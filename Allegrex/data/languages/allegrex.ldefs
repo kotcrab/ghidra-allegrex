@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<language_definitions>
+  <language processor="Allegrex"
+            endian="little"
+            size="32"
+            variant="default"
+            version="1.0"
+            slafile="allegrex.sla"
+            processorspec="allegrex.pspec"
+            id="Allegrex:LE:32:default">
+    <description>Allegrex 32-bit processor, little endian</description>
+    <compiler name="default" spec="allegrex.cspec" id="default"/>
+  </language>
+</language_definitions>

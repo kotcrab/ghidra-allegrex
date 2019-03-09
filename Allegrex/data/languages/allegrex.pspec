@@ -4,13 +4,11 @@
   <properties>
     <property key="addressesDoNotAppearDirectlyInCode" value="true"/>
     <property key="emulateInstructionStateModifierClass" value="ghidra.program.emulation.MIPSEmulateInstructionStateModifier"/>
-    <property key="assemblyRating:MIPS:BE:64:64-32addr" value="PLATINUM"/>
-    <property key="assemblyRating:MIPS:BE:64:default" value="PLATINUM"/>
   </properties>
   <programcounter register="pc"/>
   <context_data>
     <context_set space="ram">
-      <set name="PAIR_INSTRUCTION_FLAG" val="0" description="1 if LDL/LDR instruction is a pair"/>
+      <set name="PAIR_INSTRUCTION_FLAG" val="0" description="1 if LWL/LWR instruction is a pair"/>
       <set name="RELP" val="1" description="1 if mips16e, 0 if micromips"/>
     </context_set>
   </context_data>
