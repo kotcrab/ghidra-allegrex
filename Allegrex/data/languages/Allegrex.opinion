@@ -1,0 +1,7 @@
+<opinions>
+    <constraint loader="Executable and Linking Format (ELF)" compilerSpecID="default">
+        <constraint primary="8,10" processor="Allegrex"/>
+        <constraint primary="8,10" processor="Allegrex" size="32" variant="default"
+                    secondary="0b 0001 0000 1010 0010 0011 0000 0000 0001"/>
+    </constraint>
+</opinions>
