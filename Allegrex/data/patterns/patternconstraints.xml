@@ -1,5 +1,5 @@
 <patternconstraints>
-  <language id="MIPS:LE:*:*">
-    <patternfile>MIPS_LE_patterns.xml</patternfile>
-  </language>
+    <language id="Allegrex:LE:*:*">
+        <patternfile>Allegrex_patterns.xml</patternfile>
+    </language>
 </patternconstraints>
