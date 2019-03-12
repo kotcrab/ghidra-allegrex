@@ -800,7 +800,7 @@ fmt6: "D"	is format=0x15    { }
 #   (Be sure to also import the new class)
 #
 #   The mips.pspec file must have this key set (this has already been done):
-#     <property key="emulateInstructionStateModifierClass" value="ghidra.program.emulation.MIPSEmulateInstructionStateModifier"/>
+#     <property key="emulateInstructionStateModifierClass" value="ghidra.program.emulation.AllegrexEmulateInstructionStateModifier"/>
 #
 #   Add the Java class file for the new pcodeop here:
 #     ./ghidra.git/Ghidra/Framework/SoftwareModeling/src/main/java/ghidra/pcode/emulate/callother

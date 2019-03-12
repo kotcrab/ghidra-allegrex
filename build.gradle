@@ -1,0 +1,23 @@
+apply plugin: 'java'
+
+def ghidraDir = "C:/Programs/ghidra_9.0/Ghidra"
+
+artifacts {
+    jar
+}
+
+dependencies {
+    compile fileTree(dir: 'lib', include: "*.jar")
+    compile fileTree(dir: ghidraDir + '/Framework', include: "**/*.jar")
+    compile fileTree(dir: ghidraDir + '/Features', include: "**/*.jar")
+}
+
+jar {
+    manifest {
+        attributes(
+                'Specification-Title': "Allegrex",
+                'Specification-Version': "9.0",
+                'Specification-Vendor': "KC",
+        )
+    }
+}

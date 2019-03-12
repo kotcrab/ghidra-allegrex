@@ -20,7 +20,4 @@ Future ideas:
 
 #### Installation
 
-1. Download zip or clone this repository and copy `Allegrex` directory to `install_dir/Ghidra/Processors`
-
-2. For now you also have to copy `MIPS.jar` from `install_dir/Ghidra/Processors/MIPS/lib` 
-to `install_dir/Ghidra/Processors/Allegrex/lib`
+Prebuilt package will be provided after more features are implemented
