@@ -15,6 +15,7 @@
  */
 package ghidra.app.util.bin.format.elf.relocation;
 
+import com.kotcrab.ghidra.allegrex.format.elf.PspElfConstants;
 import ghidra.app.util.MemoryBlockUtil;
 import ghidra.app.util.bin.format.elf.*;
 import ghidra.app.util.bin.format.elf.extend.Allegrex_ElfExtension;
@@ -37,72 +38,93 @@ import ghidra.util.exception.AssertException;
 import ghidra.util.exception.NotFoundException;
 import ghidra.util.task.TaskMonitor;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.*;
 
 public class Allegrex_ElfRelocationHandler extends ElfRelocationHandler {
-
-//	private static final int TP_OFFSET = 0x7000;
-//	private static final int DTP_OFFSET = 0x8000;
-
+	// TODO support image base change
 	//	private static final String GOT_SYMBOL_NAME = "_GLOBAL_OFFSET_TABLE_";
 	private static final String GP_DISP_SYMBOL_NAME = "_gp_disp";
 	private static final String GP_GNU_LOCAL_SYMBOL_NAME = "__gnu_local_gp";
 
 	@Override
 	public boolean canRelocate (ElfHeader elf) {
-		return elf.e_machine() == ElfConstants.EM_MIPS;
+		return elf.e_machine() == PspElfConstants.INSTANCE.getEM_MIPS_PSP_HACK(); // check elf header flags
 	}
 
 	@Override
-	public MIPS_ElfRelocationContext createRelocationContext (ElfLoadHelper loadHelper,
-															  ElfRelocationTable relocationTable, Map<ElfSymbol, Address> symbolMap) {
-		return new MIPS_ElfRelocationContext(this, loadHelper, relocationTable, symbolMap);
+	public Allegrex_ElfRelocationContext createRelocationContext (ElfLoadHelper loadHelper,
+																  ElfRelocationTable relocationTable,
+																  Map<ElfSymbol, Address> symbolMap) {
+		return new Allegrex_ElfRelocationContext(this, loadHelper, relocationTable, symbolMap);
 	}
 
 	@Override
-	public void relocate (ElfRelocationContext elfRelocationContext, ElfRelocation relocation,
-						  Address relocationAddress) throws MemoryAccessException, NotFoundException {
+	public void relocate (ElfRelocationContext elfRelocationContext, ElfRelocation relocation, Address relocationAddress)
+			throws MemoryAccessException, NotFoundException {
 
 		ElfHeader elf = elfRelocationContext.getElfHeader();
-
-		if (elf.e_machine() != ElfConstants.EM_MIPS) {
+		if (elf.e_machine() != PspElfConstants.INSTANCE.getEM_MIPS_PSP_HACK()) {
 			return;
 		}
 
-		MIPS_ElfRelocationContext mipsRelocationContext =
-				(MIPS_ElfRelocationContext) elfRelocationContext;
+		Allegrex_ElfRelocationContext mipsRelocationContext = (Allegrex_ElfRelocationContext) elfRelocationContext;
 
 		int type = relocation.getType();
 		int symbolIndex = relocation.getSymbolIndex();
 
-		boolean saveValueForNextReloc =
-				mipsRelocationContext.nextRelocationHasSameOffset(relocation);
+		boolean saveValueForNextReloc = mipsRelocationContext.nextRelocationHasSameOffset(relocation);
+//		doRelocate(mipsRelocationContext, type, symbolIndex, relocation, relocationAddress, saveValueForNextReloc);
+		doAllegrexRelocation(mipsRelocationContext, relocation, relocationAddress);
+	}
 
-		if (elf.is64Bit()) {
-			// Each relocation can pack upto 3 relocations for 64-bit
-			for (int n = 0; n < 3; n++) {
+	private void doAllegrexRelocation (Allegrex_ElfRelocationContext context, ElfRelocation relocation, Address relocationAddress)
+			throws MemoryAccessException {
+		var program = context.getProgram();
+		var memory = program.getMemory();
+		var programHeaders = context.getElfHeader().getProgramHeaders();
 
-				int relocType = type & 0xff;
-				type >>= 8;
-				int nextRelocType = (n < 2) ? (type & 0xff) : 0;
+		int info = (int) relocation.getRelocationInfo();
+		var type = info & 0xFF;
+		var sectOffsetIndex = info >> 8 & 0xFF;
+		var relocateToIndex = info >> 16 & 0xFF;
 
-				doRelocate(mipsRelocationContext, relocType, symbolIndex, relocation,
-						relocationAddress, nextRelocType != Allegrex_ElfRelocationConstants.R_MIPS_NONE ||
-								saveValueForNextReloc);
+		var offsetSect = (int) programHeaders[sectOffsetIndex].getVirtualAddress();
+		var addr = relocationAddress.add(offsetSect);
 
-				symbolIndex = 0; // set to STN_UNDEF(0) once symbol used by first relocation
+		var relocateToSect = (int) program.getImageBase().add(programHeaders[relocateToIndex].getVirtualAddress()).getOffset();
 
-				if (nextRelocType == Allegrex_ElfRelocationConstants.R_MIPS_NONE) {
-					break;
-				}
-			}
-		} else {
-			doRelocate(mipsRelocationContext, type, symbolIndex, relocation, relocationAddress,
-					saveValueForNextReloc);
+		var currentValue = memory.getInt(addr);
+		var newValue = 0;
+
+		switch (type) {
+			case Allegrex_ElfRelocationConstants.R_MIPS_16:
+				newValue = relocate(currentValue, 0xFFFF, relocateToSect);
+				break;
+			case Allegrex_ElfRelocationConstants.R_MIPS_32:
+				newValue = currentValue + relocateToSect;
+				break;
+			case Allegrex_ElfRelocationConstants.R_MIPS_26:
+				newValue = relocate(currentValue, 0x3FFFFFF, relocateToSect >> 2);
+				break;
+			case Allegrex_ElfRelocationConstants.R_MIPS_HI16:
+				context.deferMipsHi16Relocation(new Allegrex_DeferredRelocation(type, offsetSect, relocateToSect, addr, currentValue));
+				break;
+			case Allegrex_ElfRelocationConstants.R_MIPS_LO16:
+				newValue = relocate(currentValue, 0xFFFF, relocateToSect);
+				context.completeMipsHi16Relocations((short) (currentValue & 0xFFFF));
+				break;
 		}
+
+		if (newValue != 0) {
+			memory.setInt(addr, newValue);
+		} else if(type != Allegrex_ElfRelocationConstants.R_MIPS_NONE) {
+			// TODO mark uhnadled relocation
+		}
+	}
+
+	private int relocate (int data, int mask, int relocateTo) {
+		//    return (data and mask.inv()) or (((data and mask) + relocateTo) and mask)
+		return (data & ~mask) | (((data & mask) + relocateTo) & mask);
 	}
 
 	/**
@@ -114,7 +136,7 @@ public class Allegrex_ElfRelocationHandler extends ElfRelocationHandler {
 	 * and mipsRelocationContext.useSavedAddend set true.  If false, result value should be written
 	 * to relocationAddress per relocation type.
 	 */
-	private void doRelocate (MIPS_ElfRelocationContext mipsRelocationContext, int relocType,
+	private void doRelocate (Allegrex_ElfRelocationContext mipsRelocationContext, int relocType,
 							 int symbolIndex, ElfRelocation relocation, Address relocationAddress, boolean saveValue)
 			throws MemoryAccessException, NotFoundException, AddressOutOfBoundsException {
 
@@ -176,8 +198,7 @@ public class Allegrex_ElfRelocationHandler extends ElfRelocationHandler {
 			return;
 		}
 
-		int oldValue =
-				unshuffle(memory.getInt(relocationAddress), relocType, mipsRelocationContext);
+		int oldValue = unshuffle(memory.getInt(relocationAddress), relocType, mipsRelocationContext);
 		int value = 0; // computed value which will be used as savedAddend if needed
 		int newValue = 0; // value blended with oldValue as appropriate for relocation
 		boolean writeNewValue = false;
@@ -281,7 +302,7 @@ public class Allegrex_ElfRelocationHandler extends ElfRelocationHandler {
 
 				if (elfSymbol.isLocal()) {
 					// Defer processing of local GOT16 relocations until suitable LO16 relocation is processed
-					MIPS_DeferredRelocation got16reloc = new MIPS_DeferredRelocation(relocType,
+					Allegrex_DeferredRelocationOld got16reloc = new Allegrex_DeferredRelocationOld(relocType,
 							elfSymbol, relocationAddress, oldValue, (int) addend, isGpDisp);
 					mipsRelocationContext.addGOT16Relocation(got16reloc);
 					break;
@@ -356,7 +377,7 @@ public class Allegrex_ElfRelocationHandler extends ElfRelocationHandler {
 			case Allegrex_ElfRelocationConstants.R_MIPS16_HI16:
 			case Allegrex_ElfRelocationConstants.R_MICROMIPS_HI16:
 				// Defer processing of HI16 relocations until suitable LO16 relocation is processed
-				MIPS_DeferredRelocation hi16reloc = new MIPS_DeferredRelocation(relocType,
+				Allegrex_DeferredRelocationOld hi16reloc = new Allegrex_DeferredRelocationOld(relocType,
 						elfSymbol, relocationAddress, oldValue, (int) addend, isGpDisp);
 				mipsRelocationContext.addHI16Relocation(hi16reloc);
 				break;
@@ -808,12 +829,12 @@ public class Allegrex_ElfRelocationHandler extends ElfRelocationHandler {
 	/**
 	 * Processes all pending HI16 relocations which match with the specified LO16 relocation
 	 */
-	private void processHI16Relocations (MIPS_ElfRelocationContext mipsRelocationContext,
+	private void processHI16Relocations (Allegrex_ElfRelocationContext mipsRelocationContext,
 										 int lo16RelocType, ElfSymbol lo16ElfSymbol, int lo16Addend) {
 
-		Iterator<MIPS_DeferredRelocation> iterateHi16 = mipsRelocationContext.iterateHi16();
+		Iterator<Allegrex_DeferredRelocationOld> iterateHi16 = mipsRelocationContext.iterateHi16();
 		while (iterateHi16.hasNext()) {
-			MIPS_DeferredRelocation hi16reloc = iterateHi16.next();
+			Allegrex_DeferredRelocationOld hi16reloc = iterateHi16.next();
 			if (matchingHiLo16Types(hi16reloc.relocType, lo16RelocType) &&
 					hi16reloc.elfSymbol == lo16ElfSymbol) {
 				processHI16Relocation(mipsRelocationContext, hi16reloc, lo16Addend);
@@ -827,8 +848,8 @@ public class Allegrex_ElfRelocationHandler extends ElfRelocationHandler {
 	 * specified LO16 relocation data
 	 * @return true if successful or false if unsupported
 	 */
-	private void processHI16Relocation (MIPS_ElfRelocationContext mipsRelocationContext,
-										MIPS_DeferredRelocation hi16reloc, int lo16Addend) {
+	private void processHI16Relocation (Allegrex_ElfRelocationContext mipsRelocationContext,
+										Allegrex_DeferredRelocationOld hi16reloc, int lo16Addend) {
 
 		int newValue;
 		if (hi16reloc.isGpDisp) {
@@ -871,12 +892,12 @@ public class Allegrex_ElfRelocationHandler extends ElfRelocationHandler {
 	/**
 	 * Processes all pending GOT16 relocations which match with the specified LO16 relocation
 	 */
-	private void processGOT16Relocations (MIPS_ElfRelocationContext mipsRelocationContext,
+	private void processGOT16Relocations (Allegrex_ElfRelocationContext mipsRelocationContext,
 										  int lo16RelocType, ElfSymbol lo16ElfSymbol, int lo16Addend) {
 
-		Iterator<MIPS_DeferredRelocation> iterateGot16 = mipsRelocationContext.iterateGot16();
+		Iterator<Allegrex_DeferredRelocationOld> iterateGot16 = mipsRelocationContext.iterateGot16();
 		while (iterateGot16.hasNext()) {
-			MIPS_DeferredRelocation hi16reloc = iterateGot16.next();
+			Allegrex_DeferredRelocationOld hi16reloc = iterateGot16.next();
 			if (matchingHiLo16Types(hi16reloc.relocType, lo16RelocType) &&
 					hi16reloc.elfSymbol == lo16ElfSymbol) {
 				processGOT16Relocation(mipsRelocationContext, hi16reloc, lo16Addend);
@@ -890,8 +911,8 @@ public class Allegrex_ElfRelocationHandler extends ElfRelocationHandler {
 	 * specified LO16 relocation data.  Section GOT entry will be utilized.
 	 * @return true if successful or false if unsupported
 	 */
-	private void processGOT16Relocation (MIPS_ElfRelocationContext mipsRelocationContext,
-										 MIPS_DeferredRelocation got16reloc, int lo16Addend) {
+	private void processGOT16Relocation (Allegrex_ElfRelocationContext mipsRelocationContext,
+										 Allegrex_DeferredRelocationOld got16reloc, int lo16Addend) {
 
 		long addend;
 		if (mipsRelocationContext.extractAddend()) {
@@ -939,7 +960,7 @@ public class Allegrex_ElfRelocationHandler extends ElfRelocationHandler {
 		}
 	}
 
-	private long getGpOffset (MIPS_ElfRelocationContext mipsRelocationContext, long value) {
+	private long getGpOffset (Allegrex_ElfRelocationContext mipsRelocationContext, long value) {
 		// TODO: this is a simplified use of GP and could be incorrect when multiple GPs exist
 		long gp = mipsRelocationContext.getGPValue();
 		if (gp == -1) {
@@ -950,14 +971,14 @@ public class Allegrex_ElfRelocationHandler extends ElfRelocationHandler {
 	}
 
 	/**
-	 * <code>MIPS_ElfRelocationContext</code> provides extended relocation context with the ability
+	 * <code>Allegrex_ElfRelocationContext</code> provides extended relocation context with the ability
 	 * to retain deferred relocation lists.  In addition, the ability to generate a section GOT
 	 * table is provided to facilitate relocations encountered within object modules.
 	 */
-	private static class MIPS_ElfRelocationContext extends ElfRelocationContext {
+	private static class Allegrex_ElfRelocationContext extends ElfRelocationContext {
 
-		private LinkedList<MIPS_DeferredRelocation> hi16list = new LinkedList<>();
-		private LinkedList<MIPS_DeferredRelocation> got16list = new LinkedList<>();
+		private LinkedList<Allegrex_DeferredRelocationOld> hi16list = new LinkedList<>();
+		private LinkedList<Allegrex_DeferredRelocationOld> got16list = new LinkedList<>();
 
 		private AddressRange sectionGotLimits;
 		private Address sectionGotAddress;
@@ -970,9 +991,28 @@ public class Allegrex_ElfRelocationHandler extends ElfRelocationHandler {
 		private boolean savedAddendHasError = false;
 		private long savedAddend;
 
-		MIPS_ElfRelocationContext (Allegrex_ElfRelocationHandler handler, ElfLoadHelper loadHelper,
-								   ElfRelocationTable relocationTable, Map<ElfSymbol, Address> symbolMap) {
+		private ArrayList<Allegrex_DeferredRelocation> deferredMipsHi16Relocations = new ArrayList<>();
+
+		Allegrex_ElfRelocationContext (Allegrex_ElfRelocationHandler handler, ElfLoadHelper loadHelper,
+									   ElfRelocationTable relocationTable, Map<ElfSymbol, Address> symbolMap) {
 			super(handler, loadHelper, relocationTable, symbolMap);
+		}
+
+		public void deferMipsHi16Relocation (Allegrex_DeferredRelocation reloc) {
+			deferredMipsHi16Relocations.add(reloc);
+		}
+
+		public void completeMipsHi16Relocations (short lo) throws MemoryAccessException {
+			for (Allegrex_DeferredRelocation reloc : deferredMipsHi16Relocations) {
+				int newAddr = reloc.oldValue << 16;
+				newAddr += lo;
+				newAddr += reloc.relocToSect;
+				short newLo = (short) (newAddr & 0xFFFF);
+				int newHi = (newAddr - newLo) >> 16;
+				int newData = (reloc.oldValue & 0xFFFF0000) | newHi;
+				program.getMemory().setInt(reloc.relocAddr, newData);
+			}
+			deferredMipsHi16Relocations.clear();
 		}
 
 		// TODO: move section GOT creation into ElfRelocationContext to make it
@@ -1064,7 +1104,7 @@ public class Allegrex_ElfRelocationHandler extends ElfRelocationHandler {
 		 * Determine if the next relocation has the same offset.
 		 * If true, the computed value should be stored to savedAddend and
 		 * useSaveAddend set true.
-		 * @param relocIndex current relocation index
+		 * //		 * @param relocIndex current relocation index
 		 * @return true if next relocation has same offset
 		 */
 		boolean nextRelocationHasSameOffset (ElfRelocation relocation) {
@@ -1168,7 +1208,7 @@ public class Allegrex_ElfRelocationHandler extends ElfRelocationHandler {
 		 * entries as they are processed.
 		 * @return HI16 relocation iterator
 		 */
-		Iterator<MIPS_DeferredRelocation> iterateHi16 () {
+		Iterator<Allegrex_DeferredRelocationOld> iterateHi16 () {
 			return hi16list.iterator();
 		}
 
@@ -1176,7 +1216,7 @@ public class Allegrex_ElfRelocationHandler extends ElfRelocationHandler {
 		 * Add HI16 relocation for deferred processing
 		 * @param hi16reloc HI16 relocation
 		 */
-		void addHI16Relocation (MIPS_DeferredRelocation hi16reloc) {
+		void addHI16Relocation (Allegrex_DeferredRelocationOld hi16reloc) {
 			hi16list.add(hi16reloc);
 		}
 
@@ -1185,26 +1225,30 @@ public class Allegrex_ElfRelocationHandler extends ElfRelocationHandler {
 		 * entries as they are processed.
 		 * @return GOT16 relocation iterator
 		 */
-		Iterator<MIPS_DeferredRelocation> iterateGot16 () {
+		Iterator<Allegrex_DeferredRelocationOld> iterateGot16 () {
 			return got16list.iterator();
 		}
 
 		/**
 		 * Add HI16 relocation for deferred processing
-		 * @param hi16reloc HI16 relocation
+		 * //		 * @param hi16reloc HI16 relocation
 		 */
-		void addGOT16Relocation (MIPS_DeferredRelocation got16reloc) {
+		void addGOT16Relocation (Allegrex_DeferredRelocationOld got16reloc) {
 			got16list.add(got16reloc);
 		}
 
 		@Override
 		public void dispose () {
+			for (Allegrex_DeferredRelocation reloc : deferredMipsHi16Relocations) {
+				reloc.markUnprocessed(this, "LO16 Relocation (Allegrex)");
+			}
+
 			// Mark all deferred relocations which were never processed
-			for (MIPS_DeferredRelocation reloc : hi16list) {
+			for (Allegrex_DeferredRelocationOld reloc : hi16list) {
 				reloc.markUnprocessed(this, "LO16 Relocation");
 			}
 			hi16list.clear();
-			for (MIPS_DeferredRelocation reloc : got16list) {
+			for (Allegrex_DeferredRelocationOld reloc : got16list) {
 				reloc.markUnprocessed(this, "LO16 Relocation");
 			}
 			got16list.clear();
@@ -1216,11 +1260,33 @@ public class Allegrex_ElfRelocationHandler extends ElfRelocationHandler {
 		}
 	}
 
+	private static class Allegrex_DeferredRelocation {
+		final int relocType;
+		final int offsetSect;
+		final int relocToSect;
+		final Address relocAddr;
+		final int oldValue;
+
+		Allegrex_DeferredRelocation (int relocType, int offsetSect, int relocToSect, Address relocAddr, int oldValue) {
+			this.relocType = relocType;
+			this.offsetSect = offsetSect;
+			this.relocToSect = relocToSect;
+			this.relocAddr = relocAddr;
+			this.oldValue = oldValue;
+		}
+
+		void markUnprocessed (Allegrex_ElfRelocationContext mipsRelocationContext, String missingDependencyName) {
+			markAsError(mipsRelocationContext.getProgram(), relocAddr, Integer.toString(relocType),
+					"", "Relocation missing required " + missingDependencyName,
+					mipsRelocationContext.getLog());
+		}
+	}
+
 	/**
-	 * <code>MIPS_DeferredRelocation</code> is used to capture a relocation whose processing
+	 * <code>Allegrex_DeferredRelocationOld</code> is used to capture a relocation whose processing
 	 * must be deferred.
 	 */
-	private static class MIPS_DeferredRelocation {
+	private static class Allegrex_DeferredRelocationOld {
 
 		final int relocType;
 		final ElfSymbol elfSymbol;
@@ -1229,8 +1295,8 @@ public class Allegrex_ElfRelocationHandler extends ElfRelocationHandler {
 		final int addend;
 		final boolean isGpDisp;
 
-		MIPS_DeferredRelocation (int relocType, ElfSymbol elfSymbol, Address relocAddr, int oldValue,
-								 int addend, boolean isGpDisp) {
+		Allegrex_DeferredRelocationOld (int relocType, ElfSymbol elfSymbol, Address relocAddr, int oldValue,
+										int addend, boolean isGpDisp) {
 			this.relocType = relocType;
 			this.elfSymbol = elfSymbol;
 			this.relocAddr = relocAddr;
@@ -1239,7 +1305,7 @@ public class Allegrex_ElfRelocationHandler extends ElfRelocationHandler {
 			this.isGpDisp = isGpDisp;
 		}
 
-		void markUnprocessed (MIPS_ElfRelocationContext mipsRelocationContext,
+		void markUnprocessed (Allegrex_ElfRelocationContext mipsRelocationContext,
 							  String missingDependencyName) {
 			markAsError(mipsRelocationContext.getProgram(), relocAddr, Integer.toString(relocType),
 					elfSymbol.getNameAsString(), "Relocation missing required " + missingDependencyName,

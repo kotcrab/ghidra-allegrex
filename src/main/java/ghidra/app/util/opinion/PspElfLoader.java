@@ -17,9 +17,11 @@ import java.io.IOException;
 import java.util.List;
 
 public class PspElfLoader extends ElfLoader {
+	public final static String PSP_ELF_NAME = "PSP Executable (ELF)";
+
 	@Override
 	public String getName () {
-		return "PSP Executable (ELF)";
+		return PSP_ELF_NAME;
 	}
 
 	@Override
@@ -39,6 +41,7 @@ public class PspElfLoader extends ElfLoader {
 			GenericFactory factory = MessageLogContinuesFactory.create(log);
 			ElfHeader elf = PspElfHeader.createElfHeader(factory, provider);
 			ElfProgramBuilder.loadElf(elf, program, options, log, handler, monitor);
+			program.setExecutableFormat(PSP_ELF_NAME);
 		} catch (ElfException e) {
 			throw new IOException(e.getMessage());
 		} catch (CancelledException e) { // TODO: Caller should properly handle CancelledException instead

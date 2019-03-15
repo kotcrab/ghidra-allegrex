@@ -26,9 +26,8 @@ import ghidra.program.model.data.StructureDataType;
 import java.io.IOException;
 
 public class Allegrex_ElfRelocation extends ElfRelocation {
-	private int addres;
 	private int type;
-	private int offsetIndex;
+	private int sectOffsetIndex;
 	private int relocateToIndex;
 
 	/** DO NOT USE THIS CONSTRUCTOR, USE create*(GenericFactory ...) FACTORY METHODS INSTEAD. */
@@ -39,22 +38,10 @@ public class Allegrex_ElfRelocation extends ElfRelocation {
 	protected void initElfRelocation (FactoryBundledWithBinaryReader reader, ElfHeader elfHeader,
 									  int relocationTableIndex, boolean withAddend) throws IOException {
 		super.initElfRelocation(reader, elfHeader, relocationTableIndex, withAddend);
-		addres = (int) getOffset();
-		int relloc = (int) getRelocationInfo();
-		type = relloc & 0xFF;
-		offsetIndex = relloc >> 8 & 0xFF;
-		relocateToIndex = relloc >> 16 & 0xFF;
-
-//		if (elfHeader.isLittleEndian()) {
-//			// revert to big-endian byte order
-//			info = DataConverter.swapBytes(info, 8);
-//		}
-//		DataConverter converter = elfHeader.isLittleEndian() ? LittleEndianDataConverter.INSTANCE
-//				: BigEndianDataConverter.INSTANCE;
-//		byte[] rSymBytes = BigEndianDataConverter.INSTANCE.getBytes((int) (info >>> 32));
-//		symbolIndex = converter.getInt(rSymBytes);
-//		specialSymbolIndex = ((int) info >>> 24) & 0xff;
-//		type = (int) info & 0xffffff;
+		int info = (int) getRelocationInfo();
+		type = info & 0xFF;
+		sectOffsetIndex = info >> 8 & 0xFF;
+		relocateToIndex = info >> 16 & 0xFF;
 	}
 
 	@Override
@@ -63,8 +50,21 @@ public class Allegrex_ElfRelocation extends ElfRelocation {
 	}
 
 	@Override
+	public long getOffset () {
+		return super.getOffset();
+	}
+
+	@Override
 	public int getType () {
 		return type;
+	}
+
+	public int getSectOffsetIndex () {
+		return sectOffsetIndex;
+	}
+
+	public int getRelocateToIndex () {
+		return relocateToIndex;
 	}
 
 	@Override
@@ -75,6 +75,7 @@ public class Allegrex_ElfRelocation extends ElfRelocation {
 		struct.add(BYTE, "r_type", null);
 		struct.add(BYTE, "r_offsetIndex", null);
 		struct.add(BYTE, "r_relocateToIndex", null);
+		struct.add(BYTE, "r_unused", null);
 		return struct;
 	}
 }

@@ -1,5 +1,6 @@
 package ghidra.app.util.bin.format.elf;
 
+import com.kotcrab.ghidra.allegrex.format.elf.PspElfConstants;
 import generic.continues.GenericFactory;
 import ghidra.app.util.bin.ByteProvider;
 import ghidra.app.util.bin.format.FactoryBundledWithBinaryReader;
@@ -44,7 +45,7 @@ public class PspElfHeader extends ElfHeader {
 												   ArrayList<ElfRelocationTable> relocationTableList) throws IOException {
 		try {
 			int sectionHeaderType = section.getType();
-			if (sectionHeaderType == PspElfConstants.SHT_PSP_REL) {
+			if (sectionHeaderType == PspElfConstants.INSTANCE.getSHT_PSP_REL()) {
 				int link = section.getLink(); // section index of associated symbol table
 				int info = section.getInfo(); // section index of section to which relocations apply (relocation offset base)
 
@@ -69,6 +70,12 @@ public class PspElfHeader extends ElfHeader {
 
 	@Override
 	public boolean isRelocatable () {
-		return super.isRelocatable() || e_type() == PspElfConstants.ET_PSP_PRX; //TODO should this be relocatable?
+		//TODO should PRX be relocatable? probably not, it messes up sections virtual addresses (ElfProgramBuilder#processSectionHeaders)
+		return super.isRelocatable(); // || e_type() == PspElfConstants.ET_PSP_PRX;
+	}
+
+	@Override
+	public short e_machine () {
+		return PspElfConstants.INSTANCE.getEM_MIPS_PSP_HACK();
 	}
 }

@@ -15,6 +15,7 @@
  */
 package ghidra.app.util.bin.format.elf.extend;
 
+import com.kotcrab.ghidra.allegrex.format.elf.PspElfConstants;
 import ghidra.app.util.bin.format.elf.*;
 import ghidra.app.util.bin.format.elf.ElfDynamicType.ElfDynamicValueType;
 import ghidra.app.util.bin.format.elf.relocation.Allegrex_ElfRelocation;
@@ -296,7 +297,7 @@ public class Allegrex_ElfExtension extends ElfExtension {
 	@Override
 	public boolean canHandle (ElfHeader elf) {
 		// TODO: Verify 64-bit MIPS support
-		return elf.e_machine() == ElfConstants.EM_MIPS;
+		return elf.e_machine() == PspElfConstants.INSTANCE.getEM_MIPS_PSP_HACK();
 	}
 
 	@Override
@@ -673,6 +674,12 @@ public class Allegrex_ElfExtension extends ElfExtension {
 	@Override
 	public void processGotPlt (ElfLoadHelper elfLoadHelper, TaskMonitor monitor)
 			throws CancelledException {
+
+//		if (new UpdateRelocationTable().update(elfLoadHelper)) {
+//			elfLoadHelper.log("Failed to fully update stored relocation tables to Allegrex format. " +
+//					"Image rebase won't work correctly.");
+//		}
+//
 
 		fixupGot(elfLoadHelper, monitor);
 
