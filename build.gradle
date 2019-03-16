@@ -19,12 +19,20 @@ apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'java'
 apply plugin: 'kotlin'
 
-def ghidraHome = System.getenv("GHIDRA_HOME")
+def ghidraInstallDir
+if (System.env.GHIDRA_INSTALL_DIR) {
+    ghidraInstallDir = System.env.GHIDRA_INSTALL_DIR
+} else if (project.hasProperty("GHIDRA_INSTALL_DIR")) {
+    ghidraInstallDir = project.getProperty("GHIDRA_INSTALL_DIR")
+}
+if (!ghidraInstallDir) {
+    throw new GradleException("GHIDRA_INSTALL_DIR is not defined!")
+}
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
-    shadow fileTree(dir: ghidraHome + '/Ghidra/Framework', include: "**/*.jar")
-    shadow fileTree(dir: ghidraHome + '/Ghidra/Features', include: "**/*.jar")
+    shadow fileTree(dir: ghidraInstallDir + '/Ghidra/Framework', include: "**/*.jar")
+    shadow fileTree(dir: ghidraInstallDir + '/Ghidra/Features', include: "**/*.jar")
 }
 
 compileKotlin {
@@ -39,5 +47,29 @@ jar {
                 'Specification-Title': "Allegrex",
                 'Specification-Version': "9.0",
         )
+    }
+}
+
+//noinspection GroovyAssignabilityCheck
+task ghidraInstall {
+    dependsOn 'shadowJar'
+    doLast {
+        def allegrexOut = ghidraInstallDir + '/Ghidra/Processors/Allegrex'
+        delete allegrexOut
+        copy {
+            from "data"
+            into allegrexOut + "/data"
+        }
+        copy {
+            from "build/libs"
+            into allegrexOut + "/lib"
+            include "ghidra-allegrex-all.jar"
+            rename("ghidra-allegrex-all.jar", "Allegrex.jar")
+        }
+        copy {
+            from "."
+            into allegrexOut
+            include "Module.manifest"
+        }
     }
 }

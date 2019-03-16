@@ -19,14 +19,17 @@ To be done:
 Future ideas:
 - Integration with PPSSPP debugger
 
-#### Installation
+### Installation
 
 Prebuilt package will be provided after more features are implemented.
 
-#### Building
+### Building
 
-`GHIDRA_HOME` environment variable must be set to Ghidra root installation directory.
+`GHIDRA_INSTALL_DIR` environment variable must be set to Ghidra root installation directory.
 
-Run `gradle shadowJar` and then copy:
- - `build/libs/ghidra-allegrex-all.jar` file to `GHIDRA_HOME/Ghidra/Processors/Allegrex/lib/Allegrex.jar`
- - `data` directory to `GHIDRA_HOME/Ghidra/Processors/Allegrex/`
+- `gradle ghidraInstall` - build and install into Ghidra (warning: contents of `GHIDRA_INSTALL_DIR/Ghidra/Processors/Allegrex` will be deleted before installing)
+- `gradle shadowJar` - create single library jar file with all external dependencies included
+
+After `gradle shadowJar` you can manually install extension by copying:
+ - `build/libs/ghidra-allegrex-all.jar` file to `GHIDRA_INSTALL_DIR/Ghidra/Processors/Allegrex/lib/Allegrex.jar`
+ - `data` directory to `GHIDRA_INSTALL_DIR/Ghidra/Processors/Allegrex/`
