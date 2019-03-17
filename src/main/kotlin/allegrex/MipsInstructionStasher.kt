@@ -1,6 +1,6 @@
-package com.kotcrab.ghidra.allegrex.format.elf
+package allegrex
 
-import com.kotcrab.ghidra.allegrex.format.elf.MipsInstructionStasher.LinkedCuRestorePolicy.*
+import allegrex.MipsInstructionStasher.LinkedCuRestorePolicy.*
 import ghidra.program.model.address.Address
 import ghidra.program.model.lang.InstructionPrototype
 import ghidra.program.model.lang.ProgramProcessorContext

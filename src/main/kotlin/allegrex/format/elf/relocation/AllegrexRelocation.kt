@@ -1,4 +1,4 @@
-package com.kotcrab.ghidra.allegrex.format.elf.relocation
+package allegrex.format.elf.relocation
 
 import ghidra.app.util.bin.format.elf.ElfHeader
 import ghidra.app.util.bin.format.elf.ElfRelocation
@@ -19,12 +19,26 @@ class AllegrexRelocation private constructor(
             val relocateToIndex = info shr 16 and 0xFF
             val relative = header.programHeaders[relativeIndex].virtualAddress.toInt()
             val relocateTo = header.programHeaders[relocateToIndex].virtualAddress.toInt()
-            return AllegrexRelocation(reloc.offset.toInt(), type, relativeIndex, relocateToIndex, relative, relocateTo)
+            return AllegrexRelocation(
+                reloc.offset.toInt(),
+                type,
+                relativeIndex,
+                relocateToIndex,
+                relative,
+                relocateTo
+            )
         }
 
         fun fromLongArray(arr: LongArray): AllegrexRelocation {
             val packed = arr.map { it.toInt() }
-            return AllegrexRelocation(packed[0], packed[1], packed[2], packed[3], packed[4], packed[5])
+            return AllegrexRelocation(
+                packed[0],
+                packed[1],
+                packed[2],
+                packed[3],
+                packed[4],
+                packed[5]
+            )
         }
     }
 

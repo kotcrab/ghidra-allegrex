@@ -1,8 +1,9 @@
 package com.kotcrab.ghidra.allegrex.format.elf
 
-import com.kotcrab.ghidra.allegrex.format.elf.relocation.AllegrexRelocation
+import allegrex.format.elf.relocation.AllegrexRelocation
 import ghidra.app.util.bin.format.elf.ElfLoadHelper
 
+@Deprecated("TMP")
 class UpdateRelocationTable {
     fun update(elfLoadHelper: ElfLoadHelper): Boolean {
         val memory = elfLoadHelper.program.memory

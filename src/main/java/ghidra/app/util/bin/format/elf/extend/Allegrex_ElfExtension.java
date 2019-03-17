@@ -15,10 +15,10 @@
  */
 package ghidra.app.util.bin.format.elf.extend;
 
-import com.kotcrab.ghidra.allegrex.format.elf.PspElfConstants;
+import ghidra.app.util.bin.format.elf.PspElfConstants;
 import ghidra.app.util.bin.format.elf.*;
 import ghidra.app.util.bin.format.elf.ElfDynamicType.ElfDynamicValueType;
-import ghidra.app.util.bin.format.elf.relocation.Allegrex_ElfRelocation;
+import ghidra.app.util.bin.format.elf.relocation.AllegrexElfRelocationExtension;
 import ghidra.program.model.address.Address;
 import ghidra.program.model.address.AddressOutOfBoundsException;
 import ghidra.program.model.data.*;
@@ -873,7 +873,7 @@ public class Allegrex_ElfExtension extends ElfExtension {
 
 	@Override
 	public Class<? extends ElfRelocation> getRelocationClass (ElfHeader elfHeader) {
-		return Allegrex_ElfRelocation.class;
+		return AllegrexElfRelocationExtension.class;
 	}
 
 }
