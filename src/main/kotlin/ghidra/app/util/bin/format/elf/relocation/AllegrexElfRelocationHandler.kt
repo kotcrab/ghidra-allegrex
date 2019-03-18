@@ -19,7 +19,6 @@ import ghidra.app.util.bin.format.elf.*
 import ghidra.program.model.address.Address
 import java.util.*
 
-// TODO this is ignored by extension class path scanner
 open class AllegrexElfRelocationHandler : ElfRelocationHandler() {
     override fun canRelocate(elf: ElfHeader): Boolean {
         return elf.e_machine() == PspElfConstants.EM_MIPS_PSP_HACK
@@ -52,32 +51,42 @@ open class AllegrexElfRelocationHandler : ElfRelocationHandler() {
 
         val currentValue = memory.getInt(addr)
         var newValue = 0
+        var relocAccepted = false
 
         when (type) {
+            AllegrexElfRelocationConstants.R_MIPS_NONE -> {
+                relocAccepted = true
+            }
             AllegrexElfRelocationConstants.R_MIPS_16 -> {
                 newValue = relocate(currentValue, 0xFFFF, relocateToSect)
+                relocAccepted = true
             }
             AllegrexElfRelocationConstants.R_MIPS_32 -> {
                 newValue = currentValue + relocateToSect
+                relocAccepted = true
             }
             AllegrexElfRelocationConstants.R_MIPS_26 -> {
-                newValue =
-                    relocate(currentValue, 0x3FFFFFF, relocateToSect shr 2)
+                newValue = relocate(currentValue, 0x3FFFFFF, relocateToSect shr 2)
+                relocAccepted = true
             }
             AllegrexElfRelocationConstants.R_MIPS_HI16 -> {
                 context.deferMipsHi16Relocation(
                     AllegrexDeferredRelocation(type, offsetSect, relocateToSect, addr, currentValue)
                 )
+                relocAccepted = true
             }
             AllegrexElfRelocationConstants.R_MIPS_LO16 -> {
                 newValue = relocate(currentValue, 0xFFFF, relocateToSect)
                 context.completeMipsHi16Relocations((currentValue and 0xFFFF).toShort())
+                relocAccepted = true
             }
         }
 
         if (newValue != 0) {
             memory.setInt(addr, newValue)
-        } else if (type != AllegrexElfRelocationConstants.R_MIPS_NONE) {
+        }
+
+        if (relocAccepted == false) {
             ElfRelocationHandler.markAsUnhandled(program, relocationAddress, type.toLong(), 0, "", log)
         }
     }
