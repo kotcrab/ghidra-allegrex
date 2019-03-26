@@ -9,10 +9,11 @@ class AllegrexRelocation private constructor(
     val relativeIndex: Int,
     val relocateToIndex: Int,
     val relative: Int,
-    val relocateTo: Int
+    val relocateTo: Int,
+    val linkedLoValue: Int
 ) {
     companion object {
-        fun fromElf(header: ElfHeader, reloc: ElfRelocation): AllegrexRelocation {
+        fun fromElf(header: ElfHeader, reloc: ElfRelocation, linkedLoValue: Int): AllegrexRelocation {
             val info = reloc.relocationInfo.toInt()
             val type = info and 0xFF
             val relativeIndex = info shr 8 and 0xFF
@@ -25,7 +26,8 @@ class AllegrexRelocation private constructor(
                 relativeIndex,
                 relocateToIndex,
                 relative,
-                relocateTo
+                relocateTo,
+                linkedLoValue
             )
         }
 
@@ -37,13 +39,14 @@ class AllegrexRelocation private constructor(
                 packed[2],
                 packed[3],
                 packed[4],
-                packed[5]
+                packed[5],
+                packed[6]
             )
         }
     }
 
     fun toLongArray(): LongArray {
-        return arrayOf(offset, type, relativeIndex, relocateToIndex, relative, relocateTo)
+        return arrayOf(offset, type, relativeIndex, relocateToIndex, relative, relocateTo, linkedLoValue)
             .map { it.toLong() }
             .toLongArray()
     }

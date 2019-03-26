@@ -9,7 +9,7 @@ Implemented:
 - PSP calling convention
 - Processor type auto detection for ELF files
 - Support for PSP specific ELF relocation section
-  - Image rebase after loading should work too
+  - Image rebase after loading is also supported
 
 To be done:
 - Clean up instructions and add PSP specific ones

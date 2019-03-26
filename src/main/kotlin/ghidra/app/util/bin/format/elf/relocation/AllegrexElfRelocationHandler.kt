@@ -42,11 +42,11 @@ open class AllegrexElfRelocationHandler : ElfRelocationHandler() {
 
         val info = relocation.relocationInfo.toInt()
         val type = info and 0xFF
-        val sectOffsetIndex = info shr 8 and 0xFF
+        val relative = info shr 8 and 0xFF
         val relocateToIndex = info shr 16 and 0xFF
 
-        val offsetSect = programHeaders[sectOffsetIndex].virtualAddress.toInt()
-        val addr = relocationAddress.add(offsetSect.toLong())
+        val relativeSect = programHeaders[relative].virtualAddress.toInt()
+        val addr = relocationAddress.add(relativeSect.toLong())
         val relocateToSect = program.imageBase.add(programHeaders[relocateToIndex].virtualAddress).offset.toInt()
 
         val currentValue = memory.getInt(addr)
@@ -71,7 +71,7 @@ open class AllegrexElfRelocationHandler : ElfRelocationHandler() {
             }
             AllegrexElfRelocationConstants.R_MIPS_HI16 -> {
                 context.deferMipsHi16Relocation(
-                    AllegrexDeferredRelocation(type, offsetSect, relocateToSect, addr, currentValue)
+                    AllegrexDeferredRelocation(type, relocateToSect, addr, currentValue)
                 )
                 relocAccepted = true
             }
@@ -112,7 +112,7 @@ open class AllegrexElfRelocationHandler : ElfRelocationHandler() {
                 newAddr += lo.toInt()
                 newAddr += reloc.relocToSect
                 val newLo = (newAddr and 0xFFFF).toShort()
-                val newHi = newAddr - newLo shr 16
+                val newHi = (newAddr - newLo) shr 16
                 val newData = (reloc.oldValue and 0xFFFF0000.toInt()) or newHi
                 program.memory.setInt(reloc.relocAddr, newData)
             }
@@ -130,12 +130,10 @@ open class AllegrexElfRelocationHandler : ElfRelocationHandler() {
 
     class AllegrexDeferredRelocation constructor(
         val relocType: Int,
-        val offsetSect: Int,
         val relocToSect: Int,
         val relocAddr: Address,
         val oldValue: Int
     ) {
-
         internal fun markUnprocessed(
             mipsRelocationContext: AllegrexElfRelocationContext,
             missingDependencyName: String

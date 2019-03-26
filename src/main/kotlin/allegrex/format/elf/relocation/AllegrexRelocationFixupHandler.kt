@@ -1,4 +1,4 @@
-package com.kotcrab.ghidra.allegrex.format.elf.relocation
+package allegrex.format.elf.relocation
 
 import allegrex.MipsInstructionStasher
 import ghidra.app.plugin.core.reloc.RelocationFixupHandler
@@ -7,11 +7,9 @@ import ghidra.app.util.opinion.PspElfLoader
 import ghidra.program.model.address.Address
 import ghidra.program.model.lang.Processor
 import ghidra.program.model.listing.Program
-import ghidra.program.model.mem.MemoryAccessException
 import ghidra.program.model.reloc.Relocation
-import ghidra.program.model.util.CodeUnitInsertionException
+import ghidra.util.LittleEndianDataConverter
 
-@Deprecated("TMP")
 class AllegrexRelocationFixupHandler : RelocationFixupHandler() {
     override fun handlesProgram(program: Program): Boolean {
         if (PspElfLoader.PSP_ELF_NAME != program.executableFormat) {
@@ -24,44 +22,45 @@ class AllegrexRelocationFixupHandler : RelocationFixupHandler() {
         val processor = language.processor
         return processor == Processor.findOrPossiblyCreateProcessor("Allegrex")
     }
-    @Throws(MemoryAccessException::class, CodeUnitInsertionException::class)
+
     override fun processRelocation(
-        program: Program,
-        relocation: Relocation,
-        oldImageBase: Address,
-        newImageBase: Address
+        program: Program, relocation: Relocation, oldImageBase: Address, newImageBase: Address
     ): Boolean {
         val memory = program.memory
-        val diff = newImageBase.subtract(oldImageBase).toInt()
-        val address = relocation.address
-        val value = memory.getInt(address)
-        var newValue = 0
+        val allegrexReloc = AllegrexRelocation.fromLongArray(relocation.values)
+        val addr = relocation.address.add(allegrexReloc.relative.toLong())
+        val relocateToSect = newImageBase.add(allegrexReloc.relocateTo.toLong()).offset.toInt()
+        val initialValue = LittleEndianDataConverter.INSTANCE.getInt(relocation.bytes)
+        val newValue: Int
         when (relocation.type) {
             AllegrexElfRelocationConstants.R_MIPS_NONE -> {
-                newValue = value
+                return true
             }
             AllegrexElfRelocationConstants.R_MIPS_16 -> {
-                newValue = relocate(value, 0xFFFF, diff)
+                newValue = relocate(initialValue, 0xFFFF, relocateToSect)
             }
             AllegrexElfRelocationConstants.R_MIPS_32 -> {
-                newValue += diff
+                newValue = initialValue + relocateToSect
             }
             AllegrexElfRelocationConstants.R_MIPS_26 -> {
-                newValue = relocate(value, 0x3FFFFFF, diff shr 2)
+                newValue = relocate(initialValue, 0x3FFFFFF, relocateToSect shr 2)
             }
             AllegrexElfRelocationConstants.R_MIPS_HI16 -> {
-                // TODO this won't really work for cases when sign on LO part changes (probably), might need deferring
-                newValue = relocate(value, 0xFFFF, diff shr 16)
+                var newAddr = initialValue shl 16
+                newAddr += allegrexReloc.linkedLoValue
+                newAddr += relocateToSect
+                val newLo = (newAddr and 0xFFFF).toShort()
+                val newHi = (newAddr - newLo) shr 16
+                newValue = (initialValue and 0xFFFF0000.toInt()) or newHi
             }
             AllegrexElfRelocationConstants.R_MIPS_LO16 -> {
-                newValue = relocate(value, 0xFFFF, diff)
+                newValue = relocate(initialValue, 0xFFFF, relocateToSect)
             }
             else -> return false
         }
         if (newValue == 0) return false
-        // TODO check if new value valid?
-        val instructionStasher = MipsInstructionStasher(program, address)
-        memory.setInt(address, newValue)
+        val instructionStasher = MipsInstructionStasher(program, addr)
+        memory.setInt(addr, newValue)
         instructionStasher.restore()
         return true
     }
