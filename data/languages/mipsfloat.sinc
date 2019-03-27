@@ -94,12 +94,6 @@
     fd = trunc(fd_tmp);  # converts float to int
 }
 
-# 1101 01bb bbbt tttt iiii iiii iiii iiii
-:ldc1 ft, OFF_BASE              is $(AMODE) & prime=53 & OFF_BASE & ft & ftD {
-    ftD = *[ram]:8 OFF_BASE;
-}
-
-
 # 1100 01bb bbbt tttt iiii iiii iiii iiii
 :lwc1 ft, OFF_BASE              is $(AMODE) & prime=49 & OFF_BASE & ft {        
     ft[0,32] = *[ram]:4 OFF_BASE;
@@ -111,11 +105,6 @@
     RT = sext( fs:$(SIZETO4) );
 }
 
-# 0100 0100 011t tttt ssss s000 0000 0000
-:mfhc1 RT, fs                   is $(AMODE) & prime=17 & copop=3 & bigfunct=0 & RT & fs & fsD {
-    RT = sext(fsD[32,32]);
-}
-
 # 0100 01ff fff0 0000 ssss sddd dd00 0110
 :mov.S fd, fs               is $(AMODE) & prime=17 & fct=6 & fmt1 & fs & fd & format=0x10 {
     fd[0,32] = fs:4;
@@ -125,12 +114,6 @@
 :mtc1 RTsrc, fs                 is $(AMODE) & prime=17 & copop=4 & RTsrc & fs & bigfunct=0 {
     # Move 32-bits of RTsrc to Low Half of FPR fs
 	fs[0,32] = RTsrc:$(SIZETO4);
-}
-
-# 0100 0100 111t tttt ssss s000 0000 0000
-:mthc1 RTsrc, fs                is $(AMODE) & prime=17 & copop=0x07 & bigfunct=0x0 & RTsrc & fs & fsD {
-    # Move 32-bits of RTsrc to High Half of FPR
-    fsD[32,32] = RTsrc:4;
 }
 
 # 0100 01ff ffft tttt ssss sddd dd00 0010

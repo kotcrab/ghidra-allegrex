@@ -10,25 +10,16 @@
 # 0000 00ss ssst tttt dddd d000 0010 0000
 :add RD32, RS32src, RT32src           is $(AMODE) & prime=0 & sa=0 & fct=32 & RD32 & RS32src & RT32src & RD {
     RD32 = RS32src + RT32src;
-@ifdef MIPS64
-    RD = sext(RD32);
-@endif
 }
 
 # 0010 01ss ssst tttt iiii iiii iiii iiii
 :addiu RT32, RS32src, simmed        is $(AMODE) & prime=9 & RT32 & RS32src & simmed & RT { 
     RT32 = RS32src + simmed;
-@ifdef MIPS64
-    RT = sext(RT32);
-@endif
 }
 
 # 0000 00ss ssst tttt dddd d000 0010 0001
 :addu RD32, RS32src, RT32src          is $(AMODE) & prime=0 & fct=33 & RS32src & RT32src & RD32 & sa=0 & RD { 
     RD32 = RS32src + RT32src;
-@ifdef MIPS64
-    RD = sext(RD32);
-@endif
 }
 
 # 0000 00ss ssst tttt dddd d000 0010 0100
@@ -404,9 +395,6 @@ define pcodeop special2;
     tmp1:4 = RT32src >> sa;
     tmp2:4 = RT32src << (32 - sa);
     RD32 = tmp1 + tmp2;
-@ifdef MIPS64
-    RD = sext(RD32);
-@endif
 }
 # 0000 00ss ssst tttt dddd d000 0100 0110
 :rotrv RD32, RT32src, RS32src         is $(AMODE) & prime=0 & zero2=0 & bit6=1 & fct=6 & RD32 & RT32src & RS32src & RD {
@@ -414,9 +402,6 @@ define pcodeop special2;
     tmp1:4 = RT32src >> shift;
     tmp2:4 = RT32src << (32 - shift);
     RD32 = tmp1 + tmp2;
-@ifdef MIPS64
-    RD = sext(RD32);
-@endif
 }
 
 # 1010 00bb bbbt tttt iiii iiii iiii iiii
@@ -461,18 +446,12 @@ define pcodeop special2;
 # 0000 0000 000t tttt dddd daaa aa00 0000
 :sll RD32, RT32src, sa              is $(AMODE) & prime=0 & fct=0 & rs=0 & RD32 & RT32src & sa & RD {    
     RD32 = RT32src << sa;
-@ifdef MIPS64
-    RD = sext(RD32);
-@endif
 }
 
 # 0000 00ss ssst tttt dddd d000 0000 0100
 :sllv RD32, RT32src, RS32src          is $(AMODE) & prime=0 & fct=4 & RS32src & RT32src & RD32 & sa=0 & RD { 
     shift:4 = RS32src & 0x1f;
     RD32 = RT32src << shift;
-@ifdef MIPS64
-    RD = sext(RD32);
-@endif
 }
 
 # 0000 00ss ssst tttt dddd d000 0010 1010
@@ -495,47 +474,29 @@ define pcodeop special2;
 # 0000 0000 000t tttt dddd daaa aa00 0011
 :sra RD32, RT32src, sa              is $(AMODE) & prime=0 & fct=3 & rs=0 & RT32src & RD32 & sa & RD { 
     RD32 = RT32src s>> sa;
-@ifdef MIPS64
-    RD = sext(RD32);
-@endif
 }
 # 0000 00ss ssst tttt dddd d000 0000 0111
 :srav RD32, RT32src, RS32src          is $(AMODE) & prime=0 & fct=7 & RS32src & RT32src & RD32 & sa=0 & RD { 
     shift:4 = RS32src & 0x1f;
     RD32 = RT32src s>> shift;
-@ifdef MIPS64
-    RD = sext(RD32);
-@endif
 }
 # 0000 0000 000t tttt dddd daaa aa00 0010
 :srl RD32, RT32src, sa              is $(AMODE) & prime=0 & fct=2 & rs=0 & RT32src & RD32 & sa & RD { 
     RD32 = RT32src >> sa; 
-@ifdef MIPS64
-    RD = sext(RD32);
-@endif
 }
 # 0000 00ss ssst tttt dddd d000 0000 0110
 :srlv RD32, RT32src, RS32src          is $(AMODE) & prime=0 & fct=6 & RS32src & RT32src & RD32 & sa=0 & RD { 
     shift:4 = RS32src & 0x1f;
     RD32 = RT32src >> shift; 
-@ifdef MIPS64
-    RD = sext(RD32);
-@endif
 }
 
 # 0000 00ss ssst tttt dddd d000 0010 0010
 :sub RD32, RS32src, RT32src           is $(AMODE) & prime=0 & fct=34 & RS32src & RT32src & RD32 & sa=0 & RD {    
     RD32 = RS32src - RT32src; 
-@ifdef MIPS64
-    RD = sext(RD32);
-@endif
 }
 # 0000 00ss ssst tttt dddd d000 0010 0011
 :subu RD32, RS32src, RT32src          is $(AMODE) & prime=0 & fct=35 & RS32src & RT32src & RD32 & sa=0 & RD { 
     RD32 = RS32src - RT32src;
-@ifdef MIPS64
-    RD = sext(RD32);
-@endif
 }
 
 # 1010 11bb bbbt tttt iiii iiii iiii iiii
@@ -677,9 +638,6 @@ define pcodeop SYNC;
 # 0010 00ss ssst tttt iiii iiii iiii iiii
 :addi RT32, RS32src, simmed         is $(AMODE) & prime=8 & RT32 & RS32src & simmed & RT {
     RT32 = RS32src + simmed;
-@ifdef MIPS64
-    RT = sext(RT32);
-@endif
 }
 
 # 0100 1001 000c cc00 iiii iiii iiii iiii
