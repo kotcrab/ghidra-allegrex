@@ -4,3 +4,5 @@
 
 @include "mips.sinc"
 @include "mips32Instructions.sinc"
+@include "mipsfloat.sinc"
+#TODO @include "allegrexVfpu.sinc"

@@ -190,19 +190,6 @@ define register offset=0 size=$(REGSIZE) [
 
 @ifdef MIPS64
 # We need the 32-bit pieces of the main registers for the 32-bit instructions
-@if ENDIAN == "big"
-define register offset=0 size=4 [
-    zero_hi zero_lo at_hi at_lo v0_hi v0_lo v1_hi v1_lo
-    a0_hi a0_lo a1_hi a1_lo a2_hi a2_lo a3_hi a3_lo
-    t0_hi t0_lo t1_hi t1_lo t2_hi t2_lo t3_hi t3_lo
-    t4_hi t4_lo t5_hi t5_lo t6_hi t6_lo t7_hi t7_lo
-    s0_hi s0_lo s1_hi s1_lo s2_hi s2_lo s3_hi s3_lo
-    s4_hi s4_lo s5_hi s5_lo s6_hi s6_lo s7_hi s7_lo
-    t8_hi t8_lo t9_hi t9_lo k0_hi k0_lo k1_hi k1_lo
-    gp_hi gp_lo sp_hi sp_lo s8_hi s8_lo ra_hi ra_lo
-    pc_hi pc_lo
-];
-@else
 define register offset=0 size=4 [
     zero_lo zero_hi at_lo at_hi v0_lo v0_hi v1_lo v1_hi
     a0_lo a0_hi a1_lo a1_hi a2_lo a2_hi a3_lo a3_hi
@@ -214,7 +201,6 @@ define register offset=0 size=4 [
     gp_lo gp_hi sp_lo sp_hi s8_lo s8_hi ra_lo ra_hi
     pc_lo pc_hi
 ];
-@endif # ENDIAN
 
 @endif # MIPS64
 
@@ -354,9 +340,7 @@ define register offset=0x3F00 size=1 [ ISAModeSwitch ];
 define register offset=0x4000 size=4   contextreg;
 define context contextreg
   PAIR_INSTRUCTION_FLAG=(0,0) noflow      # =1 paired instruction
-  REL6=(31,31)							  # =1 Release 6, =0 Pre release 6, (Fixed, set via pspec)
-  RELP=(30,30)							  # =1 Mips16e, =0 MicroMips. REL6, RELP can't both be 1 (Fixed, set via pspec)
-@ifdef ISA_VARIANT  
+@ifdef ISA_VARIANT
   ISA_MODE=(1,1)						  # =1 Decode using alternate ISA, variable.
   LowBitCodeMode = (1,1)				  # =1 if low bit of instruction address is set on a branch
 #below here is for mips16e. Overlaps with micromips   
@@ -728,8 +712,7 @@ macro ValCast(dest,src) {
 OFF_BASE: simmed(base)  is simmed & base    { tmp:$(REGSIZE) = base + simmed; tmpscaled:$(ADDRSIZE) = 0; ValCast(tmpscaled,tmp); export tmpscaled; }
 INDEX_BASE: index(base) is index & base     { tmp:$(REGSIZE) = base + index; tmpscaled:$(ADDRSIZE) = 0; ValCast(tmpscaled,tmp); export tmpscaled; }
 
-OFF_BASER6: simmed(base)	is REL6=0 & simmed & base	{ tmp:$(REGSIZE) = base + simmed; tmpscaled:$(ADDRSIZE) = 0; ValCast(tmpscaled,tmp); export tmpscaled; }
-OFF_BASER6: simmed9(base)	is REL6=1 & simmed9 & base	{ tmp:$(REGSIZE) = base + simmed9; tmpscaled:$(ADDRSIZE) = 0; ValCast(tmpscaled,tmp); export tmpscaled; }
+OFF_BASER6: simmed(base)	is simmed & base	{ tmp:$(REGSIZE) = base + simmed; tmpscaled:$(ADDRSIZE) = 0; ValCast(tmpscaled,tmp); export tmpscaled; }
 
 S18L3: val							is simmed18 [ val = simmed18 << 3; ] { export *[const]:4 val; }
 S19L2: val							is simmed19 [ val = simmed19 << 2; ] { export *[const]:4 val; }

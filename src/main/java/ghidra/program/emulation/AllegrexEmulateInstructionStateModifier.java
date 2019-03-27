@@ -99,7 +99,6 @@ public class AllegrexEmulateInstructionStateModifier extends EmulateInstructionS
 		 TLB_read_indexed_entryPageMask;
 		 TLB_write_indexed_entry;
 		 TLB_write_random_entry;
-		 mipsFloatPS;
 		 *
 		 */
 	}

@@ -46,8 +46,6 @@ public class AllegrexPreAnalyzer extends AbstractAnalyzer {
 	Register pairBitRegister;
 	private Register isamode;
 	private Register ismbit;
-	private Register rel6bit;
-	private Register micro16bit;
 
 	public AllegrexPreAnalyzer () {
 		super(NAME, DESCRIPTION, AnalyzerType.INSTRUCTION_ANALYZER);
@@ -70,8 +68,6 @@ public class AllegrexPreAnalyzer extends AbstractAnalyzer {
 		pairBitRegister = program.getProgramContext().getRegister("PAIR_INSTRUCTION_FLAG");
 		isamode = program.getProgramContext().getRegister("ISA_MODE");
 		ismbit = program.getProgramContext().getRegister("ISAModeSwitch");
-		rel6bit = program.getProgramContext().getRegister("REL6");
-		micro16bit = program.getProgramContext().getRegister("RELP");
 
 		set = removeUninitializedBlock(program, set);
 
@@ -132,24 +128,13 @@ public class AllegrexPreAnalyzer extends AbstractAnalyzer {
 				: program.getProgramContext().getValue(isamode, start_inst.getMinAddress(), false));
 		BigInteger curval2 = (ismbit == null ? null
 				: program.getProgramContext().getValue(ismbit, start_inst.getMinAddress(), false));
-		BigInteger curval3 = (rel6bit == null ? null
-				: program.getProgramContext().getValue(rel6bit, start_inst.getMinAddress(), false));
-		BigInteger curval4 = (micro16bit == null ? null
-				: program.getProgramContext().getValue(micro16bit, start_inst.getMinAddress(),
-				false));
 
-		if ((curval1 != null) && (curval4 != null) && (curval1.intValue() == 1) &&
-				(curval4.intValue() == 1)) {
+		if (curval1 != null && curval1.intValue() == 1) {
 			rval = true;
 		}
-		if ((curval2 != null) && (curval4 != null) && (curval2.intValue() == 1) &&
-				(curval4.intValue() == 1)) {
+		if (curval2 != null && curval2.intValue() == 1) {
 			rval = true;
 		}
-		if ((curval3 != null) && (curval3.intValue() == 1)) {
-			rval = true;
-		}
-
 		return rval;
 	}
 
