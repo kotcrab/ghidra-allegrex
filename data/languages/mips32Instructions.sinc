@@ -2,16 +2,10 @@
 #
 # MIPS32
 # Basic and FP (COP1) instructions
-# 
-# (See bottom of file for MIPS64 instructions included with MIPS32)
 #
 ############################
 
-@if defined(ISA_VARIANT)
-@define AMODE   "ISA_MODE=0"	# ISA_MODE must restrict MIPS instruction decoding and require ISA_MODE=0
-@else
 @define AMODE "epsilon"			# Mips16 instructions not supported - Mips32 only
-@endif
 
 # 0000 00ss ssst tttt dddd d000 0010 0000
 :add RD32, RS32src, RT32src           is $(AMODE) & prime=0 & sa=0 & fct=32 & RD32 & RS32src & RT32src & RD {
@@ -231,24 +225,6 @@ define pcodeop special2;
     delayslot( 1 ); 
     call Abs26; 
 }
-@ifdef ISA_VARIANT
-# 0000 00ss sss0 0000 dddd dhhh hh00 1001
-:jalr RD, RSsrc                 is $(AMODE) & prime=0 & fct=9 & RSsrc & rt=0 & RD {
-	build RD;
-	build RSsrc;
-	JXWritePC(RSsrc); 
-    RD = inst_next;
-    delayslot( 1 );
-    call [pc];
-}
-:jalr RSsrc                     is $(AMODE) & prime=0 & fct=9 & RSsrc & rt=0 & rd=31  { 
-	build RSsrc;
-	JXWritePC(RSsrc); 
-    ra = inst_next; 
-    delayslot( 1 ); 
-    call [pc];
-}
-@else
 # 0000 00ss sss0 0000 dddd dhhh hh00 1001
 :jalr RD, RSsrc                 is $(AMODE) & prime=0 & fct=9 & RSsrc & rt=0 & RD { 
     RD = inst_next;
@@ -264,51 +240,23 @@ define pcodeop special2;
 	ValCast(tmp,RSsrc);
     call [tmp];     
 }
-@endif
-@ifdef ISA_VARIANT
-# 0000 00ss sss0 0000 dddd d1hh hh00 1001
-:jalr.hb RD, RSsrc              is $(AMODE) & prime=0 & fct=9 & RSsrc & rt=0 & RD & bit10=1 { 
-	build RD;
-	build RSsrc;
-	JXWritePC(RSsrc); 
-    RD = inst_next; 
-    delayslot( 1 ); 
-    call [pc];
-}
-:jalr.hb RSsrc                  is $(AMODE) & prime=0 & fct=9 & RSsrc & rt=0 & rd=31 & bit10=1 { 
- 	build RSsrc;
-	JXWritePC(RSsrc); 
-    ra = inst_next; 
-    delayslot( 1 ); 
-    call [pc];
-}
-@else
-# 0000 00ss sss0 0000 dddd d1hh hh00 1001
-:jalr.hb RD, RSsrc              is $(AMODE) & prime=0 & fct=9 & RSsrc & rt=0 & RD & bit10=1 { 
-    RD = inst_next; 
-    delayslot( 1 ); 
-	tmp:$(ADDRSIZE) = 0;
-	ValCast(tmp,RSsrc);
-    call [tmp];     
-}
-:jalr.hb RSsrc                  is $(AMODE) & prime=0 & fct=9 & RSsrc & rt=0 & rd=31 & bit10=1 { 
-    ra = inst_next; 
-    delayslot( 1 ); 
-	tmp:$(ADDRSIZE) = 0;
-	ValCast(tmp,RSsrc);
-    call [tmp];     
-}
-@endif
 
-@ifdef ISA_VARIANT
-# 0000 00ss sss0 0000 0000 0hhh hh00 1000
-:jr RSsrc                       is $(AMODE) & prime=0 & fct=8 & RSsrc & rt=0 & rd=0  {
- 	build RSsrc;
-	JXWritePC(RSsrc); 
-    delayslot(1); 
-    goto [pc]; 
+# 0000 00ss sss0 0000 dddd d1hh hh00 1001
+:jalr.hb RD, RSsrc              is $(AMODE) & prime=0 & fct=9 & RSsrc & rt=0 & RD & bit10=1 { 
+    RD = inst_next; 
+    delayslot( 1 ); 
+	tmp:$(ADDRSIZE) = 0;
+	ValCast(tmp,RSsrc);
+    call [tmp];     
 }
-@else
+:jalr.hb RSsrc                  is $(AMODE) & prime=0 & fct=9 & RSsrc & rt=0 & rd=31 & bit10=1 { 
+    ra = inst_next; 
+    delayslot( 1 ); 
+	tmp:$(ADDRSIZE) = 0;
+	ValCast(tmp,RSsrc);
+    call [tmp];     
+}
+
 # 0000 00ss sss0 0000 0000 0hhh hh00 1000
 :jr RSsrc                       is $(AMODE) & prime=0 & fct=8 & RSsrc & rt=0 & rd=0 {
     delayslot(1); 
@@ -316,16 +264,7 @@ define pcodeop special2;
 	ValCast(tmp,RSsrc);
     goto [tmp]; 
 }
-@endif
-@ifdef ISA_VARIANT
-# 0000 00ss sss0 0000 0000 01hh hh00 1000
-:jr.hb RSsrc                    is $(AMODE) & prime=0 & fct=8 & RSsrc & rt=0 & rd=0 & bit10=1 {
-  	build RSsrc;
-	JXWritePC(RSsrc); 
-    delayslot(1); 
-    goto [pc]; 
-}
-@else
+
 # 0000 00ss sss0 0000 0000 01hh hh00 1000
 :jr.hb RSsrc                    is $(AMODE) & prime=0 & fct=8 & RSsrc & rt=0 & rd=0 & bit10=1 {
     delayslot(1); 
@@ -333,22 +272,13 @@ define pcodeop special2;
 	ValCast(tmp,RSsrc);
     goto [tmp]; 
 }
-@endif
 
 # Special case of JR
 # 0000 0011 1110 0000 0000 0hhh hh00 1000
-@ifdef ISA_VARIANT
-:jr ra                           is $(AMODE) & prime=0 & fct=8 & rs=31 & ra & rt=0 & rd=0 & sa=0    {
-	JXWritePC(ra); 
-    delayslot(1); 
-    return[pc]; 
-}
-@else
 :jr ra                           is $(AMODE) & prime=0 & fct=8 & rs=31 & ra & rt=0 & rd=0 & sa=0    {
     delayslot(1); 
     return[ra]; 
 }
-@endif
 
 # 1000 00bb bbbt tttt iiii iiii iiii iiii
 :lb RT, OFF_BASE                is $(AMODE) & prime=32 & OFF_BASE & RT {  

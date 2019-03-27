@@ -44,8 +44,6 @@ public class AllegrexPreAnalyzer extends AbstractAnalyzer {
 	private final static int NOTIFICATION_INTERVAL = 1024;
 
 	Register pairBitRegister;
-	private Register isamode;
-	private Register ismbit;
 
 	public AllegrexPreAnalyzer () {
 		super(NAME, DESCRIPTION, AnalyzerType.INSTRUCTION_ANALYZER);
@@ -66,8 +64,6 @@ public class AllegrexPreAnalyzer extends AbstractAnalyzer {
 			throws CancelledException {
 
 		pairBitRegister = program.getProgramContext().getRegister("PAIR_INSTRUCTION_FLAG");
-		isamode = program.getProgramContext().getRegister("ISA_MODE");
-		ismbit = program.getProgramContext().getRegister("ISAModeSwitch");
 
 		set = removeUninitializedBlock(program, set);
 
@@ -122,20 +118,7 @@ public class AllegrexPreAnalyzer extends AbstractAnalyzer {
 	}
 
 	private boolean skipif16orR6 (Program program, Instruction start_inst) {
-		boolean rval = false;
-
-		BigInteger curval1 = (isamode == null ? null
-				: program.getProgramContext().getValue(isamode, start_inst.getMinAddress(), false));
-		BigInteger curval2 = (ismbit == null ? null
-				: program.getProgramContext().getValue(ismbit, start_inst.getMinAddress(), false));
-
-		if (curval1 != null && curval1.intValue() == 1) {
-			rval = true;
-		}
-		if (curval2 != null && curval2.intValue() == 1) {
-			rval = true;
-		}
-		return rval;
+		return false;
 	}
 
 	private boolean checkPossiblePairInstruction (Program program, Address addr) {
@@ -395,7 +378,7 @@ public class AllegrexPreAnalyzer extends AbstractAnalyzer {
 	 * 1) mnemonics are correct
 	 * 2) offset difference is correct
 	 * 3) destination and base registers match
-	 * @param str start inst mnemonic
+//	 * @param str start inst mnemonic
 	 * @return Instruction that is the pair of this one
 	 */
 	private Instruction checkPair (Scalar offset1, Scalar offset2, Register base1, Register base2,

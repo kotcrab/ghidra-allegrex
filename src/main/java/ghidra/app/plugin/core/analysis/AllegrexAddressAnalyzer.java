@@ -19,13 +19,11 @@ import ghidra.app.cmd.function.CreateFunctionCmd;
 import ghidra.app.plugin.core.disassembler.AddressTable;
 import ghidra.app.util.importer.MessageLog;
 import ghidra.framework.options.Options;
-import ghidra.program.disassemble.Disassembler;
 import ghidra.program.model.address.*;
 import ghidra.program.model.lang.Processor;
 import ghidra.program.model.lang.Register;
 import ghidra.program.model.lang.RegisterValue;
 import ghidra.program.model.listing.*;
-import ghidra.program.model.mem.MemoryBlock;
 import ghidra.program.model.pcode.PcodeOp;
 import ghidra.program.model.pcode.Varnode;
 import ghidra.program.model.scalar.Scalar;
@@ -82,9 +80,6 @@ public class AllegrexAddressAnalyzer extends ConstantPropagationAnalyzer {
 	private Register gp;
 	private Register rareg;
 
-	private Register isamode;
-	private Register ismbit;
-
 	private Address gp_assumption_value = null;
 
 	private final static String PROCESSOR_NAME = "Allegrex";
@@ -105,8 +100,6 @@ public class AllegrexAddressAnalyzer extends ConstantPropagationAnalyzer {
 		t9 = program.getRegister("t9");
 		gp = program.getRegister("gp");
 		rareg = program.getRegister("ra");
-		isamode = program.getProgramContext().getRegister("ISA_MODE");
-		ismbit = program.getProgramContext().getRegister("ISAModeSwitch");
 
 		return true;
 	}
@@ -272,7 +265,7 @@ public class AllegrexAddressAnalyzer extends ConstantPropagationAnalyzer {
 						if (target == (addr.getOffset() + 1) && !instr.getFlowType().isCall()) {
 							instr.setFlowOverride(FlowOverride.CALL);
 							// need to trigger disassembly below! if not already
-							MipsExtDisassembly(program, instr, context, addr.add(1), monitor);
+//							MipsExtDisassembly(program, instr, context, addr.add(1), monitor);
 
 							// need to trigger re-function creation!
 							Function f = program.getFunctionManager().getFunctionContaining(
@@ -377,12 +370,7 @@ public class AllegrexAddressAnalyzer extends ConstantPropagationAnalyzer {
 				}
 
 				if ((refType.isJump() || refType.isCall()) & refType.isComputed()) {
-					//if (refType.isJump() || refType.isCall()) {
-					addr = MipsExtDisassembly(program, instr, context, address, monitor);
-					//addr = flowISA(program, instr, context, address);
-					if (addr == null) {
-						addr = address;
-					}
+					addr = address;
 				}
 
 				// if this is a call, some processors use the register value
@@ -488,65 +476,6 @@ public class AllegrexAddressAnalyzer extends ConstantPropagationAnalyzer {
 		return resultSet;
 	}
 
-	Address MipsExtDisassembly (Program program, Instruction instruction, VarnodeContext context,
-								Address target, TaskMonitor monitor) {
-		if (target == null) {
-			return null;
-		}
-
-		Address addr = flowISA(program, instruction, context, target);
-		if (addr != null) {
-			MemoryBlock block = program.getMemory().getBlock(addr);
-			if (block == null || !block.isExecute() || !block.isInitialized() ||
-					block.getName().equals("EXTERNAL")) {
-				return addr;
-			}
-
-			Disassembler dis = Disassembler.getDisassembler(program, monitor, null);
-			AddressSet disassembleAddrs = dis.disassemble(addr, null);
-			AutoAnalysisManager.getAnalysisManager(program).codeDefined(disassembleAddrs);
-		}
-
-		return addr;
-	}
-
-	Address flowISA (Program program, Instruction instruction, VarnodeContext context,
-					 Address target) {
-		if (target == null) {
-			return null;
-		}
-
-		Address addr = instruction.getMinAddress().getNewAddress(target.getOffset() & 0xfffffffe);
-
-		Listing listing = program.getListing();
-
-		if (isamode != null && listing.getUndefinedDataAt(addr) != null) {
-			boolean inM16Mode = false;
-			RegisterValue curvalue = context.getRegisterValue(isamode, instruction.getMinAddress());
-			if (curvalue != null && curvalue.hasValue()) {
-				inM16Mode = (curvalue.getUnsignedValue().intValue() == 1);
-			}
-			// if the ISM bit is set, that trumps any mode we are tracking
-			RegisterValue tbvalue = context.getRegisterValue(ismbit);
-			if (tbvalue != null && tbvalue.hasValue()) {
-				inM16Mode = (tbvalue.getUnsignedValue().intValue() == 1);
-			}
-			BigInteger m16ModeValue = BigInteger.valueOf(inM16Mode ? 1 : 0);
-			try {
-				program.getProgramContext().setValue(isamode, addr, addr, m16ModeValue);
-			} catch (ContextChangeException e) {
-				throw new AssertException("Unexpected Exception", e);
-			}
-			return addr;
-		}
-
-		// instruction already there
-		return null;
-	}
-
-	/**
-	 *
-	 */
 	private void fixJumpTable (Program program, Instruction startInstr, TaskMonitor monitor) {
 		int tableLen = -1;
 		Address tableAddr = null;

@@ -1,6 +1,5 @@
 @define ENDIAN "little"
 @define FREGSIZE "4"    
-@define ISA_VARIANT ""
 
 @include "mips.sinc"
 @include "mips32Instructions.sinc"

@@ -8,58 +8,6 @@
 #   COP2: <not supported>
 #   COP3: Used for MIPS64 FPU extended instructions (see COP1X)
 #
-# ################################
-#
-# Notes for the elf header e_flags "secondary" field in the MIPS.opinion file.
-#
-# "-" indicates don't care
-#
-# 0x5-------	MIPS32 Release 1, 32-bit addresses, ABI is o32, FREGSIZE = 4, gcc -mips32
-#		Example: 0x50001001, secondary="1342181377"
-#
-# 0x6-----2-	MIPS64 Release 1, 32-bit addresses, ABI is n32, FREGSIZE = 8, gcc -mips64
-#
-# 0x6-----0-    MIPS64 Release 1, 64-bit addresses, ABI is n64, FREGSIZE = 8, gcc -mips64 -mabi-64
-#
-# 0x7-------    MIPS32 Release 2, ABI is o32, gcc -mips32r2 to r5
-#		if 0x00000200 is set then FREGSIZE = 8 else FREGSIZE = 4
-#               0x70001001, secondary="1879052289"
-#		with mips16: 0x74001001
-#
-# 0x8-----2-    MIPS64 Release 2, 32-bit addresses, ABI is n32, FREGSIZE = 8, gcc -mips64r2 to r5
-#		0x80000021, secondary="2147483681"
-#
-# 0x8-----0-    MIPS64 Release 2, 64-bit addresses, ABI is n64, gcc -mips64r2 to r5 -mabi-64
-#		0x80000001
-#
-# 0x9-------    MIPS32 Release 6, ABI is o32, gcc -mips32r6
-#               if 0x00000200 is set then FREGSIZE = 8 else FREGSIZE = 4
-#
-# 0xa-----2-    MIPS64 Release 6, 32-bit addresses, ABI is n32, FREGSIZE = 8, gcc -mips64r6
-#		0xa0000421
-#
-# 0xa-----0-    MIPS64 Release 6, 64-bit addresses, ABI is n64, FREGSIZE = 8, gcc -mips64r6 -mabi-64
-#
-# Masks:
-#
-# 0x04000000	MIPS-16
-#
-# 0x02000000	MicroMIPS
-#
-# ################################
-#
-# Notes about register names and function args:
-#
-#   Function args are passed in a0 - a3, which are the same as $4 - $7, other args are on the stack
-#   Floating point args are in f12 and f14
-#
-#   Function return values are stored in v0 (and v1 if the regs are 32-bit and return type is 64-bits)
-#     v0 and v1 are the same as general purpose regs $2 and $3
-#   Floating point return values are in f0 (and f1 if needed for binding)
-#
-#   $29 is the stack pointer sp
-#   $30 is the frame pointer fp also called s8
-#   $31 is the return address ra
 #
 # ################################
 # There is now support for single and double floating point instructions, with the following limitations:
@@ -334,79 +282,10 @@ define register offset=0x2700 size=$(REGSIZE) [
 # Some other internal registers
 define register offset=0x3000 size=$(REGSIZE) [ hi lo tsp ];
 
-define register offset=0x3F00 size=1 [ ISAModeSwitch ];
-
 # Define context bits
 define register offset=0x4000 size=4   contextreg;
 define context contextreg
   PAIR_INSTRUCTION_FLAG=(0,0) noflow      # =1 paired instruction
-@ifdef ISA_VARIANT
-  ISA_MODE=(1,1)						  # =1 Decode using alternate ISA, variable.
-  LowBitCodeMode = (1,1)				  # =1 if low bit of instruction address is set on a branch
-#below here is for mips16e. Overlaps with micromips   
-  ext_isjal=(2,2) noflow
-  ext_value=(3,13) noflow
-  ext_value_select=(3,5) noflow
-  ext_value_1005=(3,8) noflow
-  ext_value_1004=(3,9) noflow
-  ext_value_sa40=(3,7) noflow
-  ext_value_xreg=(3,5) noflow
-  ext_value_frame=(6,9) noflow
-  ext_value_areg=(10,13) noflow
-  ext_value_b0=(13,13) noflow
-  ext_value_b1=(12,12) noflow
-  ext_value_b2=(11,11) noflow
-  ext_value_b3=(10,10) noflow
-  ext_value_saz=(8,13) noflow
-  ext_value_1511=(9,13) noflow
-  ext_value_1511s=(9,13) signed noflow
-  ext_value_1411=(10,13) noflow
-  ext_value_1411s=(10,13) signed noflow
-  ext_tgt_2521=(3,7) noflow
-  ext_tgt_2016=(8,12) noflow
-  ext_tgt_x=(13,13) noflow
-  ext_is_ext=(14,14) noflow
-  ext_m16r32=(15,19) noflow
-  ext_m16r32a=(15,19) noflow
-  ext_reg_high=(15,16) noflow
-  ext_reg_low=(17,19) noflow
-  ext_svrs_sreg=(20,24) noflow
-  ext_svrs_xs=(20,22) noflow
-  ext_svrs_s1=(23,23) noflow
-  ext_svrs_s0=(24,24) noflow
-  ext_done=(25,25) noflow
-  ext_delay=(26,27) noflow
-#below here is for micromips. Overlaps with mips16e
-  ext_t4_name=(2,5) noflow
-  ext_t4=(2,5) noflow
-  ext_tra=(6,6) noflow
-  ext_32_code=(7,16) noflow
-  ext_32_codes=(7,16) signed noflow
-  ext_32_addim=(10,16) noflow
-  ext_32_addims=(10,16) signed noflow
-  ext_32_imm2=(15,16) noflow
-  ext_32_imm2s=(15,16) signed noflow
-  ext_32_imm3=(14,16) noflow 
-  ext_32_imm3s=(14,16) signed noflow 
-  ext_32_imm5=(12,16) noflow
-  ext_32_imm5s=(12,16) signed noflow
-  ext_32_imm6=(11,16) noflow
-  ext_32_rlist=(7,11) noflow
-  ext_32_base=(12,16) noflow
-  ext_32_basea=(12,16) noflow
-
-  ext_32_rd=(7,11) noflow
-  ext_32_rdset=(7,11) noflow  
-  ext_32_rs1=(7,11) noflow
-  ext_32_rs1lo=(7,11) noflow
-  ext_32_rs1set=(7,11) noflow
-  ext_16_rs=(7,9) noflow
-  ext_16_rslo=(7,8) noflow
-  ext_16_rshi=(9,9) noflow
-  
-  ext_off16_s=(7,22) signed noflow
-  ext_off16_u=(7,22) noflow
-@endif  # ISA_VARIANT  
 ;
 
 
@@ -734,13 +613,6 @@ DextmSize: mysize         is msbd         [ mysize = msbd + 1 + 32; ]       { tm
 DXuPos: pos             is lsb          [ pos = lsb + 32; ]             { tmp:1 = pos; export tmp; }
 DinsXSize: mysize         is msbd & lsb   [ mysize = msbd - lsb + 1 + 32; ] { tmp:1 = mysize; export tmp; }
 @endif
-
-macro JXWritePC(addr) {
-   ISAModeSwitch = (addr & 0x1) != 0;
-   tmp:$(REGSIZE) = -2;
-   tmp = tmp & addr;
-   pc = tmp;
-}
 
 # Floating point formats
 #fmt: "S"        is format=0x10   { }

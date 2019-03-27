@@ -23,8 +23,6 @@ import ghidra.program.model.address.Address;
 import ghidra.program.model.address.AddressOutOfBoundsException;
 import ghidra.program.model.data.*;
 import ghidra.program.model.lang.Language;
-import ghidra.program.model.lang.Register;
-import ghidra.program.model.listing.ContextChangeException;
 import ghidra.program.model.listing.Data;
 import ghidra.program.model.listing.Program;
 import ghidra.program.model.mem.Memory;
@@ -39,8 +37,6 @@ import ghidra.util.exception.CancelledException;
 import ghidra.util.exception.InvalidInputException;
 import ghidra.util.exception.NotFoundException;
 import ghidra.util.task.TaskMonitor;
-
-import java.math.BigInteger;
 
 public class Allegrex_ElfExtension extends ElfExtension {
 
@@ -81,11 +77,7 @@ public class Allegrex_ElfExtension extends ElfExtension {
 
 	// MIPS-specific Symbol information
 	// Special values for the st_other field in the symbol table entry for MIPS.
-	public static final int STO_MIPS_OPTIONAL = 0x04; // Symbol whose definition is optional
 	public static final int STO_MIPS_PLT = 0x08; // PLT entry related dynamic table record
-	public static final int STO_MIPS_PIC = 0x20; // PIC func in an object mixes PIC/non-PIC
-	public static final int STO_MIPS_MICROMIPS = 0x80; // MIPS Specific ISA for MicroMips
-	public static final int STO_MIPS_MIPS16 = 0xf0; // MIPS Specific ISA for Mips16
 
 	// MIPS Option Kind
 	public static final byte ODK_NULL = 0;
@@ -134,44 +126,9 @@ public class Allegrex_ElfExtension extends ElfExtension {
 		}
 
 		if (elfSymbol.getType() == ElfSymbol.STT_FUNC) {
-
-			Program program = elfLoadHelper.getProgram();
-
-			Register isaModeRegister = program.getRegister("ISA_MODE");
-			if (isaModeRegister != null) {
-				address = applyIsaMode(elfSymbol, address, isaModeRegister, program);
-			}
-
 			if (!isExternal && (elfSymbol.getOther() & STO_MIPS_PLT) != 0) {
 				elfLoadHelper.createExternalFunctionLinkage(elfSymbol.getNameAsString(), address,
 						null);
-			}
-		}
-		return address;
-	}
-
-	private Address applyIsaMode (ElfSymbol elfSymbol, Address address, Register isaModeRegister,
-								  Program program) {
-		// Detect 16-bit MIPS code symbol
-		int mipsMode = elfSymbol.getOther() & 0xf0;
-		long symVal = address.getOffset();
-
-		boolean enableISA = false;
-		if ((symVal & 1) != 0) {
-			// Detect 16-bit MIPS code when symbol value bit-0 is set
-			enableISA = true;
-			address = address.previous();
-		} else {
-			// Special values for the st_other field in the symbol table entry for MIPS.
-			enableISA = (mipsMode == STO_MIPS_MIPS16 || mipsMode == STO_MIPS_MICROMIPS);
-		}
-
-		if (enableISA) {
-			try {
-				program.getProgramContext().setValue(isaModeRegister, address, address,
-						BigInteger.ONE);
-			} catch (ContextChangeException e) {
-				// ignore since should not be instructions at time of import
 			}
 		}
 		return address;
