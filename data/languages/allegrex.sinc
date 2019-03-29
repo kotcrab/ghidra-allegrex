@@ -1,0 +1,174 @@
+# Allegrex common specification file
+
+define endian=little;
+define alignment=2;
+
+define space ram type=ram_space size=4 default;
+define space register type=register_space size=4;
+
+# General purpose registers
+define register offset=0 size=4 [
+    zero at v0 v1
+    a0 a1 a2 a3
+    t0 t1 t2 t3
+    t4 t5 t6 t7
+    s0 s1 s2 s3
+    s4 s5 s6 s7
+    t8 t9 k0 k1
+    gp sp s8 ra
+    pc
+];
+
+# Floating point registers
+define register offset=0x1000 size=4 [
+    f1  f0  f3  f2  f5  f4  f7  f6
+    f9  f8  f11 f10 f13 f12 f15 f14
+    f17 f16 f19 f18 f21 f20 f23 f22
+    f25 f24 f27 f26 f29 f28 f31 f30
+];
+
+# Floating point control registers
+define register offset=0x1200 size=4 [
+    fir     fccr       fexr     fenr    fcsr
+];
+
+# Some other internal registers
+define register offset=0x3000 size=4 [ hi lo ];
+
+# Define context bits
+define register offset=0x4000 size=4   contextreg;
+define context contextreg
+  PAIR_INSTRUCTION_FLAG=(0,0) noflow      # =1 paired instruction
+;
+
+# Instruction fields
+
+define token instr(32)
+    prime       = (26,31)
+    bit25       = (25,25)
+    zero1       = (22,25)
+    rs          = (21,25)
+    fr          = (21,25)
+    base        = (21,25)
+    format      = (21,25)
+    copop       = (21,25)
+    mfmc0       = (21,25)
+    zero21		= (21,25)
+    breakcode   = (6,25)
+    off26       = (0,25) signed			# 26 bit signed offset, e.g. balc, bc
+    ind26       = (0,25)				# 26 bit unsigned index, e.g. jal
+    copfill     = (6,24)
+    cofun       = (0,24)
+    off16		= (0,15) signed		# 16 bit signed offset in conditional branch/link
+    bit21       = (21,21)
+    cc          = (18,20)
+    rt          = (16,20)
+    ft          = (16,20)
+    cop1code    = (16,20)
+    synci       = (16,20)
+    cond        = (16,20)
+    op          = (16,20)
+    nd          = (17,17)
+    tf          = (16,16)
+    szero       = (11,25)
+    rd          = (11,15)
+    fs          = (11,15)
+    fs_unk		= (11,15)
+    fs_fcr		= (11,15)
+    zero4       = (11,15)
+    msbd        = (11,15)
+    code        = (6,15)
+    bit10       = (10,10)
+    zero2       = (7,10)
+    fd          = (6,10)
+    stype       = (6,10)
+    sa          = (6,10)
+    lsb         = (6,10)
+    fct2        = (6,10)
+    zero5       = (6,10)
+    wsbh        = (6,10)
+    bigfunct    = (0,10)
+    fct         = (0,5)
+    bshfl       = (0,5)
+    bit6        = (6,6)
+    zero3       = (0,4)
+    bit5        = (5,5)
+    immed       = (0,15)
+    simmed      = (0,15) signed
+;
+
+attach variables [ rs rt rd base ] [
+    zero  at  v0  v1  a0  a1  a2  a3
+    t0    t1  t2  t3  t4  t5  t6  t7
+    s0    s1  s2  s3  s4  s5  s6  s7
+    t8    t9  k0  k1  gp  sp  s8  ra
+];
+
+attach variables [ fs ft fd fr ] [
+    f0  f1  f2  f3  f4  f5  f6  f7  f8  f9  f10 f11 f12 f13 f14 f15
+    f16 f17 f18 f19 f20 f21 f22 f23 f24 f25 f26 f27 f28 f29 f30 f31
+];
+
+# Only a few Floating Point Control (FCR) registers are defined
+attach variables [ fs_fcr ] [
+	fir		_		_		_		_		_		_		_
+	_		_		_		_		_		_		_		_
+	_		_		_		_		_		_		_		_
+	_		fccr	fexr	_		fenr	_		_		fcsr
+];
+
+RD: rd          is rd           { export rd; }
+RDsrc: rd       is rd           { export rd; }
+RDsrc: rd       is rd & rd=0    { export 0:4; }
+
+# RS: rs       	is rs           { export rs; }
+RSsrc: rs       is rs           { export rs; }
+RSsrc: rs       is rs & rs=0    { export 0:4; }
+
+RT: rt          is rt           { export rt; }
+RTsrc: rt       is rt           { export rt; }
+RTsrc: rt       is rt & rt=0    { export 0:4; }
+
+macro MemSrcCast(dest,src) {
+	dest = *(src);
+}
+macro MemDestCast(dest,src) {
+	*(dest) = src;
+}
+macro ValCast(dest,src) {
+	dest = src;
+}
+
+OFF_BASE:   simmed(base)    is simmed & base    { tmp:4 = base + simmed; tmpscaled:4 = 0; ValCast(tmpscaled,tmp); export tmpscaled; }
+
+Rel16: reloc		is off16	[ reloc=inst_start+4+4*off16; ]				                	{ export *:4 reloc; }
+Abs26: reloc		is ind26	[ reloc=((inst_start+4) $and 0xfffffffff0000000) | 4*ind26; ]	{ export *:4 reloc; }
+
+InsSize: mysize           is msbd & lsb   [ mysize = msbd - lsb + 1; ]      { tmp:1 = mysize; export tmp; }
+ExtSize: mysize           is msbd         [ mysize = msbd + 1; ]            { tmp:1 = mysize; export tmp; }
+
+# Floating point formats
+fmt1: "S"       is format=0x10   { }
+fmt1: "D"       is format=0x11   { }
+fmt1: "PS"      is format=0x16   { }
+
+fmt2: "S"       is format=0x10   { }
+fmt2: "D"       is format=0x11   { }
+
+fmt4: "D"       is format=0x11   { }
+fmt4: "W"       is format=0x14   { }
+fmt4: "L"       is format=0x15   { }
+
+# Custom Pcode Operations
+define pcodeop break;
+define pcodeop trap;
+define pcodeop wait;
+define pcodeop syscall;
+define pcodeop cacheOp;
+define pcodeop setCopControlWord;       # setCopControlWord(cop_num, reg_num, value)
+define pcodeop getCopControlWord;       # getCopControlWord(cop_num, reg_num)
+define pcodeop countLeadingOnes;        # countLeadingOnes(val)
+define pcodeop countLeadingZeros;       # countLeadingZeros(val)
+define pcodeop getHWRegister;           # getHWRegister(regnum)
+define pcodeop setShadow;               # setShadow(sgpr, value)
+define pcodeop getShadow;               # gpr = getShadow(sgpr)

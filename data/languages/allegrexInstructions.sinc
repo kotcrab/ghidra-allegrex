@@ -1,0 +1,776 @@
+# 0000 00ss ssst tttt dddd d000 0010 0000
+:add RD, RSsrc, RTsrc           is prime=0 & sa=0 & fct=32 & RD & RSsrc & RTsrc {
+    RD = RSsrc + RTsrc;
+}
+
+# 0010 01ss ssst tttt iiii iiii iiii iiii
+:addiu RT, RSsrc, simmed        is prime=9 & RT & RSsrc & simmed {
+    RT = RSsrc + simmed;
+}
+
+# 0010 00ss ssst tttt iiii iiii iiii iiii
+:addi RT, RSsrc, simmed         is prime=8 & RT & RSsrc & simmed {
+    RT = RSsrc + simmed;
+}
+
+# 0000 00ss ssst tttt dddd d000 0010 0001
+:addu RD, RSsrc, RTsrc          is prime=0 & sa=0 & fct=33 & RSsrc & RTsrc & RD {
+    RD = RSsrc + RTsrc;
+}
+
+# 0000 00ss ssst tttt dddd d000 0010 0100
+:and RD, RSsrc, RTsrc           is prime=0 & sa=0 & fct=36 & RSsrc & RTsrc & RD  {
+    RD = RSsrc & RTsrc;
+}
+
+# 0011 00ss ssst tttt iiii iiii iiii iiii
+:andi RT, RSsrc, immed          is prime=12 & RSsrc & RT & immed {
+    RT = RSsrc & immed;
+}
+
+# 0001 00ss ssst tttt iiii iiii iiii iiii
+:beq RSsrc, RTsrc, Rel16        is prime=4 & RSsrc & RTsrc & Rel16 {
+    delayflag:1 = ( RSsrc == RTsrc );
+    delayslot( 1 );
+    if delayflag goto Rel16;
+}
+
+# 0000 01ss sss0 0001 iiii iiii iiii iiii
+:bgez RSsrc, Rel16              is prime=1 & cond=1 & RSsrc & Rel16 {
+    delayflag:1 = ( RSsrc s>= 0 );
+    delayslot( 1 );
+    if delayflag goto Rel16;
+}
+
+# 0001 11ss sss0 0000 iiii iiii iiii iiii
+:bgtz RSsrc, Rel16              is prime=7 & cond=0 & RSsrc & Rel16 {
+    delayflag:1 = ( RSsrc s> 0 );
+    delayslot( 1 );
+    if delayflag goto Rel16;
+}
+
+# 0001 10ss sss0 0000 iiii iiii iiii iiii
+:blez RSsrc, Rel16              is prime=6 & cond=0 & RSsrc & Rel16 {
+    delayflag:1 = ( RSsrc s<= 0 );
+    delayslot( 1 );
+    if delayflag goto Rel16;
+}
+
+# 0000 01ss sss0 0000 iiii iiii iiii iiii
+:bltz RSsrc, Rel16              is prime=1 & cond=0 & RSsrc & Rel16 {
+    delayflag:1 = ( RSsrc s< 0 );
+    delayslot( 1 );
+    if delayflag goto Rel16;
+}
+
+# 0001 01ss ssst tttt iiii iiii iiii iiii
+:bne RSsrc, RTsrc, Rel16        is prime=5 & RSsrc & RTsrc & Rel16 {
+    delayflag:1 = ( RSsrc != RTsrc );
+    delayslot( 1 );
+    if delayflag goto Rel16;
+}
+
+# 0000 00cc cccc cccc cccc cccc cc00 1101
+:break breakcode                is prime=0 & fct=13 & breakcode {
+    tmp:4=breakcode;
+    trap(tmp);
+}
+
+# 1011 11bb bbbo oooo iiii iiii iiii iiii
+:cache op, OFF_BASE           is prime=47 & OFF_BASE & op {
+    cacheOp(op:1, OFF_BASE);
+}
+
+# 0100 0010 0000 0000 0000 0000 0001 1111
+:deret                          is prime=16 & bit25=1 & copfill=0x0 & fct=0x1F    unimpl
+
+# 0100 0001 011t tttt 0110 0000 0000 0000
+:di RT                          is prime=16 & mfmc0=0x0B & rd=0x0C & fct2=0x0 & bit5=0x0 & zero3=0x0 & RT     unimpl
+
+# 0100 0001 011t tttt 0110 0000 0010 0000
+:ei RT                          is prime=16 & mfmc0=0x0B & rd=0x0C & fct2=0x0 & bit5=0x01 & zero3=0x0 & RT    unimpl
+
+# 0100 0010 0000 0000 0000 0000 0001 1000
+:eret                           is prime=16 & bit25=1 & fct=24 & copfill=0      unimpl
+
+# 0111 11ss ssst tttt mmmm mLLL LL00 0000
+:ext RT, RSsrc, lsb, ExtSize    is prime=0x1F & fct=0x0 & RT & RSsrc & lsb & msbd & ExtSize {
+    # Extract Bit Field
+    # Note that msbd = size - 1
+    rs_tmp:4 = RSsrc << (32 - (msbd + lsb + 1));
+    rs_tmp = rs_tmp >> (32 - (msbd + 1));
+    RT = rs_tmp;
+}
+
+# 0111 11ss ssst tttt mmmm mLLL LL00 0100
+:ins RT, RSsrc, lsb, InsSize    is prime=0x1F & fct=0x04 & RT & RTsrc & RSsrc & lsb & msbd & InsSize {
+    # Insert Bit Field
+    tmpa:4 = -1;
+    tmpa = tmpa >> (4 - InsSize);
+    tmpb:4 = RSsrc & tmpa;
+    tmpa = tmpa << lsb;
+    tmpa = ~tmpa;
+    tmpb = tmpb << lsb;
+    RT = (RT & tmpa) | tmpb;
+}
+
+# 0000 10aa aaaa aaaa aaaa aaaa aaaa aaaa
+:j Abs26                        is prime=2 & Abs26 {
+    delayslot( 1 );
+    goto Abs26;
+}
+
+# 0000 11aa aaaa aaaa aaaa aaaa aaaa aaaa
+:jal Abs26                      is prime=3 & Abs26 {
+    ra = inst_next;
+    delayslot( 1 );
+    call Abs26;
+}
+
+# 0000 00ss sss0 0000 dddd dhhh hh00 1001
+:jalr RD, RSsrc                 is prime=0 & fct=9 & RSsrc & rt=0 & RD {
+    RD = inst_next;
+    delayslot( 1 );
+	tmp:4 = 0;
+	ValCast(tmp,RSsrc);
+    call [tmp];
+}
+
+:jalr RSsrc                     is prime=0 & fct=9 & RSsrc & rt=0 & rd=31 {
+    ra = inst_next;
+    delayslot( 1 );
+	tmp:4 = 0;
+	ValCast(tmp,RSsrc);
+    call [tmp];
+}
+
+# 0000 00ss sss0 0000 0000 0hhh hh00 1000
+:jr RSsrc                       is prime=0 & fct=8 & RSsrc & rt=0 & rd=0 {
+    delayslot(1);
+ 	tmp:4 = 0;
+	ValCast(tmp,RSsrc);
+    goto [tmp];
+}
+
+# Special case of JR
+# 0000 0011 1110 0000 0000 0hhh hh00 1000
+:jr ra                           is prime=0 & fct=8 & rs=31 & ra & rt=0 & rd=0 & sa=0    {
+    delayslot(1);
+    return[ra];
+}
+
+# 1000 00bb bbbt tttt iiii iiii iiii iiii
+:lb RT, OFF_BASE                is prime=32 & OFF_BASE & RT {
+    RT = sext(*[ram]:1 OFF_BASE);
+}
+
+# 1001 00bb bbbt tttt iiii iiii iiii iiii
+:lbu RT, OFF_BASE               is prime=36 & OFF_BASE & RT {
+    RT = zext(*[ram]:1 OFF_BASE);
+}
+
+# 1000 01bb bbbt tttt iiii iiii iiii iiii
+:lh RT, OFF_BASE                is prime=33 & OFF_BASE & RT {
+    RT = sext(*[ram]:2 OFF_BASE);
+}
+
+# 1001 01bb bbbt tttt iiii iiii iiii iiii
+:lhu RT, OFF_BASE               is prime=37 & OFF_BASE & RT {
+    RT = zext(*[ram]:2 OFF_BASE);
+}
+
+# 1000 11bb bbbt tttt iiii iiii iiii iiii
+:lw RT, OFF_BASE                is prime=35 & OFF_BASE & RT {
+    RT = *[ram]:4 OFF_BASE;
+}
+
+# 0000 0000 0000 0000 0000 0000 0000 0000
+:nop                            is prime=0 & rs=0 & rt=0 & rd=0 & sa=0 & fct=0  {
+}
+
+# 0000 00ss ssst tttt dddd d000 0010 0111
+:nor RD, RSsrc, RTsrc           is prime=0 & fct=39 & RSsrc & RTsrc & RD & sa=0 {
+    RD = ~(RSsrc | RTsrc);
+}
+
+# 0000 00ss ssst tttt dddd d000 0010 0101
+:or RD, RSsrc, RTsrc            is prime=0 & fct=37 & RSsrc & RTsrc & RD & sa=0 {
+    RD = RSsrc | RTsrc;
+}
+
+# 0011 01ss ssst tttt iiii iiii iiii iiii
+:ori RT, RSsrc, immed           is prime=13 & RSsrc & RT & immed  {
+    RT = RSsrc | immed;
+}
+
+# 0111 1100 000t tttt dddd d000 0011 1011
+:rdhwr RT, RDsrc                is prime=31 & rs=0 & fct2=0 & fct=59 & RT & RDsrc {
+    RT = getHWRegister(RDsrc);
+}
+
+# 0100 0001 010t tttt dddd d000 0000 0000
+:rdpgpr RD, RT                  is prime=16 & rs=10 & bigfunct=0 & RD & RT {
+    RD = getShadow(RT);
+}
+
+# 0000 0000 001t tttt dddd daaa aa00 0010
+:rotr RD, RTsrc, sa             is prime=0 & zero1=0 & bit21=1 & fct=2 & RD & RTsrc & sa {
+    tmp1:4 = RTsrc >> sa;
+    tmp2:4 = RTsrc << (32 - sa);
+    RD = tmp1 + tmp2;
+}
+
+# 0000 00ss ssst tttt dddd d000 0100 0110
+:rotrv RD, RTsrc, RSsrc         is prime=0 & zero2=0 & bit6=1 & fct=6 & RD & RTsrc & RSsrc {
+    shift:4 = RSsrc & 0x1f;
+    tmp1:4 = RTsrc >> shift;
+    tmp2:4 = RTsrc << (32 - shift);
+    RD = tmp1 + tmp2;
+}
+
+# 1010 00bb bbbt tttt iiii iiii iiii iiii
+:sb RTsrc, OFF_BASE             is prime=40 & OFF_BASE & RTsrc {
+    *[ram]:1 OFF_BASE = RTsrc:1;
+}
+
+# 0111 1100 000t tttt dddd d100 0010 0000
+:seb RD, RTsrc                  is prime=31 & rs=0 & fct2=16 & fct=32 & RD & RTsrc {
+    RD = sext( RTsrc:1 );
+}
+
+# 0111 1100 000t tttt dddd d110 0010 0000
+:seh RD, RTsrc                  is prime=31 & rs=0 & fct2=24 & fct=32 & RD & RTsrc {
+    RD = sext( RTsrc:2 );
+}
+
+# 1010 01bb bbbt tttt iiii iiii iiii iiii
+:sh RTsrc, OFF_BASE             is prime=41 & OFF_BASE & RTsrc {
+    *[ram]:2 OFF_BASE = RTsrc:2;
+}
+
+# 0000 0000 000t tttt dddd daaa aa00 0000
+:sll RD, RTsrc, sa              is prime=0 & fct=0 & rs=0 & RD & RTsrc & sa {
+    RD = RTsrc << sa;
+}
+
+# 0000 00ss ssst tttt dddd d000 0000 0100
+:sllv RD, RTsrc, RSsrc          is prime=0 & fct=4 & RSsrc & RTsrc & RD & sa=0 {
+    shift:4 = RSsrc & 0x1f;
+    RD = RTsrc << shift;
+}
+
+# 0000 00ss ssst tttt dddd d000 0010 1010
+:slt RD, RSsrc, RTsrc           is prime=0 & fct=42 & RSsrc & RTsrc & RD & sa=0 {
+    RD = zext( RSsrc s< RTsrc );
+}
+
+# 0010 10ss ssst tttt iiii iiii iiii iiii
+:slti RT, RSsrc, simmed         is prime=10 & RSsrc & RT & simmed {
+    RT = zext( RSsrc s< simmed );
+}
+
+# 0010 11ss ssst tttt iiii iiii iiii iiii
+:sltiu RT, RSsrc, simmed        is prime=11 & RSsrc & RT & simmed {
+    RT = zext( RSsrc < simmed );
+}
+
+# 0000 00ss ssst tttt dddd d000 0010 1011
+:sltu RD, RSsrc, RTsrc          is prime=0 & fct=43 & RSsrc & RTsrc & RD & sa=0 {
+    RD = zext( RSsrc < RTsrc );
+}
+
+# 0000 0000 000t tttt dddd daaa aa00 0011
+:sra RD, RTsrc, sa              is prime=0 & fct=3 & rs=0 & RTsrc & RD & sa {
+    RD = RTsrc s>> sa;
+}
+
+# 0000 00ss ssst tttt dddd d000 0000 0111
+:srav RD, RTsrc, RSsrc          is prime=0 & fct=7 & RSsrc & RTsrc & RD & sa=0 {
+    shift:4 = RSsrc & 0x1f;
+    RD = RTsrc s>> shift;
+}
+
+# 0000 0000 000t tttt dddd daaa aa00 0010
+:srl RD, RTsrc, sa              is prime=0 & fct=2 & rs=0 & RTsrc & RD & sa {
+    RD = RTsrc >> sa;
+}
+
+# 0000 00ss ssst tttt dddd d000 0000 0110
+:srlv RD, RTsrc, RSsrc          is prime=0 & fct=6 & RSsrc & RTsrc & RD & sa=0 {
+    shift:4 = RSsrc & 0x1f;
+    RD = RTsrc >> shift;
+}
+
+# 0000 00ss ssst tttt dddd d000 0010 0010
+:sub RD, RSsrc, RTsrc           is prime=0 & fct=34 & RSsrc & RTsrc & RD & sa=0 {
+    RD = RSsrc - RTsrc;
+}
+
+# 0000 00ss ssst tttt dddd d000 0010 0011
+:subu RD, RSsrc, RTsrc          is prime=0 & fct=35 & RSsrc & RTsrc & RD & sa=0 {
+    RD = RSsrc - RTsrc;
+}
+
+# 1010 11bb bbbt tttt iiii iiii iiii iiii
+:sw RTsrc, OFF_BASE             is prime=43 & OFF_BASE & RTsrc {
+    *[ram]:4 OFF_BASE = RTsrc:4;
+}
+
+# 0000 0000 0000 0000 0000 0yyy yy00 1111
+:sync scalar                    is prime=0 & fct=15 & szero=0 & stype [ scalar = stype + 0; ] {
+}
+
+# 0000 01bb bbb1 1111 iiii iiii iiii iiii
+:synci OFF_BASE                 is prime=1 & OFF_BASE & synci=31  {
+}
+
+# 0000 00cc cccc cccc cccc cccc cc00 1100
+:syscall                        is prime=0 & fct=12 & breakcode {
+    tmp:4=breakcode;
+    syscall(tmp);
+}
+
+# 0000 00ss ssst tttt cccc cccc cc11 0100
+:teq RSsrc, RTsrc               is prime=0 & fct=52 & RSsrc & RTsrc & code {
+    if (RSsrc != RTsrc) goto <done>;
+    tmp:2=code;
+    trap(tmp);
+    <done>
+}
+
+# 0000 00ss ssst tttt cccc cccc cc11 0000
+:tge RSsrc, RTsrc               is prime=0 & fct=48 & RSsrc & RTsrc & code {
+    if (RSsrc < RTsrc) goto <done>;
+    tmp:2=code;
+    trap(tmp);
+    <done>
+}
+
+# 0000 00ss ssst tttt cccc cccc cc11 0001
+:tgeu RSsrc, RTsrc              is prime=0 & fct=49 & RSsrc & RTsrc & code {
+    if (RSsrc < RTsrc) goto <done>;
+    tmp:2=code;
+    trap(tmp);
+    <done>
+}
+
+:tlbp		is prime=0x10  & bit25=1 & copfill=0x00 & fct=0x08      unimpl
+
+:tlbr           is prime=0x10  & bit25=1 & copfill=0x00 & fct=0x01  unimpl
+
+:tlbwi		is prime=0x10  & bit25=1 & copfill=0x00 & fct=0x02      unimpl
+
+:tlbwr          is prime=0x10  & bit25=1 & copfill=0x00 & fct=0x06  unimpl
+
+# 0000 00ss ssst tttt cccc cccc cc11 0010
+:tlt RSsrc, RTsrc               is prime=0 & fct=50 & RSsrc & RTsrc & code {
+    if (RSsrc s>= RTsrc) goto <done>;
+    tmp:2=code;
+    trap(tmp);
+    <done>
+}
+
+# 0000 00ss ssst tttt cccc cccc cc11 0011
+:tltu RSsrc, RTsrc              is prime=0 & fct=51 & RSsrc & RTsrc & code {
+    if (RSsrc >= RTsrc) goto <done>;
+    tmp:2=code;
+    trap(tmp);
+    <done>
+}
+
+# 0000 00ss ssst tttt cccc cccc cc11 0110
+:tne RSsrc, RTsrc               is prime=0 & fct=54 & RSsrc & RTsrc & code {
+    if (RSsrc == RTsrc) goto <done>;
+    tmp:2=code;
+    trap(tmp);
+    <done>
+}
+
+# 0100 001c cccc cccc cccc cccc cc10 0000
+:wait                           is prime=16 & fct=32 & copfill & bit25=1  {
+}
+
+# 0100 0001 110t tttt dddd d000 0000 0000
+:wrpgpr  RD, RTsrc              is prime=16 & format=14 & RTsrc & RD & bigfunct=0  {
+    setShadow(RD, RTsrc);
+}
+
+# 0111 1100 000t tttt dddd d000 1010 0000
+:wsbh RD, RTsrc                 is prime=31 & format=0 & RTsrc & RD & wsbh=2 & bshfl=32 {
+    tmp1:4 = RTsrc & 0xff;
+    tmp2:4 = (RTsrc >> 8) & 0xff;
+    tmp3:4 = (RTsrc >> 16) & 0xff;
+    tmp4:4 = (RTsrc >> 24) & 0xff;
+    RD = (tmp3 << 24) | (tmp4 << 16) | (tmp1 << 8) | (tmp2);
+}
+
+# 0000 00ss ssst tttt dddd d000 0010 0110
+:xor RD, RSsrc, RTsrc           is prime=0 & fct=38 & RSsrc & RTsrc & RD & sa=0 {
+    RD = RSsrc ^ RTsrc;
+}
+
+# 0011 10ss ssst tttt iiii iiii iiii iiii
+:xori RT, RSsrc, immed          is prime=14 & RSsrc & RT & immed {
+    RT = RSsrc ^ immed;
+}
+
+# 0101 00ss ssst tttt iiii iiii iiii iiii
+:beql RSsrc, RTsrc, Rel16       is prime=20 & RSsrc & RTsrc & Rel16 {
+    if (!(RSsrc==RTsrc)) goto inst_next;
+    delayslot(1);
+    goto Rel16;
+}
+
+:bgezal RSsrc, Rel16            is prime=1 & cond=17 & RSsrc & Rel16 {
+    ra = inst_next;
+    delayflag:1 = ( RSsrc s>= 0 );
+    delayslot( 1 );
+    if (!delayflag) goto inst_next;
+    call Rel16;
+}
+
+# 0000 01ss sss1 0011 iiii iiii iiii iiii
+:bgezall RSsrc, Rel16           is prime=1 & cond=19 & RSsrc & Rel16 {
+    ra = inst_next;
+    if (!(RSsrc s>= 0)) goto inst_next;
+    delayslot( 1 );
+    call Rel16;
+}
+
+# 0000 01ss sss0 0011 iiii iiii iiii iiii
+:bgezl RSsrc, Rel16             is prime=1 & cond=3 & RSsrc & Rel16 {
+    if (!(RSsrc s>= 0)) goto inst_next;
+    delayslot(1);
+    goto Rel16;
+}
+
+# 0101 11ss sss0 0000 iiii iiii iiii iiii
+:bgtzl RSsrc, Rel16             is prime=23 & cond=0 & RSsrc & Rel16 {
+    if (!(RSsrc s> 0)) goto inst_next;
+    delayslot(1);
+    goto Rel16;
+}
+
+# 0101 10ss sss0 0000 iiii iiii iiii iiii
+:blezl RSsrc, Rel16             is prime=22 & cond=0 & RSsrc & Rel16 {
+    if (!(RSsrc s<= 0)) goto inst_next;
+    delayslot(1);
+    goto Rel16;
+}
+
+# 0000 01ss sss1 0000 iiii iiii iiii iiii
+:bltzal RSsrc, Rel16            is prime=1 & cond=16 & RSsrc & Rel16 {
+    ra = inst_next;
+    delayflag:1 = ( RSsrc s< 0 );
+    delayslot( 1 );
+    if (!delayflag) goto inst_next;
+    call Rel16;
+}
+
+# 0000 01ss sss1 0010 iiii iiii iiii iiii
+:bltzall RSsrc, Rel16           is prime=1 & cond=18 & RSsrc & Rel16 {
+    ra = inst_next;
+    if (!(RSsrc s< 0)) goto inst_next;
+    delayslot(1);
+    call Rel16;
+}
+
+# 0000 01ss sss0 0010 iiii iiii iiii iiii
+:bltzl RSsrc, Rel16             is prime=1 & cond=2 & RSsrc & Rel16 {
+    if (!(RSsrc s< 0)) goto inst_next;
+    delayslot(1);
+    goto Rel16;
+}
+
+# 0101 01ss ssst tttt iiii iiii iiii iiii
+:bnel RSsrc, RTsrc, Rel16       is prime=21 & RSsrc & RTsrc & Rel16 {
+    if (!(RSsrc!=RTsrc)) goto inst_next;
+    delayslot(1);
+    goto Rel16;
+}
+
+# 0000 00ss ssst tttt 0000 0000 0001 1010
+:div RSsrc, RTsrc               is prime=0 & fct=26 & RSsrc & RTsrc & rd=0 & sa=0 {
+    lo = RSsrc s/ RTsrc;
+    hi = RSsrc s% RTsrc;
+}
+
+# 0000 00ss ssst tttt 0000 0000 0001 1011
+:divu RSsrc, RTsrc              is prime=0 & fct=27 & RSsrc & RTsrc & rd=0 & sa=0 {
+    lo = RSsrc / RTsrc;
+    hi = RSsrc % RTsrc;
+}
+
+# 1100 00bb bbbt tttt iiii iiii iiii iiii
+:ll RT, OFF_BASE                is prime=48 & OFF_BASE & RT {
+    RT = *[ram]:4 OFF_BASE;
+}
+
+# 0011 1100 000t tttt iiii iiii iiii iiii
+:lui RT, immed                  is prime=15 & rs=0 & RT & immed {
+    tmp:4 = immed << 16;
+    RT = tmp;
+}
+
+:lwl RT, OFF_BASE               is prime=34 & OFF_BASE & RT & RTsrc {
+    shft:4 = OFF_BASE & 0x3;
+    addr:4 = OFF_BASE - shft;
+    valOrig:4 = RTsrc:4 & (0xffffffff >> ((shft+1)* 8));
+    valLoad:4 = *(addr) << ((3-shft) * 8);
+    RT = valLoad | valOrig;
+}
+
+# 1001 10bb bbbt tttt iiii iiii iiii iiii
+:lwr RT, OFF_BASE               is prime=38 & OFF_BASE & RT & RTsrc {
+    shft:4 = OFF_BASE & 0x3;
+    addr:4 = OFF_BASE - shft;
+    valOrig:4 = RTsrc:4 & (0xffffffff << ((4-shft)* 8));
+    valLoad:4 = *(addr) >> (shft * 8);
+    RT = valOrig | valLoad;
+}
+
+# lwl and lwr almost always come in pairs.
+# When the analyzer does finds a matching lwl/lwr pair, the pcode is simplified so that
+# lwl does all the loading while lwr is a no-op
+:lwl RT, OFF_BASE               is prime=34 & OFF_BASE & RT & PAIR_INSTRUCTION_FLAG=1 [ PAIR_INSTRUCTION_FLAG = 1; globalset(inst_next, PAIR_INSTRUCTION_FLAG);] {
+}
+:lwr RT, OFF_BASE               is prime=38 & OFF_BASE & RT & PAIR_INSTRUCTION_FLAG=1 [ PAIR_INSTRUCTION_FLAG = 0; ] {
+    RT = *[ram]:4 OFF_BASE;
+}
+
+# 0000 0000 0000 0000 dddd d000 0001 0000
+:mfhi RD                        is prime=0 & fct=16 & rs=0 & rt=0 & RD & sa=0 {
+    RD = hi;
+}
+
+# 0000 0000 0000 0000 dddd d000 0001 0010
+:mflo RD                        is prime=0 & fct=18 & rs=0 & rt=0 & RD & sa=0 {
+    RD = lo;
+}
+
+# 0000 00ss ssst tttt dddd d000 0000 1011
+:movn RD, RSsrc, RTsrc          is prime=0 & zero5=0 & fct=11 & RD & RSsrc & RTsrc  {
+    if (RTsrc == 0) goto <done>;
+      RD = RSsrc;
+    <done>
+}
+
+# 0000 00ss ssst tttt dddd d000 0000 1010
+:movz RD, RSsrc, RTsrc          is prime=0 & zero5=0 & fct=10 & RD & RSsrc & RTsrc {
+     if (RTsrc != 0) goto <done>; # We can't use goto inst_next because it fails if we are in a delay slot
+       RD = RSsrc;
+     <done>
+}
+
+# 0000 00ss sss0 0000 0000 0000 0001 0001
+:mthi RSsrc                     is prime=0 & fct=17 & RSsrc & rt=0 & rd=0 & sa=0 {
+    hi = RSsrc;
+}
+
+# 0000 00ss sss0 0000 0000 0000 0001 0011
+:mtlo RSsrc                     is prime=0 & fct=19 & RSsrc & rt=0 & rd=0 & sa=0 {
+    lo = RSsrc;
+}
+
+# 0111 00ss ssst tttt dddd d000 0000 0010
+:mul RD, RSsrc, RTsrc           is prime=0x1C & sa=0x0 & fct=0x02 & RD & RSsrc & RTsrc {
+    tmp1:8 = sext( RSsrc );
+    tmp2:8 = sext( RTsrc );
+    prod:8 = tmp1 * tmp2;
+    RD = prod:4;
+}
+
+# 0000 00ss ssst tttt 0000 0000 0001 1000
+:mult RSsrc, RTsrc              is prime=0 & fct=24 & RSsrc & RTsrc & rd=0 & sa=0 {
+    tmp1:8 = sext( RSsrc );
+    tmp2:8 = sext( RTsrc );
+    prod:8 = tmp1 * tmp2;
+    lo = prod:4;
+    prod = prod >> 32;
+    hi = prod:4;
+}
+
+# 0000 00ss ssst tttt 0000 0000 0001 1001
+:multu RSsrc, RTsrc             is prime=0 & fct=25 & RSsrc & RTsrc & rd=0 & sa=0 {
+    tmp1:8 = zext( RSsrc );
+    tmp2:8 = zext( RTsrc );
+    prod:8 = tmp1 * tmp2;
+    lo = prod:4;
+    prod = prod >> 32;
+    hi = prod:4;
+}
+
+# 1110 00bb bbbt tttt iiii iiii iiii iiii
+:sc RTsrc, OFF_BASE             is prime=56 & OFF_BASE & RT & RTsrc {
+    *[ram]:4 OFF_BASE = RTsrc:4;
+    RT = 1;
+}
+
+# 1010 10bb bbbt tttt iiii iiii iiii iiii
+:swl RTsrc, OFF_BASE            is prime=42 & OFF_BASE & RTsrc {
+    tmpRT:4 = RTsrc:4;
+    shft:4 = OFF_BASE & 0x3;
+    addr:4 = OFF_BASE - shft;
+    valOrig:4 = *(addr) & (0xffffffff << ((shft+1) * 8));
+    valStore:4 = tmpRT >> ((3-shft) * 8);
+    *(addr) = valOrig | valStore;
+}
+
+# 1011 10bb bbbt tttt iiii iiii iiii iiii
+:swr RTsrc, OFF_BASE            is prime=46 & OFF_BASE & RTsrc {
+    tmpRT:4 = RTsrc:4;
+    shft:4 = OFF_BASE & 0x3;
+    addr:4 = OFF_BASE - shft;
+    valOrig:4 = *(addr) & (0xffffffff >> ((4-shft) * 8));
+    valStore:4 = tmpRT << (shft*8);
+    *(addr) = valOrig | valStore;
+}
+
+# When the analyzer finds a matching swl/swr pair, the pcode is simplified so that
+# swl does all the storing while swr is a no-op
+:swl RTsrc, OFF_BASE            is prime=42 & OFF_BASE & RTsrc & PAIR_INSTRUCTION_FLAG=1 [ PAIR_INSTRUCTION_FLAG = 1; globalset(inst_next, PAIR_INSTRUCTION_FLAG);] {
+}
+:swr RTsrc, OFF_BASE            is prime=46 & OFF_BASE & RTsrc & PAIR_INSTRUCTION_FLAG=1 [ PAIR_INSTRUCTION_FLAG = 0; ]{
+    *[ram]:4 OFF_BASE = RTsrc:4;
+}
+
+# 0000 01ss sss0 1100 iiii iiii iiii iiii
+:teqi RSsrc, simmed             is prime=1 & cond=12 & RSsrc & simmed {
+    if (RSsrc != simmed) goto <done>;
+    trap();
+    <done>
+}
+
+# 0000 01ss sss0 1000 iiii iiii iiii iiii
+:tgei RSsrc, simmed             is prime=1 & cond=8 & RSsrc & simmed {
+    if (RSsrc s< simmed) goto <done>;
+    trap();
+    <done>
+}
+
+# 0000 01ss sss0 1001 iiii iiii iiii iiii
+:tgeiu RSsrc, simmed            is prime=1 & cond=9 & RSsrc & simmed {
+    if (RSsrc < simmed) goto <done>;
+    trap();
+    <done>
+}
+
+# 0000 01ss sss0 1010 iiii iiii iiii iiii
+:tlti RSsrc, simmed             is prime=1 & cond=10 & RSsrc & simmed {
+    if (RSsrc s>= simmed) goto <done>;
+    trap();
+    <done>
+}
+
+# 0000 01ss sss0 1011 iiii iiii iiii iiii
+:tltiu RSsrc, simmed            is prime=1 & cond=11 & RSsrc & simmed {
+    if (RSsrc >= simmed) goto <done>;
+    trap();
+    <done>
+}
+
+# 0000 01ss sss0 1110 iiii iiii iiii iiii
+:tnei RSsrc, simmed             is prime=1 & cond=14 & RSsrc & simmed {
+    if (RSsrc == simmed) goto <done>;
+    trap();
+    <done>
+}
+
+
+# # TODO IDIOMS
+#
+# # Special case of ADDIU
+# # 0010 0100 000t tttt iiii iiii iiii iiii
+# :li RT, simmed                is prime=9 & rs=0 & RT & simmed            {
+#     RT = simmed;
+# }
+# # Special case of ADDU
+# # 0000 0000 000t tttt dddd d000 0010 0001
+# :move RD, RTsrc                 is prime=0 & fct=33 & rs=0 & RD & RTsrc & sa=0    {
+#     RD = RTsrc;
+# }
+# # Special case of ADDU
+# # 0000 00ss sss0 0000 dddd d000 0010 0001
+# :move RD, RSsrc                 is prime=0 & fct=33 & RSsrc & rt=0 & RD & sa=0    {
+#     RD = RSsrc;
+# }
+#
+# # 0001 0000 0000 0000 iiii iiii iiii iiii
+# :b Rel16                        is prime=4 & rs=0 & rt=0 & Rel16 {
+#     delayslot(1);
+#     goto Rel16;
+# }
+#
+#
+# # Special case of ADDU
+# # 0000 0000 0000 0000 dddd d000 0010 0001
+# :clear RD                       is prime=0 & fct=33 & rs=0 & rt=0 & RD & sa=0    { # this should actually be li rd, 0?
+#     RD = 0;
+# }
+#
+#
+# # TODO allegrex specific
+# clz, clo, max, min, madd, maddu, msub, msubu
+# mtic, mtic, halt
+#
+#
+# # 0111 00ss ssst tttt 0000 0000 0000 0000
+# :madd RSsrc, RTsrc              is prime=0x1C & zero4=0x0 & fct2=0x0 & fct=0x0 & RSsrc & RTsrc {
+# 	tmp1:8 = sext(RSsrc);
+# 	tmp2:8 = sext(RTsrc);
+# 	prod:8 = tmp1 * tmp2;
+#         lo = lo & 0xffffffff;       # Make sure any upper bits of lo don't contribute to sum
+# 	sum:8 = (zext(hi) << 32) + zext(lo) + prod;
+#     lo = sext(sum:4);
+#     sum = sum >> 32;
+#     hi = sext(sum:4);
+# }
+#
+# # 0111 00ss ssst tttt 0000 0000 0000 0001
+# :maddu RSsrc, RTsrc             is prime=0x1C & zero4=0x0 & fct2=0x0 & fct=0x01 & RSsrc & RTsrc {
+# 	tmp1:8 = zext(RSsrc);
+# 	tmp2:8 = zext(RTsrc);
+# 	prod:8 = tmp1 * tmp2;
+#         lo = lo & 0xffffffff;       # Make sure any upper bits of lo don't contribute to sum
+# 	sum:8 = (zext(hi) << 32) + zext(lo) + prod;
+#     lo = sext(sum:4);
+#     sum = sum >> 32;
+#     hi = sext(sum:4);
+# }
+#
+# # 0111 00ss ssst tttt dddd d000 0010 0001
+# :clo RD, RSsrc                  is prime=0x1C & sa=0x0 & fct=0x21 & RD & RSsrc {
+#     # Count leading ones in a word
+#     RD = countLeadingOnes( RSsrc );
+# }
+#
+# # 0111 00ss ssst tttt dddd d000 0010 0000
+# :clz RD, RSsrc                  is prime=0x1C & sa=0x0 & fct=0x20 & RD & RSsrc {
+#     # Count leading zeros in a word
+#     RD = countLeadingZeros( RSsrc );
+# }
+#
+# # 0111 00ss ssst tttt 0000 0000 0000 0100
+# :msub RSsrc, RTsrc              is prime=0x1C & rd=0x0 & sa=0x0 & fct=0x04 & RSsrc & RTsrc {
+# 	tmp1:8 = sext(RSsrc);
+# 	tmp2:8 = sext(RTsrc);
+# 	prod:8 = tmp1 * tmp2;
+#         lo = lo & 0xffffffff;       # Make sure any upper bits of lo don't contribute to sum
+#        	sum:8 = (zext(hi) << 32) + zext(lo) - prod;
+#     lo = sext(sum:4);
+#     sum = sum >> 32;
+#     hi = sext(sum:4);
+# }
+#
+# # 0111 00ss ssst tttt 0000 0000 0000 0101
+# :msubu RSsrc, RTsrc             is prime=0x1C & zero4=0x0 & fct2=0x0 & fct=0x05 & RSsrc & RTsrc {
+# 	tmp1:8 = zext(RSsrc);
+# 	tmp2:8 = zext(RTsrc);
+# 	prod:8 = tmp1 * tmp2;
+#         lo = lo & 0xffffffff;       # Make sure any upper bits of lo don't contribute to sum
+# 	sum:8 = (zext(hi) << 32) + zext(lo) - prod;
+#     lo = sext(sum:4);
+#     sum = sum >> 32;
+#     hi = sext(sum:4);
+# }
+
