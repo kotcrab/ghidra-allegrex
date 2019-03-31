@@ -1,0 +1,82 @@
+:vadd.s vd_s, vs_s, vt_s          is prime=24 & vop3 = 0 & vc1 = 0 & vc0 = 0 & vd_s & vs_s & vt_s   unimpl
+:vadd.p vd_p, vs_p, vt_p          is prime=24 & vop3 = 0 & vc1 = 0 & vc0 = 1 & vd_p & vs_p & vt_p   unimpl
+:vadd.t vd_t, vs_t, vt_t          is prime=24 & vop3 = 0 & vc1 = 1 & vc0 = 0 & vd_t & vs_t & vt_t   unimpl
+:vadd.q vd_q, vs_q, vt_q          is prime=24 & vop3 = 0 & vc1 = 1 & vc0 = 1 & vd_q & vs_q & vt_q   unimpl
+
+:vsub.s vd_s, vs_s, vt_s          is prime=24 & vop3 = 1 & vc1 = 0 & vc0 = 0 & vd_s & vs_s & vt_s   unimpl
+:vsub.p vd_p, vs_p, vt_p          is prime=24 & vop3 = 1 & vc1 = 0 & vc0 = 1 & vd_p & vs_p & vt_p   unimpl
+:vsub.t vd_t, vs_t, vt_t          is prime=24 & vop3 = 1 & vc1 = 1 & vc0 = 0 & vd_t & vs_t & vt_t   unimpl
+:vsub.q vd_q, vs_q, vt_q          is prime=24 & vop3 = 1 & vc1 = 1 & vc0 = 1 & vd_q & vs_q & vt_q   unimpl
+
+:vsbn.s vd_s, vs_s, vt_s          is prime=24 & vop3 = 2 & vc1 = 0 & vc0 = 0 & vd_s & vs_s & vt_s   unimpl
+:vsbn.p vd_p, vs_p, vt_p          is prime=24 & vop3 = 2 & vc1 = 0 & vc0 = 1 & vd_p & vs_p & vt_p   unimpl
+:vsbn.t vd_t, vs_t, vt_t          is prime=24 & vop3 = 2 & vc1 = 1 & vc0 = 0 & vd_t & vs_t & vt_t   unimpl
+:vsbn.q vd_q, vs_q, vt_q          is prime=24 & vop3 = 2 & vc1 = 1 & vc0 = 1 & vd_q & vs_q & vt_q   unimpl
+
+:vdiv.s vd_s, vs_s, vt_s          is prime=24 & vop3 = 7 & vc1 = 0 & vc0 = 0 & vd_s & vs_s & vt_s   unimpl
+:vdiv.p vd_p, vs_p, vt_p          is prime=24 & vop3 = 7 & vc1 = 0 & vc0 = 1 & vd_p & vs_p & vt_p   unimpl
+:vdiv.t vd_t, vs_t, vt_t          is prime=24 & vop3 = 7 & vc1 = 1 & vc0 = 0 & vd_t & vs_t & vt_t   unimpl
+:vdiv.q vd_q, vs_q, vt_q          is prime=24 & vop3 = 7 & vc1 = 1 & vc0 = 1 & vd_q & vs_q & vt_q   unimpl
+
+:vmul.s vd_s, vs_s, vt_s          is prime=25 & vop3 = 0 & vc1 = 0 & vc0 = 0 & vd_s & vs_s & vt_s   unimpl
+:vmul.p vd_p, vs_p, vt_p          is prime=25 & vop3 = 0 & vc1 = 0 & vc0 = 1 & vd_p & vs_p & vt_p   unimpl
+:vmul.t vd_t, vs_t, vt_t          is prime=25 & vop3 = 0 & vc1 = 1 & vc0 = 0 & vd_t & vs_t & vt_t   unimpl
+:vmul.q vd_q, vs_q, vt_q          is prime=25 & vop3 = 0 & vc1 = 1 & vc0 = 1 & vd_q & vs_q & vt_q   unimpl
+
+:vdot.s vd_s, vs_s, vt_s          is prime=25 & vop3 = 1 & vc1 = 0 & vc0 = 0 & vd_s & vs_s & vt_s   unimpl
+:vdot.p vd_s, vs_p, vt_p          is prime=25 & vop3 = 1 & vc1 = 0 & vc0 = 1 & vd_s & vs_p & vt_p   unimpl
+:vdot.t vd_s, vs_t, vt_t          is prime=25 & vop3 = 1 & vc1 = 1 & vc0 = 0 & vd_s & vs_t & vt_t   unimpl
+:vdot.q vd_s, vs_q, vt_q          is prime=25 & vop3 = 1 & vc1 = 1 & vc0 = 1 & vd_s & vs_q & vt_q   unimpl
+
+# # 0100 1001 000c cc00 iiii iiii iiii iiii
+# :bc2f Rel16                     is prime=18 & copop=8 & cc=0 & nd=0 & tf=0 & Rel16 {
+#     tmp:1 = getCopCondition(2:1, 0:1);
+#     delayslot(1);
+#     if (tmp != 0) goto inst_next;
+#     goto Rel16;
+# }
+# :bc2f cc,Rel16                  is prime=18 & copop=8 & cc & nd=0 & tf=0 & Rel16 {
+#     tmp:1 = getCopCondition(2:1, cc:1);
+#     delayslot(1);
+#     if (tmp != 0) goto inst_next;
+#     goto Rel16;
+# }
+# # 0100 1001 000c cc10 iiii iiii iiii iiii
+# :bc2fl Rel16                    is prime=18 & copop=8 & cc=0 & nd=1 & tf=0 & Rel16 {
+#     tmp:1 = getCopCondition(2:1, 0:1);
+#     if (tmp != 0) goto inst_next;
+#     delayslot(1);
+#     goto Rel16;
+# }
+# :bc2fl cc,Rel16                 is prime=18 & copop=8 & cc & nd=1 & tf=0 & Rel16 {
+#     tmp:1 = getCopCondition(2:1, cc:1);
+#     if (tmp != 0) goto inst_next;
+#     delayslot(1);
+#     goto Rel16;
+# }
+# # 0100 1001 000c cc01 iiii iiii iiii iiii
+# :bc2t Rel16                     is prime=18 & copop=8 & cc=0 & nd=0 & tf=1 & Rel16 {
+#     tmp:1 = getCopCondition(2:1, 0:1);
+#     delayslot(1);
+#     if (tmp == 0) goto inst_next;
+#     goto Rel16;
+# }
+# :bc2t cc,Rel16                  is prime=18 & copop=8 & cc & nd=0 & tf=1 & Rel16 {
+#     tmp:1 = getCopCondition(2:1, cc:1);
+#     delayslot(1);
+#     if (tmp == 0) goto inst_next;
+#     goto Rel16;
+# }
+# # 0100 1001 000c cc11 iiii iiii iiii iiii
+# :bc2tl Rel16                    is prime=18 & copop=8 & cc=0 & nd=1 & tf=1 & Rel16 {
+#     tmp:1 = getCopCondition(2:1, 0:1);
+#     if (tmp == 0) goto inst_next;
+#     delayslot(1);
+#     goto Rel16;
+# }
+# :bc2tl cc,Rel16                 is prime=18 & copop=8 & cc & nd=1 & tf=1 & Rel16 {
+#     tmp:1 = getCopCondition(2:1, cc:1);
+#     if (tmp == 0) goto inst_next;
+#     delayslot(1);
+#     goto Rel16;
+# }

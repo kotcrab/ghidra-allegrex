@@ -256,24 +256,3 @@ macro trapIfSNaN(x1, x2) { }
     fd[0,32] = fs:4;
     <done>
 }
-
-:min.s fd, fs, ft	is prime=0x11 & format=0x10 & cop1code=0x0 & fs & fd & ft & fct=0x1c {
-    # set floating point fd to the min of fs and ft, TBD special case for NaN
-    tmp_cond:1 = fs:4 f< ft:4;
-    fd[0,32] = (fs:4 * zext(tmp_cond == 1)) | (ft:4 * zext(tmp_cond == 0) );
-}
-
-:max.s fd, fs, ft       is prime=0x11 & format=0x10 & cop1code=0x0 & fs & fd & ft & fct=0x1d {
-    # set floating point fd to the max of fs and ft, TBD special case for NaN
-    tmp_cond:1 = fs:4 f> ft:4;
-    fd[0,32] = (fs:4 * zext(tmp_cond == 1)) | (ft:4 * zext(tmp_cond == 0) );
-}
-
-# FIXME
-# :clo RD, RSsrc                  	is prime=0x00 & op=0 & sa=0x1 & fct=0x11 & RD & RSsrc {
-#     RD = countLeadingOnes( RSsrc );
-# }
-#
-# :clz RD, RSsrc                  	is prime=0x00 & op=0 & sa=0x1 & fct=0x10 & RD & RSsrc {
-#     RD = countLeadingZeros( RSsrc );
-# }

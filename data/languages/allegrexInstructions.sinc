@@ -8,14 +8,37 @@
     RT = RSsrc + simmed;
 }
 
+# Special cases of addi
+:li RT, simmed                  is prime=9 & rs=0 & RT & simmed {
+    RT = simmed;
+}
+
 # 0010 00ss ssst tttt iiii iiii iiii iiii
 :addi RT, RSsrc, simmed         is prime=8 & RT & RSsrc & simmed {
     RT = RSsrc + simmed;
 }
 
+# Special cases of addi
+:li RT, simmed                  is prime=8 & rs=0 & RT & simmed {
+    RT = simmed;
+}
+
 # 0000 00ss ssst tttt dddd d000 0010 0001
 :addu RD, RSsrc, RTsrc          is prime=0 & sa=0 & fct=33 & RSsrc & RTsrc & RD {
     RD = RSsrc + RTsrc;
+}
+
+# Special cases of addu
+:li RD, 0                       is prime=0 & sa=0 & fct=33 & rs=0 & rt=0 & RD {
+    RD = 0;
+}
+
+:move RD, RTsrc                 is prime=0 & sa=0 & fct=33 & rs=0 & RD & RTsrc {
+    RD = RTsrc;
+}
+
+:move RD, RSsrc                 is prime=0 & sa=0 & fct=33 & rt=0 & RD & RSsrc {
+    RD = RSsrc;
 }
 
 # 0000 00ss ssst tttt dddd d000 0010 0100
@@ -33,6 +56,12 @@
     delayflag:1 = ( RSsrc == RTsrc );
     delayslot( 1 );
     if delayflag goto Rel16;
+}
+
+# Special case of beq
+:b Rel16                        is prime=4 & rs=rt & Rel16 {
+    delayslot(1);
+    goto Rel16;
 }
 
 # 0000 01ss sss0 0001 iiii iiii iiii iiii
@@ -136,6 +165,7 @@
     call [tmp];
 }
 
+# Special case of jalr
 :jalr RSsrc                     is prime=0 & fct=9 & RSsrc & rt=0 & rd=31 {
     ra = inst_next;
     delayslot( 1 );
@@ -152,8 +182,7 @@
     goto [tmp];
 }
 
-# Special case of JR
-# 0000 0011 1110 0000 0000 0hhh hh00 1000
+# Special case of jr
 :jr ra                           is prime=0 & fct=8 & rs=31 & ra & rt=0 & rd=0 & sa=0    {
     delayslot(1);
     return[ra];
@@ -198,9 +227,27 @@
     RD = RSsrc | RTsrc;
 }
 
+# Special cases of or
+:li RD, 0                       is prime=0 & fct=37 & rs=0 & rt=0 & RD {
+    RD = 0;
+}
+
+:move RD, RTsrc                 is prime=0 & fct=37 & rs=0 & RD & RTsrc {
+    RD = RTsrc;
+}
+
+:move RD, RSsrc                 is prime=0 & fct=37 & rt=0 & RD & RSsrc {
+    RD = RSsrc;
+}
+
 # 0011 01ss ssst tttt iiii iiii iiii iiii
-:ori RT, RSsrc, immed           is prime=13 & RSsrc & RT & immed  {
+:ori RT, RSsrc, immed           is prime=13 & RSsrc & RT & immed {
     RT = RSsrc | immed;
+}
+
+# Special case of ori
+:li RT, immed           is prime=13 & rs=0 & RT & immed {
+    RT = immed;
 }
 
 # 0111 1100 000t tttt dddd d000 0011 1011
@@ -417,6 +464,12 @@
 # 0101 00ss ssst tttt iiii iiii iiii iiii
 :beql RSsrc, RTsrc, Rel16       is prime=20 & RSsrc & RTsrc & Rel16 {
     if (!(RSsrc==RTsrc)) goto inst_next;
+    delayslot(1);
+    goto Rel16;
+}
+
+# Special case of beql
+:bl Rel16                       is prime=20 & rs=rt & Rel16 {
     delayslot(1);
     goto Rel16;
 }
@@ -676,101 +729,67 @@
     <done>
 }
 
+# Allegrex specific
 
-# # TODO IDIOMS
-#
-# # Special case of ADDIU
-# # 0010 0100 000t tttt iiii iiii iiii iiii
-# :li RT, simmed                is prime=9 & rs=0 & RT & simmed            {
-#     RT = simmed;
-# }
-# # Special case of ADDU
-# # 0000 0000 000t tttt dddd d000 0010 0001
-# :move RD, RTsrc                 is prime=0 & fct=33 & rs=0 & RD & RTsrc & sa=0    {
-#     RD = RTsrc;
-# }
-# # Special case of ADDU
-# # 0000 00ss sss0 0000 dddd d000 0010 0001
-# :move RD, RSsrc                 is prime=0 & fct=33 & RSsrc & rt=0 & RD & sa=0    {
-#     RD = RSsrc;
-# }
-#
-# # 0001 0000 0000 0000 iiii iiii iiii iiii
-# :b Rel16                        is prime=4 & rs=0 & rt=0 & Rel16 {
-#     delayslot(1);
-#     goto Rel16;
-# }
-#
-#
-# # Special case of ADDU
-# # 0000 0000 0000 0000 dddd d000 0010 0001
-# :clear RD                       is prime=0 & fct=33 & rs=0 & rt=0 & RD & sa=0    { # this should actually be li rd, 0?
-#     RD = 0;
-# }
-#
-#
-# # TODO allegrex specific
-# clz, clo, max, min, madd, maddu, msub, msubu
-# mtic, mtic, halt
-#
-#
-# # 0111 00ss ssst tttt 0000 0000 0000 0000
-# :madd RSsrc, RTsrc              is prime=0x1C & zero4=0x0 & fct2=0x0 & fct=0x0 & RSsrc & RTsrc {
-# 	tmp1:8 = sext(RSsrc);
-# 	tmp2:8 = sext(RTsrc);
-# 	prod:8 = tmp1 * tmp2;
-#         lo = lo & 0xffffffff;       # Make sure any upper bits of lo don't contribute to sum
-# 	sum:8 = (zext(hi) << 32) + zext(lo) + prod;
-#     lo = sext(sum:4);
-#     sum = sum >> 32;
-#     hi = sext(sum:4);
-# }
-#
-# # 0111 00ss ssst tttt 0000 0000 0000 0001
-# :maddu RSsrc, RTsrc             is prime=0x1C & zero4=0x0 & fct2=0x0 & fct=0x01 & RSsrc & RTsrc {
-# 	tmp1:8 = zext(RSsrc);
-# 	tmp2:8 = zext(RTsrc);
-# 	prod:8 = tmp1 * tmp2;
-#         lo = lo & 0xffffffff;       # Make sure any upper bits of lo don't contribute to sum
-# 	sum:8 = (zext(hi) << 32) + zext(lo) + prod;
-#     lo = sext(sum:4);
-#     sum = sum >> 32;
-#     hi = sext(sum:4);
-# }
-#
-# # 0111 00ss ssst tttt dddd d000 0010 0001
-# :clo RD, RSsrc                  is prime=0x1C & sa=0x0 & fct=0x21 & RD & RSsrc {
-#     # Count leading ones in a word
-#     RD = countLeadingOnes( RSsrc );
-# }
-#
-# # 0111 00ss ssst tttt dddd d000 0010 0000
-# :clz RD, RSsrc                  is prime=0x1C & sa=0x0 & fct=0x20 & RD & RSsrc {
-#     # Count leading zeros in a word
-#     RD = countLeadingZeros( RSsrc );
-# }
-#
-# # 0111 00ss ssst tttt 0000 0000 0000 0100
-# :msub RSsrc, RTsrc              is prime=0x1C & rd=0x0 & sa=0x0 & fct=0x04 & RSsrc & RTsrc {
-# 	tmp1:8 = sext(RSsrc);
-# 	tmp2:8 = sext(RTsrc);
-# 	prod:8 = tmp1 * tmp2;
-#         lo = lo & 0xffffffff;       # Make sure any upper bits of lo don't contribute to sum
-#        	sum:8 = (zext(hi) << 32) + zext(lo) - prod;
-#     lo = sext(sum:4);
-#     sum = sum >> 32;
-#     hi = sext(sum:4);
-# }
-#
-# # 0111 00ss ssst tttt 0000 0000 0000 0101
-# :msubu RSsrc, RTsrc             is prime=0x1C & zero4=0x0 & fct2=0x0 & fct=0x05 & RSsrc & RTsrc {
-# 	tmp1:8 = zext(RSsrc);
-# 	tmp2:8 = zext(RTsrc);
-# 	prod:8 = tmp1 * tmp2;
-#         lo = lo & 0xffffffff;       # Make sure any upper bits of lo don't contribute to sum
-# 	sum:8 = (zext(hi) << 32) + zext(lo) - prod;
-#     lo = sext(sum:4);
-#     sum = sum >> 32;
-#     hi = sext(sum:4);
-# }
+:clz RD, RSsrc                  is prime=0 & sa=0 & rt=0 & fct=22 & RD & RSsrc {
+    RD = countLeadingZeros( RSsrc );
+}
 
+:clo RD, RSsrc                  is prime=0 & sa=0 & rt=0 & fct=23 & RD & RSsrc {
+    RD = countLeadingOnes( RSsrc );
+}
+
+:max RD, RSsrc, RTsrc           is prime=0 & sa=0 & fct=44 & RD & RSsrc & RTsrc {
+    RD = zext(RSsrc:4 > RTsrc:4);
+}
+
+:min RD, RSsrc, RTsrc           is prime=0 & sa=0 & fct=45 & RD & RSsrc & RTsrc {
+    RD = zext(RSsrc:4 < RTsrc:4);
+}
+
+:halt                           is prime=28 & sa=0 & rd=0 & rs=0 & rt=0 & fct=0 {
+}
+
+:madd RSsrc, RTsrc              is prime=0 & sa=0 & rd=0 & fct=28 & RSsrc & RTsrc {
+	tmp1:8 = sext(RSsrc);
+	tmp2:8 = sext(RTsrc);
+	prod:8 = tmp1 * tmp2;
+    lo = lo & 0xffffffff;       # Make sure any upper bits of lo don't contribute to sum
+	sum:8 = (zext(hi) << 32) + zext(lo) + prod;
+    lo = sum:4;
+    sum = sum >> 32;
+    hi = sum:4;
+}
+
+:maddu RSsrc, RTsrc             is prime=0 & sa=0 & rd=0 & fct=29 & RSsrc & RTsrc {
+	tmp1:8 = zext(RSsrc);
+	tmp2:8 = zext(RTsrc);
+	prod:8 = tmp1 * tmp2;
+    lo = lo & 0xffffffff;       # Make sure any upper bits of lo don't contribute to sum
+	sum:8 = (zext(hi) << 32) + zext(lo) + prod;
+    lo = sum:4;
+    sum = sum >> 32;
+    hi = sum:4;
+}
+
+:msub RSsrc, RTsrc              is prime=0 & sa=0 & rd=0 & fct=46 & RSsrc & RTsrc {
+	tmp1:8 = sext(RSsrc);
+	tmp2:8 = sext(RTsrc);
+	prod:8 = tmp1 * tmp2;
+    lo = lo & 0xffffffff;       # Make sure any upper bits of lo don't contribute to sum
+    sum:8 = (zext(hi) << 32) + zext(lo) - prod;
+    lo = sum:4;
+    sum = sum >> 32;
+    hi = sum:4;
+}
+
+:msubu RSsrc, RTsrc             is prime=0 & sa=0 & rd=0 & fct=47 & RSsrc & RTsrc {
+	tmp1:8 = zext(RSsrc);
+	tmp2:8 = zext(RTsrc);
+	prod:8 = tmp1 * tmp2;
+    lo = lo & 0xffffffff;       # Make sure any upper bits of lo don't contribute to sum
+	sum:8 = (zext(hi) << 32) + zext(lo) - prod;
+    lo = sum:4;
+    sum = sum >> 32;
+    hi = sum:4;
+}
