@@ -53,10 +53,6 @@ define register offset=0x5000 size=4 [
     V70 V71 V72 V73 V74 V75 V76 V77 V78 V79 V7A V7B V7C V7D V7E V7F
 ];
 
-define register offset=0x5000 size=8 [
-    z00
-];
-
 # VFPU control registers
 define register offset=0x5300 size=4 [
     SPFX    TPFX    DPFX    CC      INF4    RSV5    RSV6     REV

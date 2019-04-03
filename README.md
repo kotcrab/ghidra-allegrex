@@ -25,6 +25,8 @@ Prebuilt package will be provided after more features are implemented.
 
 ### Building
 
+Note this project is still work  in progress and breaking changes are likely.
+
 `GHIDRA_INSTALL_DIR` environment variable must be set to Ghidra root installation directory.
 
 - `gradle ghidraInstall` - build and install into Ghidra (warning: contents of `GHIDRA_INSTALL_DIR/Ghidra/Processors/Allegrex` will be deleted before installing)
@@ -33,3 +35,8 @@ Prebuilt package will be provided after more features are implemented.
 After `gradle shadowJar` you can manually install extension by copying:
  - `build/libs/ghidra-allegrex-all.jar` file to `GHIDRA_INSTALL_DIR/Ghidra/Processors/Allegrex/lib/Allegrex.jar`
  - `data` directory to `GHIDRA_INSTALL_DIR/Ghidra/Processors/Allegrex/`
+
+Ghidra should automatically recompile Sleigh files when importing an executable, if not run:
+```bash
+/ghidra_9.0.1/support$ ./sleigh -a ../Ghidra/Processors/Allegrex/data/languages/
+```
