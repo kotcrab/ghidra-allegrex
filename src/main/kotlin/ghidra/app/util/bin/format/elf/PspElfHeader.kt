@@ -1,6 +1,7 @@
 package ghidra.app.util.bin.format.elf
 
 import generic.continues.GenericFactory
+import ghidra.app.util.bin.BinaryReader
 import ghidra.app.util.bin.ByteProvider
 import ghidra.app.util.bin.format.FactoryBundledWithBinaryReader
 import ghidra.util.Msg
@@ -36,7 +37,7 @@ open class PspElfHeader : ElfHeader() {
                 val info = section.info // section index of section to which relocations apply (relocation offset base)
                 val sectionToBeRelocated = if (info != 0) sections[info] else null
                 val relocBaseName = if (sectionToBeRelocated != null) sectionToBeRelocated.nameAsString else "PT_LOAD"
-                val symbolTable = getSymbolTable(sections[link])
+                val symbolTable = getSymbolTable(sections[link]) ?: createDummySymbolTable(reader, sections[link])
                 Msg.debug(this, "PSP ELF relocation table section ${section.nameAsString} affecting $relocBaseName")
                 relocTableList.add(
                     ElfRelocationTable.createElfRelocationTable(
@@ -49,6 +50,16 @@ open class PspElfHeader : ElfHeader() {
         } catch (e: ArrayIndexOutOfBoundsException) {
             Msg.error(this, "Failed to process PSP relocation section ${section.nameAsString}: ${e.message}")
         }
+    }
+
+    private fun createDummySymbolTable(reader: BinaryReader, header: ElfSectionHeader): ElfSymbolTable {
+        Msg.debug(this, "ELF symbol table missing, creating dummy symbol table")
+        val stringTable = ElfStringTable.createElfStringTable(
+            reader as FactoryBundledWithBinaryReader, this, header, 0, 0, 0
+        )
+        return ElfSymbolTable.createElfSymbolTable(
+            reader, this, header, 0, 0, 1, 1, stringTable, false
+        )
     }
 
     override fun e_machine(): Short {

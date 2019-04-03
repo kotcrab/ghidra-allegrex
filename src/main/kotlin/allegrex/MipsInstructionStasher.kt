@@ -22,8 +22,7 @@ class MipsInstructionStasher(private val program: Program, private val address: 
         cuCtx = CodeUnitCtx.fromProgram(program, address)
         cuCtx?.also {
             if (it.prototype.hasDelaySlots()) {
-                linkedCuCtx =
-                    CodeUnitCtx.fromProgram(program, address.add(4))
+                linkedCuCtx = CodeUnitCtx.fromProgram(program, address.add(4))
                 linkedCuRestorePolicy = RestoreFirst
             } else if (it.prototype.isInDelaySlot) {
                 linkedCuCtx = CodeUnitCtx.fromProgram(program, address.subtract(4))
