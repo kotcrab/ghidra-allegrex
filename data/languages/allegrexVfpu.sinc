@@ -28,6 +28,286 @@
 :vdot.t vd_s, vs_t, vt_t          is prime=25 & vop3 = 1 & vc1 = 1 & vc0 = 0 & vd_s & vs_t & vt_t   unimpl
 :vdot.q vd_s, vs_q, vt_q          is prime=25 & vop3 = 1 & vc1 = 1 & vc0 = 1 & vd_s & vs_q & vt_q   unimpl
 
+:vscl.s vd_s, vs_s, vt_s          is prime=25 & vop3 = 2 & vc1 = 0 & vc0 = 0 & vd_s & vs_s & vt_s   unimpl
+:vscl.p vd_p, vs_p, vt_s          is prime=25 & vop3 = 2 & vc1 = 0 & vc0 = 1 & vd_p & vs_p & vt_s   unimpl
+:vscl.t vd_t, vs_t, vt_s          is prime=25 & vop3 = 2 & vc1 = 1 & vc0 = 0 & vd_t & vs_t & vt_s   unimpl
+:vscl.q vd_q, vs_q, vt_s          is prime=25 & vop3 = 2 & vc1 = 1 & vc0 = 1 & vd_q & vs_q & vt_s   unimpl
+
+:vhdp.s vd_s, vs_s, vt_s          is prime=25 & vop3 = 4 & vc1 = 0 & vc0 = 0 & vd_s & vs_s & vt_s   unimpl
+:vhdp.p vd_s, vs_p, vt_p          is prime=25 & vop3 = 4 & vc1 = 0 & vc0 = 1 & vd_s & vs_p & vt_p   unimpl
+:vhdp.t vd_s, vs_t, vt_t          is prime=25 & vop3 = 4 & vc1 = 1 & vc0 = 0 & vd_s & vs_t & vt_t   unimpl
+:vhdp.q vd_s, vs_q, vt_q          is prime=25 & vop3 = 4 & vc1 = 1 & vc0 = 1 & vd_s & vs_q & vt_q   unimpl
+
+:vcrs.t vd_t, vs_t, vt_t          is prime=25 & vop3 = 5 & vc1 = 1 & vc0 = 0 & vd_t & vs_t & vt_t   unimpl
+
+:vdet.s vd_s, vs_s, vt_s          is prime=25 & vop3 = 6 & vc1 = 0 & vc0 = 0 & vd_s & vs_s & vt_s   unimpl
+:vdet.p vd_s, vs_p, vt_p          is prime=25 & vop3 = 6 & vc1 = 0 & vc0 = 1 & vd_s & vs_p & vt_p   unimpl
+:vdet.t vd_s, vs_t, vt_t          is prime=25 & vop3 = 6 & vc1 = 1 & vc0 = 0 & vd_s & vs_t & vt_t   unimpl
+:vdet.q vd_s, vs_q, vt_q          is prime=25 & vop3 = 6 & vc1 = 1 & vc0 = 1 & vd_s & vs_q & vt_q   unimpl
+
+:vcmp.s vd_cmp, vs_s, vt_s        is prime=26 & vop3 = 0 & vc1 = 0 & vc0 = 0 & vd_cmp & vs_s & vt_s   unimpl
+:vcmp.p vd_cmp, vs_p, vt_p        is prime=26 & vop3 = 0 & vc1 = 0 & vc0 = 1 & vd_cmp & vs_p & vt_p   unimpl
+:vcmp.t vd_cmp, vs_t, vt_t        is prime=26 & vop3 = 0 & vc1 = 1 & vc0 = 0 & vd_cmp & vs_t & vt_t   unimpl
+:vcmp.q vd_cmp, vs_q, vt_q        is prime=26 & vop3 = 0 & vc1 = 1 & vc0 = 1 & vd_cmp & vs_q & vt_q   unimpl
+
+:vmin.s vd_s, vs_s, vt_s          is prime=26 & vop3 = 2 & vc1 = 0 & vc0 = 0 & vd_s & vs_s & vt_s   unimpl
+:vmin.p vd_p, vs_p, vt_p          is prime=26 & vop3 = 2 & vc1 = 0 & vc0 = 1 & vd_p & vs_p & vt_p   unimpl
+:vmin.t vd_t, vs_t, vt_t          is prime=26 & vop3 = 2 & vc1 = 1 & vc0 = 0 & vd_t & vs_t & vt_t   unimpl
+:vmin.q vd_q, vs_q, vt_q          is prime=26 & vop3 = 2 & vc1 = 1 & vc0 = 1 & vd_q & vs_q & vt_q   unimpl
+
+:vmax.s vd_s, vs_s, vt_s          is prime=26 & vop3 = 3 & vc1 = 0 & vc0 = 0 & vd_s & vs_s & vt_s   unimpl
+:vmax.p vd_p, vs_p, vt_p          is prime=26 & vop3 = 3 & vc1 = 0 & vc0 = 1 & vd_p & vs_p & vt_p   unimpl
+:vmax.t vd_t, vs_t, vt_t          is prime=26 & vop3 = 3 & vc1 = 1 & vc0 = 0 & vd_t & vs_t & vt_t   unimpl
+:vmax.q vd_q, vs_q, vt_q          is prime=26 & vop3 = 3 & vc1 = 1 & vc0 = 1 & vd_q & vs_q & vt_q   unimpl
+
+:vscmp.s vd_s, vs_s, vt_s         is prime=26 & vop3 = 5 & vc1 = 0 & vc0 = 0 & vd_s & vs_s & vt_s   unimpl
+:vscmp.p vd_p, vs_p, vt_p         is prime=26 & vop3 = 5 & vc1 = 0 & vc0 = 1 & vd_p & vs_p & vt_p   unimpl
+:vscmp.t vd_t, vs_t, vt_t         is prime=26 & vop3 = 5 & vc1 = 1 & vc0 = 0 & vd_t & vs_t & vt_t   unimpl
+:vscmp.q vd_q, vs_q, vt_q         is prime=26 & vop3 = 5 & vc1 = 1 & vc0 = 1 & vd_q & vs_q & vt_q   unimpl
+
+:vsge.s vd_s, vs_s, vt_s          is prime=26 & vop3 = 6 & vc1 = 0 & vc0 = 0 & vd_s & vs_s & vt_s   unimpl
+:vsge.p vd_p, vs_p, vt_p          is prime=26 & vop3 = 6 & vc1 = 0 & vc0 = 1 & vd_p & vs_p & vt_p   unimpl
+:vsge.t vd_t, vs_t, vt_t          is prime=26 & vop3 = 6 & vc1 = 1 & vc0 = 0 & vd_t & vs_t & vt_t   unimpl
+:vsge.q vd_q, vs_q, vt_q          is prime=26 & vop3 = 6 & vc1 = 1 & vc0 = 1 & vd_q & vs_q & vt_q   unimpl
+
+:vslt.s vd_s, vs_s, vt_s          is prime=26 & vop3 = 7 & vc1 = 0 & vc0 = 0 & vd_s & vs_s & vt_s   unimpl
+:vslt.p vd_p, vs_p, vt_p          is prime=26 & vop3 = 7 & vc1 = 0 & vc0 = 1 & vd_p & vs_p & vt_p   unimpl
+:vslt.t vd_t, vs_t, vt_t          is prime=26 & vop3 = 7 & vc1 = 1 & vc0 = 0 & vd_t & vs_t & vt_t   unimpl
+:vslt.q vd_q, vs_q, vt_q          is prime=26 & vop3 = 7 & vc1 = 1 & vc0 = 1 & vd_q & vs_q & vt_q   unimpl
+
+:vmov.s vd_s, vs_s                is prime=52 & vop3 = 0 & vt = 0 & vc1 = 0 & vc0 = 0 & vd_s & vs_s   unimpl
+:vmov.p vd_p, vs_p                is prime=52 & vop3 = 0 & vt = 0 & vc1 = 0 & vc0 = 1 & vd_p & vs_p   unimpl
+:vmov.t vd_t, vs_t                is prime=52 & vop3 = 0 & vt = 0 & vc1 = 1 & vc0 = 0 & vd_t & vs_t   unimpl
+:vmov.q vd_q, vs_q                is prime=52 & vop3 = 0 & vt = 0 & vc1 = 1 & vc0 = 1 & vd_q & vs_q   unimpl
+
+:vabs.s vd_s, vs_s                is prime=52 & vop3 = 0 & vt = 1 & vc1 = 0 & vc0 = 0 & vd_s & vs_s   unimpl
+:vabs.p vd_p, vs_p                is prime=52 & vop3 = 0 & vt = 1 & vc1 = 0 & vc0 = 1 & vd_p & vs_p   unimpl
+:vabs.t vd_t, vs_t                is prime=52 & vop3 = 0 & vt = 1 & vc1 = 1 & vc0 = 0 & vd_t & vs_t   unimpl
+:vabs.q vd_q, vs_q                is prime=52 & vop3 = 0 & vt = 1 & vc1 = 1 & vc0 = 1 & vd_q & vs_q   unimpl
+
+:vneg.s vd_s, vs_s                is prime=52 & vop3 = 0 & vt = 2 & vc1 = 0 & vc0 = 0 & vd_s & vs_s   unimpl
+:vneg.p vd_p, vs_p                is prime=52 & vop3 = 0 & vt = 2 & vc1 = 0 & vc0 = 1 & vd_p & vs_p   unimpl
+:vneg.t vd_t, vs_t                is prime=52 & vop3 = 0 & vt = 2 & vc1 = 1 & vc0 = 0 & vd_t & vs_t   unimpl
+:vneg.q vd_q, vs_q                is prime=52 & vop3 = 0 & vt = 2 & vc1 = 1 & vc0 = 1 & vd_q & vs_q   unimpl
+
+:vidt.s vd_s                      is prime=52 & vop3 = 0 & vt = 3 & vc1 = 0 & vc0 = 0 & vd_s   unimpl
+:vidt.p vd_p                      is prime=52 & vop3 = 0 & vt = 3 & vc1 = 0 & vc0 = 1 & vd_p   unimpl
+:vidt.t vd_t                      is prime=52 & vop3 = 0 & vt = 3 & vc1 = 1 & vc0 = 0 & vd_t   unimpl
+:vidt.q vd_q                      is prime=52 & vop3 = 0 & vt = 3 & vc1 = 1 & vc0 = 1 & vd_q   unimpl
+
+:vsat0.s vd_s, vs_s               is prime=52 & vop3 = 0 & vt = 4 & vc1 = 0 & vc0 = 0 & vd_s & vs_s   unimpl
+:vsat0.p vd_p, vs_p               is prime=52 & vop3 = 0 & vt = 4 & vc1 = 0 & vc0 = 1 & vd_p & vs_p   unimpl
+:vsat0.t vd_t, vs_t               is prime=52 & vop3 = 0 & vt = 4 & vc1 = 1 & vc0 = 0 & vd_t & vs_t   unimpl
+:vsat0.q vd_q, vs_q               is prime=52 & vop3 = 0 & vt = 4 & vc1 = 1 & vc0 = 1 & vd_q & vs_q   unimpl
+
+:vsat1.s vd_s, vs_s               is prime=52 & vop3 = 0 & vt = 5 & vc1 = 0 & vc0 = 0 & vd_s & vs_s   unimpl
+:vsat1.p vd_p, vs_p               is prime=52 & vop3 = 0 & vt = 5 & vc1 = 0 & vc0 = 1 & vd_p & vs_p   unimpl
+:vsat1.t vd_t, vs_t               is prime=52 & vop3 = 0 & vt = 5 & vc1 = 1 & vc0 = 0 & vd_t & vs_t   unimpl
+:vsat1.q vd_q, vs_q               is prime=52 & vop3 = 0 & vt = 5 & vc1 = 1 & vc0 = 1 & vd_q & vs_q   unimpl
+
+:vzero.s vd_s                     is prime=52 & vop3 = 0 & vt = 6 & vc1 = 0 & vc0 = 0 & vd_s   unimpl
+:vzero.p vd_p                     is prime=52 & vop3 = 0 & vt = 6 & vc1 = 0 & vc0 = 1 & vd_p   unimpl
+:vzero.t vd_t                     is prime=52 & vop3 = 0 & vt = 6 & vc1 = 1 & vc0 = 0 & vd_t   unimpl
+:vzero.q vd_q                     is prime=52 & vop3 = 0 & vt = 6 & vc1 = 1 & vc0 = 1 & vd_q   unimpl
+
+:vone.s vd_s                      is prime=52 & vop3 = 0 & vt = 7 & vc1 = 0 & vc0 = 0 & vd_s   unimpl
+:vone.p vd_p                      is prime=52 & vop3 = 0 & vt = 7 & vc1 = 0 & vc0 = 1 & vd_p   unimpl
+:vone.t vd_t                      is prime=52 & vop3 = 0 & vt = 7 & vc1 = 1 & vc0 = 0 & vd_t   unimpl
+:vone.q vd_q                      is prime=52 & vop3 = 0 & vt = 7 & vc1 = 1 & vc0 = 1 & vd_q   unimpl
+
+:vrcp.s vd_s, vs_s                is prime=52 & vop3 = 0 & vt = 16 & vc1 = 0 & vc0 = 0 & vd_s & vs_s   unimpl
+:vrcp.p vd_p, vs_p                is prime=52 & vop3 = 0 & vt = 16 & vc1 = 0 & vc0 = 1 & vd_p & vs_p   unimpl
+:vrcp.t vd_t, vs_t                is prime=52 & vop3 = 0 & vt = 16 & vc1 = 1 & vc0 = 0 & vd_t & vs_t   unimpl
+:vrcp.q vd_q, vs_q                is prime=52 & vop3 = 0 & vt = 16 & vc1 = 1 & vc0 = 1 & vd_q & vs_q   unimpl
+
+:vrsq.s vd_s, vs_s                is prime=52 & vop3 = 0 & vt = 17 & vc1 = 0 & vc0 = 0 & vd_s & vs_s   unimpl
+:vrsq.p vd_p, vs_p                is prime=52 & vop3 = 0 & vt = 17 & vc1 = 0 & vc0 = 1 & vd_p & vs_p   unimpl
+:vrsq.t vd_t, vs_t                is prime=52 & vop3 = 0 & vt = 17 & vc1 = 1 & vc0 = 0 & vd_t & vs_t   unimpl
+:vrsq.q vd_q, vs_q                is prime=52 & vop3 = 0 & vt = 17 & vc1 = 1 & vc0 = 1 & vd_q & vs_q   unimpl
+
+:vsin.s vd_s, vs_s                is prime=52 & vop3 = 0 & vt = 18 & vc1 = 0 & vc0 = 0 & vd_s & vs_s   unimpl
+:vsin.p vd_p, vs_p                is prime=52 & vop3 = 0 & vt = 18 & vc1 = 0 & vc0 = 1 & vd_p & vs_p   unimpl
+:vsin.t vd_t, vs_t                is prime=52 & vop3 = 0 & vt = 18 & vc1 = 1 & vc0 = 0 & vd_t & vs_t   unimpl
+:vsin.q vd_q, vs_q                is prime=52 & vop3 = 0 & vt = 18 & vc1 = 1 & vc0 = 1 & vd_q & vs_q   unimpl
+
+:vcos.s vd_s, vs_s                is prime=52 & vop3 = 0 & vt = 19 & vc1 = 0 & vc0 = 0 & vd_s & vs_s   unimpl
+:vcos.p vd_p, vs_p                is prime=52 & vop3 = 0 & vt = 19 & vc1 = 0 & vc0 = 1 & vd_p & vs_p   unimpl
+:vcos.t vd_t, vs_t                is prime=52 & vop3 = 0 & vt = 19 & vc1 = 1 & vc0 = 0 & vd_t & vs_t   unimpl
+:vcos.q vd_q, vs_q                is prime=52 & vop3 = 0 & vt = 19 & vc1 = 1 & vc0 = 1 & vd_q & vs_q   unimpl
+
+:vexp2.s vd_s, vs_s               is prime=52 & vop3 = 0 & vt = 20 & vc1 = 0 & vc0 = 0 & vd_s & vs_s   unimpl
+:vexp2.p vd_p, vs_p               is prime=52 & vop3 = 0 & vt = 20 & vc1 = 0 & vc0 = 1 & vd_p & vs_p   unimpl
+:vexp2.t vd_t, vs_t               is prime=52 & vop3 = 0 & vt = 20 & vc1 = 1 & vc0 = 0 & vd_t & vs_t   unimpl
+:vexp2.q vd_q, vs_q               is prime=52 & vop3 = 0 & vt = 20 & vc1 = 1 & vc0 = 1 & vd_q & vs_q   unimpl
+
+:vlog2.s vd_s, vs_s               is prime=52 & vop3 = 0 & vt = 21 & vc1 = 0 & vc0 = 0 & vd_s & vs_s   unimpl
+:vlog2.p vd_p, vs_p               is prime=52 & vop3 = 0 & vt = 21 & vc1 = 0 & vc0 = 1 & vd_p & vs_p   unimpl
+:vlog2.t vd_t, vs_t               is prime=52 & vop3 = 0 & vt = 21 & vc1 = 1 & vc0 = 0 & vd_t & vs_t   unimpl
+:vlog2.q vd_q, vs_q               is prime=52 & vop3 = 0 & vt = 21 & vc1 = 1 & vc0 = 1 & vd_q & vs_q   unimpl
+
+:vsqrt.s vd_s, vs_s               is prime=52 & vop3 = 0 & vt = 22 & vc1 = 0 & vc0 = 0 & vd_s & vs_s   unimpl
+:vsqrt.p vd_p, vs_p               is prime=52 & vop3 = 0 & vt = 22 & vc1 = 0 & vc0 = 1 & vd_p & vs_p   unimpl
+:vsqrt.t vd_t, vs_t               is prime=52 & vop3 = 0 & vt = 22 & vc1 = 1 & vc0 = 0 & vd_t & vs_t   unimpl
+:vsqrt.q vd_q, vs_q               is prime=52 & vop3 = 0 & vt = 22 & vc1 = 1 & vc0 = 1 & vd_q & vs_q   unimpl
+
+:vasin.s vd_s, vs_s               is prime=52 & vop3 = 0 & vt = 23 & vc1 = 0 & vc0 = 0 & vd_s & vs_s   unimpl
+:vasin.p vd_p, vs_p               is prime=52 & vop3 = 0 & vt = 23 & vc1 = 0 & vc0 = 1 & vd_p & vs_p   unimpl
+:vasin.t vd_t, vs_t               is prime=52 & vop3 = 0 & vt = 23 & vc1 = 1 & vc0 = 0 & vd_t & vs_t   unimpl
+:vasin.q vd_q, vs_q               is prime=52 & vop3 = 0 & vt = 23 & vc1 = 1 & vc0 = 1 & vd_q & vs_q   unimpl
+
+:vnrcp.s vd_s, vs_s               is prime=52 & vop3 = 0 & vt = 24 & vc1 = 0 & vc0 = 0 & vd_s & vs_s   unimpl
+:vnrcp.p vd_p, vs_p               is prime=52 & vop3 = 0 & vt = 24 & vc1 = 0 & vc0 = 1 & vd_p & vs_p   unimpl
+:vnrcp.t vd_t, vs_t               is prime=52 & vop3 = 0 & vt = 24 & vc1 = 1 & vc0 = 0 & vd_t & vs_t   unimpl
+:vnrcp.q vd_q, vs_q               is prime=52 & vop3 = 0 & vt = 24 & vc1 = 1 & vc0 = 1 & vd_q & vs_q   unimpl
+
+:vnsin.s vd_s, vs_s               is prime=52 & vop3 = 0 & vt = 26 & vc1 = 0 & vc0 = 0 & vd_s & vs_s   unimpl
+:vnsin.p vd_p, vs_p               is prime=52 & vop3 = 0 & vt = 26 & vc1 = 0 & vc0 = 1 & vd_p & vs_p   unimpl
+:vnsin.t vd_t, vs_t               is prime=52 & vop3 = 0 & vt = 26 & vc1 = 1 & vc0 = 0 & vd_t & vs_t   unimpl
+:vnsin.q vd_q, vs_q               is prime=52 & vop3 = 0 & vt = 26 & vc1 = 1 & vc0 = 1 & vd_q & vs_q   unimpl
+
+:vrexp2.s vd_s, vs_s              is prime=52 & vop3 = 0 & vt = 28 & vc1 = 0 & vc0 = 0 & vd_s & vs_s   unimpl
+:vrexp2.p vd_p, vs_p              is prime=52 & vop3 = 0 & vt = 28 & vc1 = 0 & vc0 = 1 & vd_p & vs_p   unimpl
+:vrexp2.t vd_t, vs_t              is prime=52 & vop3 = 0 & vt = 28 & vc1 = 1 & vc0 = 0 & vd_t & vs_t   unimpl
+:vrexp2.q vd_q, vs_q              is prime=52 & vop3 = 0 & vt = 28 & vc1 = 1 & vc0 = 1 & vd_q & vs_q   unimpl
+
+:vrnds.s vd_s                     is prime=52 & vop3 = 0 & vt = 32 & vc1 = 0 & vc0 = 0 & vd_s   unimpl
+:vrnds.p vd_s                     is prime=52 & vop3 = 0 & vt = 32 & vc1 = 0 & vc0 = 1 & vd_s   unimpl
+:vrnds.t vd_s                     is prime=52 & vop3 = 0 & vt = 32 & vc1 = 1 & vc0 = 0 & vd_s   unimpl
+:vrnds.q vd_s                     is prime=52 & vop3 = 0 & vt = 32 & vc1 = 1 & vc0 = 1 & vd_s   unimpl
+
+:vrndi.s vd_s                     is prime=52 & vop3 = 0 & vt = 33 & vc1 = 0 & vc0 = 0 & vd_s   unimpl
+:vrndi.p vd_p                     is prime=52 & vop3 = 0 & vt = 33 & vc1 = 0 & vc0 = 1 & vd_p   unimpl
+:vrndi.t vd_t                     is prime=52 & vop3 = 0 & vt = 33 & vc1 = 1 & vc0 = 0 & vd_t   unimpl
+:vrndi.q vd_q                     is prime=52 & vop3 = 0 & vt = 33 & vc1 = 1 & vc0 = 1 & vd_q   unimpl
+
+:vrndf1.s vd_s                    is prime=52 & vop3 = 0 & vt = 34 & vc1 = 0 & vc0 = 0 & vd_s   unimpl
+:vrndf1.p vd_p                    is prime=52 & vop3 = 0 & vt = 34 & vc1 = 0 & vc0 = 1 & vd_p   unimpl
+:vrndf1.t vd_t                    is prime=52 & vop3 = 0 & vt = 34 & vc1 = 1 & vc0 = 0 & vd_t   unimpl
+:vrndf1.q vd_q                    is prime=52 & vop3 = 0 & vt = 34 & vc1 = 1 & vc0 = 1 & vd_q   unimpl
+
+:vrndf2.s vd_s                    is prime=52 & vop3 = 0 & vt = 35 & vc1 = 0 & vc0 = 0 & vd_s   unimpl
+:vrndf2.p vd_p                    is prime=52 & vop3 = 0 & vt = 35 & vc1 = 0 & vc0 = 1 & vd_p   unimpl
+:vrndf2.t vd_t                    is prime=52 & vop3 = 0 & vt = 35 & vc1 = 1 & vc0 = 0 & vd_t   unimpl
+:vrndf2.q vd_q                    is prime=52 & vop3 = 0 & vt = 35 & vc1 = 1 & vc0 = 1 & vd_q   unimpl
+
+:vsbz vd_s, vs_s                  is prime=52 & vop3 = 0 & vt = 44 & vc1 = 0 & vc0 = 0 & vd_s & vs_s   unimpl
+
+:vf2h.p vd_s, vs_p                is prime=52 & vop3 = 0 & vt = 50 & vc1 = 0 & vc0 = 1 & vd_s & vs_p   unimpl
+:vf2h.q vd_p, vs_q                is prime=52 & vop3 = 0 & vt = 50 & vc1 = 1 & vc0 = 1 & vd_p & vs_q   unimpl
+
+:vh2f.s vd_p, vs_s                is prime=52 & vop3 = 0 & vt = 51 & vc1 = 0 & vc0 = 0 & vd_p & vs_s   unimpl
+:vh2f.p vd_p, vs_p                is prime=52 & vop3 = 0 & vt = 51 & vc1 = 0 & vc0 = 1 & vd_p & vs_p   unimpl
+
+:vlgb vd_s, vs_s                  is prime=52 & vop3 = 0 & vt = 55 & vc1 = 0 & vc0 = 0 & vd_s & vs_s   unimpl
+
+:vuc2i.s vd_s, vs_s               is prime=52 & vop3 = 0 & vt = 56 & vc1 = 0 & vc0 = 0 & vd_s & vs_s   unimpl
+:vuc2i.p vd_p, vs_p               is prime=52 & vop3 = 0 & vt = 56 & vc1 = 0 & vc0 = 1 & vd_p & vs_p   unimpl
+:vuc2i.t vd_t, vs_t               is prime=52 & vop3 = 0 & vt = 56 & vc1 = 1 & vc0 = 0 & vd_t & vs_t   unimpl
+:vuc2i.q vd_q, vs_q               is prime=52 & vop3 = 0 & vt = 56 & vc1 = 1 & vc0 = 1 & vd_q & vs_q   unimpl
+
+:vuc2i.s vd_s, vs_s               is prime=52 & vop3 = 0 & vt = 57 & vc1 = 0 & vc0 = 0 & vd_s & vs_s   unimpl
+:vuc2i.p vd_p, vs_p               is prime=52 & vop3 = 0 & vt = 57 & vc1 = 0 & vc0 = 1 & vd_p & vs_p   unimpl
+:vuc2i.t vd_t, vs_t               is prime=52 & vop3 = 0 & vt = 57 & vc1 = 1 & vc0 = 0 & vd_t & vs_t   unimpl
+:vuc2i.q vd_q, vs_q               is prime=52 & vop3 = 0 & vt = 57 & vc1 = 1 & vc0 = 1 & vd_q & vs_q   unimpl
+
+:vus2i.s vd_s, vs_s               is prime=52 & vop3 = 0 & vt = 58 & vc1 = 0 & vc0 = 0 & vd_s & vs_s   unimpl
+:vus2i.p vd_p, vs_p               is prime=52 & vop3 = 0 & vt = 58 & vc1 = 0 & vc0 = 1 & vd_p & vs_p   unimpl
+:vus2i.t vd_t, vs_t               is prime=52 & vop3 = 0 & vt = 58 & vc1 = 1 & vc0 = 0 & vd_t & vs_t   unimpl
+:vus2i.q vd_q, vs_q               is prime=52 & vop3 = 0 & vt = 58 & vc1 = 1 & vc0 = 1 & vd_q & vs_q   unimpl
+
+:vs2i.s vd_s, vs_s                is prime=52 & vop3 = 0 & vt = 59 & vc1 = 0 & vc0 = 0 & vd_s & vs_s   unimpl
+:vs2i.p vd_p, vs_p                is prime=52 & vop3 = 0 & vt = 59 & vc1 = 0 & vc0 = 1 & vd_p & vs_p   unimpl
+:vs2i.t vd_t, vs_t                is prime=52 & vop3 = 0 & vt = 59 & vc1 = 1 & vc0 = 0 & vd_t & vs_t   unimpl
+:vs2i.q vd_q, vs_q                is prime=52 & vop3 = 0 & vt = 59 & vc1 = 1 & vc0 = 1 & vd_q & vs_q   unimpl
+
+:vi2uc.s vd_s, vs_s               is prime=52 & vop3 = 0 & vt = 60 & vc1 = 0 & vc0 = 0 & vd_s & vs_s   unimpl
+:vi2uc.p vd_s, vs_p               is prime=52 & vop3 = 0 & vt = 60 & vc1 = 0 & vc0 = 1 & vd_s & vs_p   unimpl
+:vi2uc.t vd_s, vs_t               is prime=52 & vop3 = 0 & vt = 60 & vc1 = 1 & vc0 = 0 & vd_s & vs_t   unimpl
+:vi2uc.q vd_s, vs_q               is prime=52 & vop3 = 0 & vt = 60 & vc1 = 1 & vc0 = 1 & vd_s & vs_q   unimpl
+
+:vi2c.p vd_s, vs_p                is prime=52 & vop3 = 0 & vt = 61 & vc1 = 0 & vc0 = 1 & vd_s & vs_p   unimpl
+:vi2c.q vd_q, vs_q                is prime=52 & vop3 = 0 & vt = 61 & vc1 = 1 & vc0 = 1 & vd_q & vs_q   unimpl
+
+:vi2us.p vd_s, vs_p               is prime=52 & vop3 = 0 & vt = 62 & vc1 = 0 & vc0 = 1 & vd_s & vs_p   unimpl
+:vi2us.q vd_q, vs_q               is prime=52 & vop3 = 0 & vt = 62 & vc1 = 1 & vc0 = 1 & vd_q & vs_q   unimpl
+
+:vi2s.p vd_s, vs_p                is prime=52 & vop3 = 0 & vt = 63 & vc1 = 0 & vc0 = 1 & vd_s & vs_p   unimpl
+:vi2s.q vd_q, vs_q                is prime=52 & vop3 = 0 & vt = 63 & vc1 = 1 & vc0 = 1 & vd_q & vs_q   unimpl
+
+:vsrt1.s vd_s, vs_s               is prime=52 & vop3 = 0 & vt = 64 & vc1 = 0 & vc0 = 0 & vd_s & vs_s   unimpl
+:vsrt1.p vd_p, vs_p               is prime=52 & vop3 = 0 & vt = 64 & vc1 = 0 & vc0 = 1 & vd_p & vs_p   unimpl
+:vsrt1.t vd_t, vs_t               is prime=52 & vop3 = 0 & vt = 64 & vc1 = 1 & vc0 = 0 & vd_t & vs_t   unimpl
+:vsrt1.q vd_q, vs_q               is prime=52 & vop3 = 0 & vt = 64 & vc1 = 1 & vc0 = 1 & vd_q & vs_q   unimpl
+
+:vsrt2.s vd_s, vs_s               is prime=52 & vop3 = 0 & vt = 65 & vc1 = 0 & vc0 = 0 & vd_s & vs_s   unimpl
+:vsrt2.p vd_p, vs_p               is prime=52 & vop3 = 0 & vt = 65 & vc1 = 0 & vc0 = 1 & vd_p & vs_p   unimpl
+:vsrt2.t vd_t, vs_t               is prime=52 & vop3 = 0 & vt = 65 & vc1 = 1 & vc0 = 0 & vd_t & vs_t   unimpl
+:vsrt2.q vd_q, vs_q               is prime=52 & vop3 = 0 & vt = 65 & vc1 = 1 & vc0 = 1 & vd_q & vs_q   unimpl
+
+:vbfy1.s vd_s, vs_s               is prime=52 & vop3 = 0 & vt = 66 & vc1 = 0 & vc0 = 0 & vd_s & vs_s   unimpl
+:vbfy1.p vd_p, vs_p               is prime=52 & vop3 = 0 & vt = 66 & vc1 = 0 & vc0 = 1 & vd_p & vs_p   unimpl
+:vbfy1.t vd_t, vs_t               is prime=52 & vop3 = 0 & vt = 66 & vc1 = 1 & vc0 = 0 & vd_t & vs_t   unimpl
+:vbfy1.q vd_q, vs_q               is prime=52 & vop3 = 0 & vt = 66 & vc1 = 1 & vc0 = 1 & vd_q & vs_q   unimpl
+
+:vbfy2.s vd_s, vs_s               is prime=52 & vop3 = 0 & vt = 67 & vc1 = 0 & vc0 = 0 & vd_s & vs_s   unimpl
+:vbfy2.p vd_p, vs_p               is prime=52 & vop3 = 0 & vt = 67 & vc1 = 0 & vc0 = 1 & vd_p & vs_p   unimpl
+:vbfy2.t vd_t, vs_t               is prime=52 & vop3 = 0 & vt = 67 & vc1 = 1 & vc0 = 0 & vd_t & vs_t   unimpl
+:vbfy2.q vd_q, vs_q               is prime=52 & vop3 = 0 & vt = 67 & vc1 = 1 & vc0 = 1 & vd_q & vs_q   unimpl
+
+:vocp.s vd_s, vs_s                is prime=52 & vop3 = 0 & vt = 68 & vc1 = 0 & vc0 = 0 & vd_s & vs_s   unimpl
+:vocp.p vd_p, vs_p                is prime=52 & vop3 = 0 & vt = 68 & vc1 = 0 & vc0 = 1 & vd_p & vs_p   unimpl
+:vocp.t vd_t, vs_t                is prime=52 & vop3 = 0 & vt = 68 & vc1 = 1 & vc0 = 0 & vd_t & vs_t   unimpl
+:vocp.q vd_q, vs_q                is prime=52 & vop3 = 0 & vt = 68 & vc1 = 1 & vc0 = 1 & vd_q & vs_q   unimpl
+
+:vsocp.s vd_s, vs_s               is prime=52 & vop3 = 0 & vt = 69 & vc1 = 0 & vc0 = 0 & vd_s & vs_s   unimpl
+:vsocp.p vd_p, vs_p               is prime=52 & vop3 = 0 & vt = 69 & vc1 = 0 & vc0 = 1 & vd_p & vs_p   unimpl
+:vsocp.t vd_t, vs_t               is prime=52 & vop3 = 0 & vt = 69 & vc1 = 1 & vc0 = 0 & vd_t & vs_t   unimpl
+:vsocp.q vd_q, vs_q               is prime=52 & vop3 = 0 & vt = 69 & vc1 = 1 & vc0 = 1 & vd_q & vs_q   unimpl
+
+:vfad.s vd_s, vs_s                is prime=52 & vop3 = 0 & vt = 70 & vc1 = 0 & vc0 = 0 & vd_s & vs_s   unimpl
+:vfad.p vd_s, vs_p                is prime=52 & vop3 = 0 & vt = 70 & vc1 = 0 & vc0 = 1 & vd_s & vs_p   unimpl
+:vfad.t vd_s, vs_t                is prime=52 & vop3 = 0 & vt = 70 & vc1 = 1 & vc0 = 0 & vd_s & vs_t   unimpl
+:vfad.q vd_s, vs_q                is prime=52 & vop3 = 0 & vt = 70 & vc1 = 1 & vc0 = 1 & vd_s & vs_q   unimpl
+
+:vavg.s vd_s, vs_s                is prime=52 & vop3 = 0 & vt = 71 & vc1 = 0 & vc0 = 0 & vd_s & vs_s   unimpl
+:vavg.p vd_s, vs_p                is prime=52 & vop3 = 0 & vt = 71 & vc1 = 0 & vc0 = 1 & vd_s & vs_p   unimpl
+:vavg.t vd_s, vs_t                is prime=52 & vop3 = 0 & vt = 71 & vc1 = 1 & vc0 = 0 & vd_s & vs_t   unimpl
+:vavg.q vd_s, vs_q                is prime=52 & vop3 = 0 & vt = 71 & vc1 = 1 & vc0 = 1 & vd_s & vs_q   unimpl
+
+:vsrt3.s vd_s, vs_s               is prime=52 & vop3 = 0 & vt = 72 & vc1 = 0 & vc0 = 0 & vd_s & vs_s   unimpl
+:vsrt3.p vd_p, vs_p               is prime=52 & vop3 = 0 & vt = 72 & vc1 = 0 & vc0 = 1 & vd_p & vs_p   unimpl
+:vsrt3.t vd_t, vs_t               is prime=52 & vop3 = 0 & vt = 72 & vc1 = 1 & vc0 = 0 & vd_t & vs_t   unimpl
+:vsrt3.q vd_q, vs_q               is prime=52 & vop3 = 0 & vt = 72 & vc1 = 1 & vc0 = 1 & vd_q & vs_q   unimpl
+
+:vsrt4.s vd_s, vs_s               is prime=52 & vop3 = 0 & vt = 73 & vc1 = 0 & vc0 = 0 & vd_s & vs_s   unimpl
+:vsrt4.p vd_p, vs_p               is prime=52 & vop3 = 0 & vt = 73 & vc1 = 0 & vc0 = 1 & vd_p & vs_p   unimpl
+:vsrt4.t vd_t, vs_t               is prime=52 & vop3 = 0 & vt = 73 & vc1 = 1 & vc0 = 0 & vd_t & vs_t   unimpl
+:vsrt4.q vd_q, vs_q               is prime=52 & vop3 = 0 & vt = 73 & vc1 = 1 & vc0 = 1 & vd_q & vs_q   unimpl
+
+:vsgn.s vd_s, vs_s                is prime=52 & vop3 = 0 & vt = 74 & vc1 = 0 & vc0 = 0 & vd_s & vs_s   unimpl
+:vsgn.p vd_p, vs_p                is prime=52 & vop3 = 0 & vt = 74 & vc1 = 0 & vc0 = 1 & vd_p & vs_p   unimpl
+:vsgn.t vd_t, vs_t                is prime=52 & vop3 = 0 & vt = 74 & vc1 = 1 & vc0 = 0 & vd_t & vs_t   unimpl
+:vsgn.q vd_q, vs_q                is prime=52 & vop3 = 0 & vt = 74 & vc1 = 1 & vc0 = 1 & vd_q & vs_q   unimpl
+
+:vmfvc.s vs_s, vd_s               is prime=52 & vop3 = 0 & vt = 80 & vc1 = 0 & vc0 = 0 & vs_s & vd_s    unimpl
+:vmfvc.p vs_s, vd_ctl             is prime=52 & vop3 = 0 & vt = 80 & vc1 = 0 & vc0 = 1 & vs_s & vd_ctl  unimpl
+:vmfvc.t vs_s, vd_s               is prime=52 & vop3 = 0 & vt = 80 & vc1 = 1 & vc0 = 0 & vs_s & vd_s    unimpl
+:vmfvc.q vs_s, vd_ctl             is prime=52 & vop3 = 0 & vt = 80 & vc1 = 1 & vc0 = 1 & vs_s & vd_ctl  unimpl
+
+:vmtvc.s vs_s, vd_s               is prime=52 & vop3 = 0 & vt = 81 & vc1 = 0 & vc0 = 0 & vs_s & vd_s    unimpl
+:vmtvc.p vs_s, vd_ctl             is prime=52 & vop3 = 0 & vt = 81 & vc1 = 0 & vc0 = 1 & vs_s & vd_ctl  unimpl
+:vmtvc.t vs_s, vd_s               is prime=52 & vop3 = 0 & vt = 81 & vc1 = 1 & vc0 = 0 & vs_s & vd_s    unimpl
+:vmtvc.q vs_s, vd_ctl             is prime=52 & vop3 = 0 & vt = 81 & vc1 = 1 & vc0 = 1 & vs_s & vd_ctl  unimpl
+
+:vt4444.p vd_s, vs_p              is prime=52 & vop3 = 0 & vt = 89 & vc1 = 0 & vc0 = 1 & vd_s & vs_p   unimpl
+:vt4444.q vd_q, vs_q              is prime=52 & vop3 = 0 & vt = 89 & vc1 = 1 & vc0 = 1 & vd_q & vs_q   unimpl
+
+:vt5551.p vd_s, vs_p              is prime=52 & vop3 = 0 & vt = 90 & vc1 = 0 & vc0 = 1 & vd_s & vs_p   unimpl
+:vt5551.q vd_q, vs_q              is prime=52 & vop3 = 0 & vt = 90 & vc1 = 1 & vc0 = 1 & vd_q & vs_q   unimpl
+
+:vt5650.p vd_s, vs_p              is prime=52 & vop3 = 0 & vt = 91 & vc1 = 0 & vc0 = 1 & vd_s & vs_p   unimpl
+:vt5650.q vd_q, vs_q              is prime=52 & vop3 = 0 & vt = 91 & vc1 = 1 & vc0 = 1 & vd_q & vs_q   unimpl
+
 # # 0100 1001 000c cc00 iiii iiii iiii iiii
 # :bc2f Rel16                     is prime=18 & copop=8 & cc=0 & nd=0 & tf=0 & Rel16 {
 #     tmp:1 = getCopCondition(2:1, 0:1);
