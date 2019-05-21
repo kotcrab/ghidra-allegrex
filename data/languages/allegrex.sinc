@@ -134,6 +134,9 @@ define token instr(32)
     vt_e        = (16,22)
     vs_e        = (8,14)
     vd_e        = (0,6)
+    vt_tm       = (16,22)
+    vs_tm       = (8,14)
+    vd_tm       = (0,6)
     vt_te       = (16,22)
     vs_te       = (8,14)
     vd_te       = (0,6)
@@ -143,6 +146,10 @@ define token instr(32)
     vc1         = (15,15)
     vop3        = (23,25)
     vtop2       = (21,22)
+    vtimm5      = (16,20)
+    vwbnimm8    = (16,23)
+    vwbnop2     = (24,25)
+    vtop4       = (16,19)
     vcc         = (19,21)
 ;
 
@@ -242,6 +249,17 @@ attach names [ vt_e vs_e vd_e ] [
     E420.q E421.q E422.q E423.q E520.q E521.q E522.q E523.q E620.q E621.q E622.q E623.q E720.q E721.q E722.q E723.q
     M002.q M012.q M022.q M032.q M102.q M112.q M122.q M132.q M202.q M212.q M222.q M232.q M302.q M312.q M322.q M332.q
     M402.q M412.q M422.q M432.q M502.q M512.q M522.q M532.q M602.q M612.q M622.q M632.q M702.q M712.q M722.q M732.q
+];
+
+attach names [ vt_tm vs_tm vd_tm ] [
+    M000.t M010.t M020.t M030.t M100.t M110.t M120.t M130.t M200.t M210.t M220.t M230.t M300.t M310.t M320.t M330.t
+    M400.t M410.t M420.t M430.t M500.t M510.t M520.t M530.t M600.t M610.t M620.t M630.t M700.t M710.t M720.t M730.t
+    E000.t E001.t E002.t E003.t E100.t E101.t E102.t E103.t E200.t E201.t E202.t E203.t E300.t E301.t E302.t E303.t
+    E400.t E401.t E402.t E403.t E500.t E501.t E502.t E503.t E600.t E601.t E602.t E603.t E700.t E701.t E702.t E703.t
+    M001.t M011.t M021.t M031.t M101.t M111.t M121.t M131.t M201.t M211.t M221.t M231.t M301.t M311.t M321.t M331.t
+    M401.t M411.t M421.t M431.t M501.t M511.t M521.t M531.t M601.t M611.t M621.t M631.t M701.t M711.t M721.t M731.t
+    E010.t E011.t E012.t E013.t E110.t E111.t E112.t E113.t E210.t E211.t E212.t E213.t E310.t E311.t E312.t E313.t
+    E410.t E411.t E412.t E413.t E510.t E511.t E512.t E513.t E610.t E611.t E612.t E613.t E710.t E711.t E712.t E713.t
 ];
 
 attach names [ vt_te vs_te vd_te ] [
