@@ -4,7 +4,6 @@ import ghidra.app.util.Option
 import ghidra.app.util.bin.ByteProvider
 import ghidra.app.util.bin.format.elf.ElfException
 import ghidra.app.util.bin.format.elf.PspElfHeader
-import ghidra.app.util.importer.MemoryConflictHandler
 import ghidra.app.util.importer.MessageLog
 import ghidra.app.util.importer.MessageLogContinuesFactory
 import ghidra.program.model.listing.Program
@@ -31,13 +30,12 @@ class PspElfLoader : ElfLoader() {
 
     override fun load(
         provider: ByteProvider, loadSpec: LoadSpec?, options: List<Option>,
-        program: Program,
-        handler: MemoryConflictHandler, monitor: TaskMonitor, log: MessageLog
+        program: Program, monitor: TaskMonitor, log: MessageLog
     ) {
         try {
             val factory = MessageLogContinuesFactory.create(log)
             val elf = PspElfHeader.createElfHeader(factory, provider)
-            ElfProgramBuilder.loadElf(elf, program, options, log, handler, monitor)
+            ElfProgramBuilder.loadElf(elf, program, options, log, monitor)
             program.executableFormat = PSP_ELF_NAME
         } catch (e: ElfException) {
             throw IOException(e.message)
