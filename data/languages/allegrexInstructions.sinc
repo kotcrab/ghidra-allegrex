@@ -223,20 +223,20 @@
 }
 
 # 0000 00ss ssst tttt dddd d000 0010 0101
+# Special cases of or
+:li RD, 0                       is prime=0 & fct=37 & rs=0 & rt=0 & RD & sa=0 {
+    RD = 0;
+}
+
 :or RD, RSsrc, RTsrc            is prime=0 & fct=37 & RSsrc & RTsrc & RD & sa=0 {
     RD = RSsrc | RTsrc;
 }
 
-# Special cases of or
-:li RD, 0                       is prime=0 & fct=37 & rs=0 & rt=0 & RD {
-    RD = 0;
-}
-
-:move RD, RTsrc                 is prime=0 & fct=37 & rs=0 & RD & RTsrc {
+:move RD, RTsrc                 is prime=0 & fct=37 & rs=0 & RD & RTsrc & sa=0 {
     RD = RTsrc;
 }
 
-:move RD, RSsrc                 is prime=0 & fct=37 & rt=0 & RD & RSsrc {
+:move RD, RSsrc                 is prime=0 & fct=37 & rt=0 & RD & RSsrc & sa=0 {
     RD = RSsrc;
 }
 
@@ -402,11 +402,8 @@
 }
 
 :tlbp      is prime=0x10  & bit25=1 & copfill=0x00 & fct=0x08  unimpl
-
 :tlbr      is prime=0x10  & bit25=1 & copfill=0x00 & fct=0x01  unimpl
-
 :tlbwi     is prime=0x10  & bit25=1 & copfill=0x00 & fct=0x02  unimpl
-
 :tlbwr     is prime=0x10  & bit25=1 & copfill=0x00 & fct=0x06  unimpl
 
 # 0000 00ss ssst tttt cccc cccc cc11 0010

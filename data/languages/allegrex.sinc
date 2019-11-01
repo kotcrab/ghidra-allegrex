@@ -15,7 +15,7 @@ define register offset=0 size=4 [
     s0 s1 s2 s3
     s4 s5 s6 s7
     t8 t9 k0 k1
-    gp sp s8 ra
+    gp sp fp ra
     pc
 ];
 
@@ -157,7 +157,7 @@ attach variables [ rs rt rd base ] [
     zero  at  v0  v1  a0  a1  a2  a3
     t0    t1  t2  t3  t4  t5  t6  t7
     s0    s1  s2  s3  s4  s5  s6  s7
-    t8    t9  k0  k1  gp  sp  s8  ra
+    t8    t9  k0  k1  gp  sp  fp  ra
 ];
 
 attach variables [ fs ft fd fr ] [
@@ -345,6 +345,8 @@ define pcodeop trap;
 define pcodeop wait;
 define pcodeop syscall;
 define pcodeop cacheOp;
+define pcodeop wsbw;
+define pcodeop bitrev;
 define pcodeop setCopControlWord;       # setCopControlWord(cop_num, reg_num, value)
 define pcodeop getCopControlWord;       # getCopControlWord(cop_num, reg_num)
 define pcodeop countLeadingOnes;        # countLeadingOnes(val)
