@@ -20,7 +20,13 @@ import ghidra.app.services.AnalysisPriority;
 import ghidra.app.services.AnalyzerType;
 import ghidra.app.util.importer.MessageLog;
 import ghidra.program.disassemble.Disassembler;
-import ghidra.program.model.address.*;
+import ghidra.program.model.address.Address;
+import ghidra.program.model.address.AddressIterator;
+import ghidra.program.model.address.AddressOutOfBoundsException;
+import ghidra.program.model.address.AddressRange;
+import ghidra.program.model.address.AddressRangeImpl;
+import ghidra.program.model.address.AddressSet;
+import ghidra.program.model.address.AddressSetView;
 import ghidra.program.model.lang.Processor;
 import ghidra.program.model.lang.Register;
 import ghidra.program.model.listing.ContextChangeException;
@@ -378,7 +384,7 @@ public class AllegrexPreAnalyzer extends AbstractAnalyzer {
 	 * 1) mnemonics are correct
 	 * 2) offset difference is correct
 	 * 3) destination and base registers match
-//	 * @param str start inst mnemonic
+	 * //	 * @param str start inst mnemonic
 	 * @return Instruction that is the pair of this one
 	 */
 	private Instruction checkPair (Scalar offset1, Scalar offset2, Register base1, Register base2,

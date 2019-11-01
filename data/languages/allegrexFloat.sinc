@@ -1,6 +1,6 @@
 # 0100 01ff fff0 0000 ssss sddd dd00 0101
 :abs.s fd, fs               is prime=17 & fct=5 & fmt1 & format=0x10 & fs & fd {
-	fd[0,32] = abs( fs:4 );
+    fd[0,32] = abs( fs:4 );
 }
 
 # 0100 01ff ffft tttt ssss sddd dd00 0000
@@ -48,7 +48,7 @@
     <do_round>
       fs_cvt_tmp = round(fs_tmp); # round returns a float
     <done>
-    fd[0,32] = trunc(fs_cvt_tmp);	# trunc returns an integer
+    fd[0,32] = trunc(fs_cvt_tmp); # trunc returns an integer
 }
 
 # 0100 01ff ffft tttt ssss sddd dd00 0011
@@ -82,7 +82,7 @@
 # 0100 0100 100t tttt dddd d000 0000 0000
 :mtc1 RTsrc, fs                 is prime=17 & copop=4 & RTsrc & fs & bigfunct=0 {
     # Move 32-bits of RTsrc to Low Half of FPR fs
-	fs[0,32] = RTsrc:4;
+    fs[0,32] = RTsrc:4;
 }
 
 # 0100 01ff ffft tttt ssss sddd dd00 0010

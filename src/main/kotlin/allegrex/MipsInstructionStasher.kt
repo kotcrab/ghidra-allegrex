@@ -1,6 +1,8 @@
 package allegrex
 
-import allegrex.MipsInstructionStasher.LinkedCuRestorePolicy.*
+import allegrex.MipsInstructionStasher.LinkedCuRestorePolicy.Ignore
+import allegrex.MipsInstructionStasher.LinkedCuRestorePolicy.RestoreFirst
+import allegrex.MipsInstructionStasher.LinkedCuRestorePolicy.RestoreLast
 import ghidra.program.model.address.Address
 import ghidra.program.model.lang.InstructionPrototype
 import ghidra.program.model.lang.ProgramProcessorContext

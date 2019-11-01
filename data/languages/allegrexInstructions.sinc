@@ -160,8 +160,8 @@
 :jalr RD, RSsrc                 is prime=0 & fct=9 & RSsrc & rt=0 & RD {
     RD = inst_next;
     delayslot( 1 );
-	tmp:4 = 0;
-	ValCast(tmp,RSsrc);
+    tmp:4 = 0;
+    ValCast(tmp,RSsrc);
     call [tmp];
 }
 
@@ -169,16 +169,16 @@
 :jalr RSsrc                     is prime=0 & fct=9 & RSsrc & rt=0 & rd=31 {
     ra = inst_next;
     delayslot( 1 );
-	tmp:4 = 0;
-	ValCast(tmp,RSsrc);
+    tmp:4 = 0;
+    ValCast(tmp,RSsrc);
     call [tmp];
 }
 
 # 0000 00ss sss0 0000 0000 0hhh hh00 1000
 :jr RSsrc                       is prime=0 & fct=8 & RSsrc & rt=0 & rd=0 {
     delayslot(1);
- 	tmp:4 = 0;
-	ValCast(tmp,RSsrc);
+    tmp:4 = 0;
+    ValCast(tmp,RSsrc);
     goto [tmp];
 }
 
@@ -401,13 +401,13 @@
     <done>
 }
 
-:tlbp		is prime=0x10  & bit25=1 & copfill=0x00 & fct=0x08      unimpl
+:tlbp      is prime=0x10  & bit25=1 & copfill=0x00 & fct=0x08  unimpl
 
-:tlbr           is prime=0x10  & bit25=1 & copfill=0x00 & fct=0x01  unimpl
+:tlbr      is prime=0x10  & bit25=1 & copfill=0x00 & fct=0x01  unimpl
 
-:tlbwi		is prime=0x10  & bit25=1 & copfill=0x00 & fct=0x02      unimpl
+:tlbwi     is prime=0x10  & bit25=1 & copfill=0x00 & fct=0x02  unimpl
 
-:tlbwr          is prime=0x10  & bit25=1 & copfill=0x00 & fct=0x06  unimpl
+:tlbwr     is prime=0x10  & bit25=1 & copfill=0x00 & fct=0x06  unimpl
 
 # 0000 00ss ssst tttt cccc cccc cc11 0010
 :tlt RSsrc, RTsrc               is prime=0 & fct=50 & RSsrc & RTsrc & code {
@@ -751,31 +751,31 @@
 }
 
 :madd RSsrc, RTsrc              is prime=0 & sa=0 & rd=0 & fct=28 & RSsrc & RTsrc {
-	tmp1:8 = sext(RSsrc);
-	tmp2:8 = sext(RTsrc);
-	prod:8 = tmp1 * tmp2;
+    tmp1:8 = sext(RSsrc);
+    tmp2:8 = sext(RTsrc);
+    prod:8 = tmp1 * tmp2;
     lo = lo & 0xffffffff;       # Make sure any upper bits of lo don't contribute to sum
-	sum:8 = (zext(hi) << 32) + zext(lo) + prod;
+    sum:8 = (zext(hi) << 32) + zext(lo) + prod;
     lo = sum:4;
     sum = sum >> 32;
     hi = sum:4;
 }
 
 :maddu RSsrc, RTsrc             is prime=0 & sa=0 & rd=0 & fct=29 & RSsrc & RTsrc {
-	tmp1:8 = zext(RSsrc);
-	tmp2:8 = zext(RTsrc);
-	prod:8 = tmp1 * tmp2;
+    tmp1:8 = zext(RSsrc);
+    tmp2:8 = zext(RTsrc);
+    prod:8 = tmp1 * tmp2;
     lo = lo & 0xffffffff;       # Make sure any upper bits of lo don't contribute to sum
-	sum:8 = (zext(hi) << 32) + zext(lo) + prod;
+    sum:8 = (zext(hi) << 32) + zext(lo) + prod;
     lo = sum:4;
     sum = sum >> 32;
     hi = sum:4;
 }
 
 :msub RSsrc, RTsrc              is prime=0 & sa=0 & rd=0 & fct=46 & RSsrc & RTsrc {
-	tmp1:8 = sext(RSsrc);
-	tmp2:8 = sext(RTsrc);
-	prod:8 = tmp1 * tmp2;
+    tmp1:8 = sext(RSsrc);
+    tmp2:8 = sext(RTsrc);
+    prod:8 = tmp1 * tmp2;
     lo = lo & 0xffffffff;       # Make sure any upper bits of lo don't contribute to sum
     sum:8 = (zext(hi) << 32) + zext(lo) - prod;
     lo = sum:4;
@@ -784,11 +784,11 @@
 }
 
 :msubu RSsrc, RTsrc             is prime=0 & sa=0 & rd=0 & fct=47 & RSsrc & RTsrc {
-	tmp1:8 = zext(RSsrc);
-	tmp2:8 = zext(RTsrc);
-	prod:8 = tmp1 * tmp2;
+    tmp1:8 = zext(RSsrc);
+    tmp2:8 = zext(RTsrc);
+    prod:8 = tmp1 * tmp2;
     lo = lo & 0xffffffff;       # Make sure any upper bits of lo don't contribute to sum
-	sum:8 = (zext(hi) << 32) + zext(lo) - prod;
+    sum:8 = (zext(hi) << 32) + zext(lo) - prod;
     lo = sum:4;
     sum = sum >> 32;
     hi = sum:4;

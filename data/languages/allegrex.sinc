@@ -71,13 +71,13 @@ define token instr(32)
     format      = (21,25)
     copop       = (21,25)
     mfmc0       = (21,25)
-    zero21		= (21,25)
+    zero21      = (21,25)
     breakcode   = (6,25)
-    off26       = (0,25) signed			# 26 bit signed offset, e.g. balc, bc
-    ind26       = (0,25)				# 26 bit unsigned index, e.g. jal
+    off26       = (0,25) signed      # 26 bit signed offset, e.g. balc, bc
+    ind26       = (0,25)             # 26 bit unsigned index, e.g. jal
     copfill     = (6,24)
     cofun       = (0,24)
-    off16		= (0,15) signed		# 16 bit signed offset in conditional branch/link
+    off16       = (0,15) signed      # 16 bit signed offset in conditional branch/link
     bit21       = (21,21)
     cc          = (18,20)
     rt          = (16,20)
@@ -91,8 +91,8 @@ define token instr(32)
     szero       = (11,25)
     rd          = (11,15)
     fs          = (11,15)
-    fs_unk		= (11,15)
-    fs_fcr		= (11,15)
+    fs_unk      = (11,15)
+    fs_fcr      = (11,15)
     zero4       = (11,15)
     msbd        = (11,15)
     code        = (6,15)
@@ -167,10 +167,10 @@ attach variables [ fs ft fd fr ] [
 
 # Only a few Floating Point Control (FCR) registers are defined
 attach variables [ fs_fcr ] [
-	fir		_		_		_		_		_		_		_
-	_		_		_		_		_		_		_		_
-	_		_		_		_		_		_		_		_
-	_		fccr	fexr	_		fenr	_		_		fcsr
+    fir     _       _       _       _       _       _       _
+    _       _       _       _       _       _       _       _
+    _       _       _       _       _       _       _       _
+    _       fccr    fexr    _       fenr    _       _       fcsr
 ];
 
 # VFPU
@@ -301,7 +301,7 @@ RD: rd          is rd           { export rd; }
 RDsrc: rd       is rd           { export rd; }
 RDsrc: rd       is rd & rd=0    { export 0:4; }
 
-# RS: rs       	is rs           { export rs; }
+# RS: rs        is rs           { export rs; }
 RSsrc: rs       is rs           { export rs; }
 RSsrc: rs       is rs & rs=0    { export 0:4; }
 
@@ -310,22 +310,22 @@ RTsrc: rt       is rt           { export rt; }
 RTsrc: rt       is rt & rt=0    { export 0:4; }
 
 macro MemSrcCast(dest,src) {
-	dest = *(src);
+    dest = *(src);
 }
 macro MemDestCast(dest,src) {
-	*(dest) = src;
+    *(dest) = src;
 }
 macro ValCast(dest,src) {
-	dest = src;
+    dest = src;
 }
 
 OFF_BASE:   simmed(base)    is simmed & base    { tmp:4 = base + simmed; tmpscaled:4 = 0; ValCast(tmpscaled,tmp); export tmpscaled; }
 
-Rel16: reloc		is off16	[ reloc=inst_start+4+4*off16; ]				                	{ export *:4 reloc; }
-Abs26: reloc		is ind26	[ reloc=((inst_start+4) $and 0xfffffffff0000000) | 4*ind26; ]	{ export *:4 reloc; }
+Rel16: reloc        is off16    [ reloc=inst_start+4+4*off16; ]                                 { export *:4 reloc; }
+Abs26: reloc        is ind26    [ reloc=((inst_start+4) $and 0xfffffffff0000000) | 4*ind26; ]   { export *:4 reloc; }
 
-InsSize: mysize           is msbd & lsb   [ mysize = msbd - lsb + 1; ]      { tmp:1 = mysize; export tmp; }
-ExtSize: mysize           is msbd         [ mysize = msbd + 1; ]            { tmp:1 = mysize; export tmp; }
+InsSize: mysize     is msbd & lsb   [ mysize = msbd - lsb + 1; ]      { tmp:1 = mysize; export tmp; }
+ExtSize: mysize     is msbd         [ mysize = msbd + 1; ]            { tmp:1 = mysize; export tmp; }
 
 # Floating point formats
 fmt1: "S"       is format=0x10   { }
