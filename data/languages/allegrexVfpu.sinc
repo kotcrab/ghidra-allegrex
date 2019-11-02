@@ -389,55 +389,30 @@
 :vflush                           is prime=63 {
 }
 
-# # 0100 1001 000c cc00 iiii iiii iiii iiii
-# :bc2f Rel16                     is prime=18 & copop=8 & cc=0 & nd=0 & tf=0 & Rel16 {
-#     tmp:1 = getCopCondition(2:1, 0:1);
-#     delayslot(1);
-#     if (tmp != 0) goto inst_next;
-#     goto Rel16;
-# }
-# :bc2f cc,Rel16                  is prime=18 & copop=8 & cc & nd=0 & tf=0 & Rel16 {
-#     tmp:1 = getCopCondition(2:1, cc:1);
-#     delayslot(1);
-#     if (tmp != 0) goto inst_next;
-#     goto Rel16;
-# }
-# # 0100 1001 000c cc10 iiii iiii iiii iiii
-# :bc2fl Rel16                    is prime=18 & copop=8 & cc=0 & nd=1 & tf=0 & Rel16 {
-#     tmp:1 = getCopCondition(2:1, 0:1);
-#     if (tmp != 0) goto inst_next;
-#     delayslot(1);
-#     goto Rel16;
-# }
-# :bc2fl cc,Rel16                 is prime=18 & copop=8 & cc & nd=1 & tf=0 & Rel16 {
-#     tmp:1 = getCopCondition(2:1, cc:1);
-#     if (tmp != 0) goto inst_next;
-#     delayslot(1);
-#     goto Rel16;
-# }
-# # 0100 1001 000c cc01 iiii iiii iiii iiii
-# :bc2t Rel16                     is prime=18 & copop=8 & cc=0 & nd=0 & tf=1 & Rel16 {
-#     tmp:1 = getCopCondition(2:1, 0:1);
-#     delayslot(1);
-#     if (tmp == 0) goto inst_next;
-#     goto Rel16;
-# }
-# :bc2t cc,Rel16                  is prime=18 & copop=8 & cc & nd=0 & tf=1 & Rel16 {
-#     tmp:1 = getCopCondition(2:1, cc:1);
-#     delayslot(1);
-#     if (tmp == 0) goto inst_next;
-#     goto Rel16;
-# }
-# # 0100 1001 000c cc11 iiii iiii iiii iiii
-# :bc2tl Rel16                    is prime=18 & copop=8 & cc=0 & nd=1 & tf=1 & Rel16 {
-#     tmp:1 = getCopCondition(2:1, 0:1);
-#     if (tmp == 0) goto inst_next;
-#     delayslot(1);
-#     goto Rel16;
-# }
-# :bc2tl cc,Rel16                 is prime=18 & copop=8 & cc & nd=1 & tf=1 & Rel16 {
-#     tmp:1 = getCopCondition(2:1, cc:1);
-#     if (tmp == 0) goto inst_next;
-#     delayslot(1);
-#     goto Rel16;
-# }
+:bvf vcc, Rel16                  is prime=18 & copop = 8 & vndtf = 0 & vcc & Rel16 {
+    tmp:1 = getCopCondition(2:1, vcc:1);
+    delayslot(1);
+    if (tmp != 0) goto inst_next;
+    goto Rel16;
+}
+
+:bvfl vcc, Rel16                  is prime=18 & copop = 8 & vndtf = 2 & vcc & Rel16 {
+    tmp:1 = getCopCondition(2:1, vcc:1);
+    if (tmp != 0) goto inst_next;
+    delayslot(1);
+    goto Rel16;
+}
+
+:bvt vcc, Rel16                  is prime=18 & copop = 8 & vndtf = 1 & vcc & Rel16 {
+    tmp:1 = getCopCondition(2:1, vcc:1);
+    delayslot(1);
+    if (tmp == 0) goto inst_next;
+    goto Rel16;
+}
+
+:bvtl vcc, Rel16                  is prime=18 & copop = 8 & vndtf = 3 & vcc & Rel16 {
+    tmp:1 = getCopCondition(2:1, vcc:1);
+    if (tmp == 0) goto inst_next;
+    delayslot(1);
+    goto Rel16;
+}

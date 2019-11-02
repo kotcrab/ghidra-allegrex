@@ -435,7 +435,7 @@
 }
 
 # 0100 0001 110t tttt dddd d000 0000 0000
-:wrpgpr  RD, RTsrc              is prime=16 & format=14 & RTsrc & RD & bigfunct=0  {
+:wrpgpr  RD, RTsrc              is prime=16 & rs=14 & bigfunct=0 & RTsrc & RD  {
     setShadow(RD, RTsrc);
 }
 
@@ -727,6 +727,9 @@
 }
 
 # Allegrex specific
+
+:mfc0 RT, cop0d                 is prime=16 & mfmc0=0 & bigfunct=0 & RT & cop0d unimpl
+:mtc0 RT, cop0d                 is prime=16 & mfmc0=4 & bigfunct=0 & RT & cop0d unimpl
 
 :clz RD, RSsrc                  is prime=0 & sa=0 & rt=0 & fct=22 & RD & RSsrc {
     RD = countLeadingZeros( RSsrc );

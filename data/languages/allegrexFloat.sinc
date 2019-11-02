@@ -80,7 +80,7 @@
 }
 
 # 0100 0100 100t tttt dddd d000 0000 0000
-:mtc1 RTsrc, fs                 is prime=17 & copop=4 & RTsrc & fs & bigfunct=0 {
+:mtc1 RTsrc, fs             is prime=17 & copop=4 & RTsrc & fs & bigfunct=0 {
     # Move 32-bits of RTsrc to Low Half of FPR fs
     fs[0,32] = RTsrc:4;
 }
@@ -95,20 +95,10 @@
     fd[0,32] = f- fs:4;
 }
 
-# 0100 01ff fff0 0000 ssss sddd dd01 0101
-:recip.s fd, fs             is prime=17 & ft=0 & fct=21 & fmt2 & fd & fs  & format=0x10 {
-    fd[0,32] = 1:4 f/ fs:4;
-}
-
 # 0100 01ff fff0 0000 ssss sddd dd00 1100
 :round.w.s fd, fs           is prime=17 & ft=0 & fct=12 & fmt2 & fd & fs & format=0x10 {
     fd_tmp:4 = round(fs:4);
     fd = trunc(fd_tmp);
-}
-
-# 0100 01ff fff0 0000 ssss sddd dd01 0110
-:rsqrt.s fd, fs             is prime=17 & ft=0 & fct=22 & fmt2 & fd & fs & format=0x10 {
-    fd[0,32] = 1:4 f/ sqrt(fs:4);
 }
 
 # 0100 01ff fff0 0000 ssss sddd dd00 0100
@@ -248,11 +238,4 @@ macro trapIfSNaN(x1, x2) { }
 :c.ngt.s fs, ft              is prime=17 & fct=63 & fmt1 & format=0x10 & fs & ft {
     trapIfNaN(fs:4, ft:4);
     fcsr[23,1] = (fs:4 f<= ft:4) || nan(fs:4) || nan(ft:4); # Less than or equal or NaN
-}
-
-# 0100 01ff ffft tttt ssss sddd dd01 0010
-:movz.s fd, fs, RTsrc       is prime=17 & fct=18 & fmt1 & fd & fs & RTsrc & format=0x10 {
-    if (RTsrc != 0) goto <done>;
-    fd[0,32] = fs:4;
-    <done>
 }

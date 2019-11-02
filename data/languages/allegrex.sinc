@@ -90,6 +90,7 @@ define token instr(32)
     tf          = (16,16)
     szero       = (11,25)
     rd          = (11,15)
+    cop0d       = (11,15)
     fs          = (11,15)
     fs_unk      = (11,15)
     fs_fcr      = (11,15)
@@ -150,7 +151,8 @@ define token instr(32)
     vwbnimm8    = (16,23)
     vwbnop2     = (24,25)
     vtop4       = (16,19)
-    vcc         = (19,21)
+    vndtf       = (16,17)
+    vcc         = (18,20)
 ;
 
 attach variables [ rs rt rd base ] [
@@ -163,6 +165,14 @@ attach variables [ rs rt rd base ] [
 attach variables [ fs ft fd fr ] [
     f0  f1  f2  f3  f4  f5  f6  f7  f8  f9  f10 f11 f12 f13 f14 f15
     f16 f17 f18 f19 f20 f21 f22 f23 f24 f25 f26 f27 f28 f29 f30 f31
+];
+
+# FIXME rename to kernel regs
+attach names [ cop0d ] [
+    zero  at  v0  v1  a0  a1  a2  a3
+    t0    t1  t2  t3  t4  t5  t6  t7
+    s0    s1  s2  s3  s4  s5  s6  s7
+    t8    t9  k0  k1  gp  sp  fp  ra
 ];
 
 # Only a few Floating Point Control (FCR) registers are defined
@@ -295,6 +305,10 @@ attach names [ vd_ctl ] [
     V70 V71 V72 V73 V74 V75 V76 V77 V78 V79 V7A V7B V7C V7D V7E V7F
 ];
 
+attach names [ vcc ] [
+   "CC[0]" "CC[1]" "CC[2]" "CC[3]" "CC[4]" "CC[5]" "CC[6]" "CC[7]"
+];
+
 # GPR
 
 RD: rd          is rd           { export rd; }
@@ -347,6 +361,7 @@ define pcodeop syscall;
 define pcodeop cacheOp;
 define pcodeop wsbw;
 define pcodeop bitrev;
+define pcodeop getCopCondition;
 define pcodeop setCopControlWord;       # setCopControlWord(cop_num, reg_num, value)
 define pcodeop getCopControlWord;       # getCopControlWord(cop_num, reg_num)
 define pcodeop countLeadingOnes;        # countLeadingOnes(val)
