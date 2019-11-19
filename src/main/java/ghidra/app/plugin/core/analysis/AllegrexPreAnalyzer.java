@@ -18,7 +18,6 @@ package ghidra.app.plugin.core.analysis;
 import ghidra.app.services.AbstractAnalyzer;
 import ghidra.app.services.AnalysisPriority;
 import ghidra.app.services.AnalyzerType;
-import ghidra.app.util.InstructionSpaceTest;
 import ghidra.app.util.importer.MessageLog;
 import ghidra.program.disassemble.Disassembler;
 import ghidra.program.model.address.Address;
@@ -63,7 +62,6 @@ public class AllegrexPreAnalyzer extends AbstractAnalyzer {
     @Override
     public boolean canAnalyze (Program program) {
         Processor processor = program.getLanguage().getProcessor();
-        new InstructionSpaceTest(program);
         return (processor.equals(Processor.findOrPossiblyCreateProcessor("Allegrex")));
     }
 

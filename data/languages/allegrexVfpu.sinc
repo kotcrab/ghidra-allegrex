@@ -416,3 +416,8 @@
     delayslot(1);
     goto Rel16;
 }
+
+:mfv rt, vd_s                    is prime=18 & copop = 3 & vc0 = 0  & rt & vd_s   unimpl
+:mfvc rt, vd_ctl                 is prime=18 & copop = 3 & vc0 != 0 & rt & vd_ctl unimpl
+:mtv rt, vd_s                    is prime=18 & copop = 7 & vc0 = 0  & rt & vd_s   unimpl
+:mtvc rt, vd_ctl                 is prime=18 & copop = 7 & vc0 != 0 & rt & vd_ctl unimpl
