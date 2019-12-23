@@ -45,35 +45,35 @@
 :vdet.t vd_s, vs_t, vt_t          is prime=25 & vop3 = 6 & vc1 = 1 & vc0 = 0 & vd_s & vs_t & vt_t   unimpl
 :vdet.q vd_s, vs_q, vt_q          is prime=25 & vop3 = 6 & vc1 = 1 & vc0 = 1 & vd_s & vs_q & vt_q   unimpl
 
-:vcmp.s vd_cmp, vs_s, vt_s        is prime=26 & vop3 = 0 & vc1 = 0 & vc0 = 0 & vd_cmp & vs_s & vt_s   unimpl
-:vcmp.p vd_cmp, vs_p, vt_p        is prime=26 & vop3 = 0 & vc1 = 0 & vc0 = 1 & vd_cmp & vs_p & vt_p   unimpl
-:vcmp.t vd_cmp, vs_t, vt_t        is prime=26 & vop3 = 0 & vc1 = 1 & vc0 = 0 & vd_cmp & vs_t & vt_t   unimpl
-:vcmp.q vd_cmp, vs_q, vt_q        is prime=26 & vop3 = 0 & vc1 = 1 & vc0 = 1 & vd_cmp & vs_q & vt_q   unimpl
+:vcmp.s vd_cmp, vs_s, vt_s        is prime=27 & vop3 = 0 & vc1 = 0 & vc0 = 0 & vd_cmp & vs_s & vt_s   unimpl
+:vcmp.p vd_cmp, vs_p, vt_p        is prime=27 & vop3 = 0 & vc1 = 0 & vc0 = 1 & vd_cmp & vs_p & vt_p   unimpl
+:vcmp.t vd_cmp, vs_t, vt_t        is prime=27 & vop3 = 0 & vc1 = 1 & vc0 = 0 & vd_cmp & vs_t & vt_t   unimpl
+:vcmp.q vd_cmp, vs_q, vt_q        is prime=27 & vop3 = 0 & vc1 = 1 & vc0 = 1 & vd_cmp & vs_q & vt_q   unimpl
 
-:vmin.s vd_s, vs_s, vt_s          is prime=26 & vop3 = 2 & vc1 = 0 & vc0 = 0 & vd_s & vs_s & vt_s   unimpl
-:vmin.p vd_p, vs_p, vt_p          is prime=26 & vop3 = 2 & vc1 = 0 & vc0 = 1 & vd_p & vs_p & vt_p   unimpl
-:vmin.t vd_t, vs_t, vt_t          is prime=26 & vop3 = 2 & vc1 = 1 & vc0 = 0 & vd_t & vs_t & vt_t   unimpl
-:vmin.q vd_q, vs_q, vt_q          is prime=26 & vop3 = 2 & vc1 = 1 & vc0 = 1 & vd_q & vs_q & vt_q   unimpl
+:vmin.s vd_s, vs_s, vt_s          is prime=27 & vop3 = 2 & vc1 = 0 & vc0 = 0 & vd_s & vs_s & vt_s   unimpl
+:vmin.p vd_p, vs_p, vt_p          is prime=27 & vop3 = 2 & vc1 = 0 & vc0 = 1 & vd_p & vs_p & vt_p   unimpl
+:vmin.t vd_t, vs_t, vt_t          is prime=27 & vop3 = 2 & vc1 = 1 & vc0 = 0 & vd_t & vs_t & vt_t   unimpl
+:vmin.q vd_q, vs_q, vt_q          is prime=27 & vop3 = 2 & vc1 = 1 & vc0 = 1 & vd_q & vs_q & vt_q   unimpl
 
-:vmax.s vd_s, vs_s, vt_s          is prime=26 & vop3 = 3 & vc1 = 0 & vc0 = 0 & vd_s & vs_s & vt_s   unimpl
-:vmax.p vd_p, vs_p, vt_p          is prime=26 & vop3 = 3 & vc1 = 0 & vc0 = 1 & vd_p & vs_p & vt_p   unimpl
-:vmax.t vd_t, vs_t, vt_t          is prime=26 & vop3 = 3 & vc1 = 1 & vc0 = 0 & vd_t & vs_t & vt_t   unimpl
-:vmax.q vd_q, vs_q, vt_q          is prime=26 & vop3 = 3 & vc1 = 1 & vc0 = 1 & vd_q & vs_q & vt_q   unimpl
+:vmax.s vd_s, vs_s, vt_s          is prime=27 & vop3 = 3 & vc1 = 0 & vc0 = 0 & vd_s & vs_s & vt_s   unimpl
+:vmax.p vd_p, vs_p, vt_p          is prime=27 & vop3 = 3 & vc1 = 0 & vc0 = 1 & vd_p & vs_p & vt_p   unimpl
+:vmax.t vd_t, vs_t, vt_t          is prime=27 & vop3 = 3 & vc1 = 1 & vc0 = 0 & vd_t & vs_t & vt_t   unimpl
+:vmax.q vd_q, vs_q, vt_q          is prime=27 & vop3 = 3 & vc1 = 1 & vc0 = 1 & vd_q & vs_q & vt_q   unimpl
 
-:vscmp.s vd_s, vs_s, vt_s         is prime=26 & vop3 = 5 & vc1 = 0 & vc0 = 0 & vd_s & vs_s & vt_s   unimpl
-:vscmp.p vd_p, vs_p, vt_p         is prime=26 & vop3 = 5 & vc1 = 0 & vc0 = 1 & vd_p & vs_p & vt_p   unimpl
-:vscmp.t vd_t, vs_t, vt_t         is prime=26 & vop3 = 5 & vc1 = 1 & vc0 = 0 & vd_t & vs_t & vt_t   unimpl
-:vscmp.q vd_q, vs_q, vt_q         is prime=26 & vop3 = 5 & vc1 = 1 & vc0 = 1 & vd_q & vs_q & vt_q   unimpl
+:vscmp.s vd_s, vs_s, vt_s         is prime=27 & vop3 = 5 & vc1 = 0 & vc0 = 0 & vd_s & vs_s & vt_s   unimpl
+:vscmp.p vd_p, vs_p, vt_p         is prime=27 & vop3 = 5 & vc1 = 0 & vc0 = 1 & vd_p & vs_p & vt_p   unimpl
+:vscmp.t vd_t, vs_t, vt_t         is prime=27 & vop3 = 5 & vc1 = 1 & vc0 = 0 & vd_t & vs_t & vt_t   unimpl
+:vscmp.q vd_q, vs_q, vt_q         is prime=27 & vop3 = 5 & vc1 = 1 & vc0 = 1 & vd_q & vs_q & vt_q   unimpl
 
-:vsge.s vd_s, vs_s, vt_s          is prime=26 & vop3 = 6 & vc1 = 0 & vc0 = 0 & vd_s & vs_s & vt_s   unimpl
-:vsge.p vd_p, vs_p, vt_p          is prime=26 & vop3 = 6 & vc1 = 0 & vc0 = 1 & vd_p & vs_p & vt_p   unimpl
-:vsge.t vd_t, vs_t, vt_t          is prime=26 & vop3 = 6 & vc1 = 1 & vc0 = 0 & vd_t & vs_t & vt_t   unimpl
-:vsge.q vd_q, vs_q, vt_q          is prime=26 & vop3 = 6 & vc1 = 1 & vc0 = 1 & vd_q & vs_q & vt_q   unimpl
+:vsge.s vd_s, vs_s, vt_s          is prime=27 & vop3 = 6 & vc1 = 0 & vc0 = 0 & vd_s & vs_s & vt_s   unimpl
+:vsge.p vd_p, vs_p, vt_p          is prime=27 & vop3 = 6 & vc1 = 0 & vc0 = 1 & vd_p & vs_p & vt_p   unimpl
+:vsge.t vd_t, vs_t, vt_t          is prime=27 & vop3 = 6 & vc1 = 1 & vc0 = 0 & vd_t & vs_t & vt_t   unimpl
+:vsge.q vd_q, vs_q, vt_q          is prime=27 & vop3 = 6 & vc1 = 1 & vc0 = 1 & vd_q & vs_q & vt_q   unimpl
 
-:vslt.s vd_s, vs_s, vt_s          is prime=26 & vop3 = 7 & vc1 = 0 & vc0 = 0 & vd_s & vs_s & vt_s   unimpl
-:vslt.p vd_p, vs_p, vt_p          is prime=26 & vop3 = 7 & vc1 = 0 & vc0 = 1 & vd_p & vs_p & vt_p   unimpl
-:vslt.t vd_t, vs_t, vt_t          is prime=26 & vop3 = 7 & vc1 = 1 & vc0 = 0 & vd_t & vs_t & vt_t   unimpl
-:vslt.q vd_q, vs_q, vt_q          is prime=26 & vop3 = 7 & vc1 = 1 & vc0 = 1 & vd_q & vs_q & vt_q   unimpl
+:vslt.s vd_s, vs_s, vt_s          is prime=27 & vop3 = 7 & vc1 = 0 & vc0 = 0 & vd_s & vs_s & vt_s   unimpl
+:vslt.p vd_p, vs_p, vt_p          is prime=27 & vop3 = 7 & vc1 = 0 & vc0 = 1 & vd_p & vs_p & vt_p   unimpl
+:vslt.t vd_t, vs_t, vt_t          is prime=27 & vop3 = 7 & vc1 = 1 & vc0 = 0 & vd_t & vs_t & vt_t   unimpl
+:vslt.q vd_q, vs_q, vt_q          is prime=27 & vop3 = 7 & vc1 = 1 & vc0 = 1 & vd_q & vs_q & vt_q   unimpl
 
 :vmov.s vd_s, vs_s                is prime=52 & vop3 = 0 & vt = 0 & vc1 = 0 & vc0 = 0 & vd_s & vs_s   unimpl
 :vmov.p vd_p, vs_p                is prime=52 & vop3 = 0 & vt = 0 & vc1 = 0 & vc0 = 1 & vd_p & vs_p   unimpl
