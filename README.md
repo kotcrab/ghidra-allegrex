@@ -25,7 +25,7 @@ Prebuilt package will be provided after more features are implemented.
 
 ### Building
 
-Note this project is still work  in progress and breaking changes are likely.
+Note this project is still work in progress and breaking changes are likely.
 
 `GHIDRA_INSTALL_DIR` environment variable must be set to Ghidra root installation directory.
 
