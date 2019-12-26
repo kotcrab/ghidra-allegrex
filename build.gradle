@@ -61,6 +61,10 @@ task ghidraInstall {
             into allegrexOut + "/data"
         }
         copy {
+            from "ghidra_scripts"
+            into allegrexOut + "/ghidra_scripts"
+        }
+        copy {
             from "build/libs"
             into allegrexOut + "/lib"
             include "ghidra-allegrex-all.jar"

@@ -11,9 +11,10 @@ Implemented:
 - Support for PSP specific ELF relocation section
   - Image rebase after loading is also supported
 - Disassembly of VFPU instructions (see limitations bellow)
+- Script for importing PPSSPP `.sym` files (importing function labels)
 
 To be done:
-- Importing and exporting `.sym` files from PPSSPP
+- Exporting `.sym` files for PPSSPP
 
 Future ideas:
 - Integration with PPSSPP debugger
@@ -45,7 +46,7 @@ Note this project is still work in progress and breaking changes are likely.
 
 After `gradle shadowJar` you can manually install extension by copying:
  - `build/libs/ghidra-allegrex-all.jar` file to `GHIDRA_INSTALL_DIR/Ghidra/Processors/Allegrex/lib/Allegrex.jar`
- - `data` directory to `GHIDRA_INSTALL_DIR/Ghidra/Processors/Allegrex/`
+ - `data` and `ghidra_scripts` directories to `GHIDRA_INSTALL_DIR/Ghidra/Processors/Allegrex/`
 
 Ghidra should automatically recompile Sleigh files when importing an executable, if not run:
 ```bash
