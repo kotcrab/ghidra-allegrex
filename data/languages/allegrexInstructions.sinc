@@ -123,7 +123,7 @@
 :eret                           is prime=16 & bit25=1 & fct=24 & copfill=0      unimpl
 
 # 0111 11ss ssst tttt mmmm mLLL LL00 0000
-:ext RT, RSsrc, lsb, ExtSize    is prime=0x1F & fct=0x0 & RT & RSsrc & lsb & msbd & ExtSize {
+:ext RT, RSsrc, lsb, ExtSize    is prime=31 & fct=0 & RT & RSsrc & lsb & msbd & ExtSize {
     # Extract Bit Field
     # Note that msbd = size - 1
     rs_tmp:4 = RSsrc << (32 - (msbd + lsb + 1));
@@ -132,7 +132,7 @@
 }
 
 # 0111 11ss ssst tttt mmmm mLLL LL00 0100
-:ins RT, RSsrc, lsb, InsSize    is prime=0x1F & fct=0x04 & RT & RTsrc & RSsrc & lsb & msbd & InsSize {
+:ins RT, RSsrc, lsb, InsSize    is prime=31 & fct=4 & RT & RTsrc & RSsrc & lsb & msbd & InsSize {
     # Insert Bit Field
     tmpa:4 = -1;
     tmpa = tmpa >> (4 - InsSize);
@@ -142,6 +142,34 @@
     tmpb = tmpb << lsb;
     RT = (RT & tmpa) | tmpb;
 }
+
+# 0111 1100 000t tttt dddd d000 0011 1011
+:rdhwr RT, RDsrc                is prime=31 & rs=0 & fct2=0 & fct=59 & RT & RDsrc {
+    RT = getHWRegister(RDsrc);
+}
+
+# 0111 1100 000t tttt dddd d000 1010 0000
+:wsbh RD, RTsrc                 is prime=31 & (fct=32 | fct=24) & fct2=2 & rs=0 & RTsrc & RD {
+    tmp1:4 = RTsrc & 0xff;
+    tmp2:4 = (RTsrc >> 8) & 0xff;
+    tmp3:4 = (RTsrc >> 16) & 0xff;
+    tmp4:4 = (RTsrc >> 24) & 0xff;
+    RD = (tmp3 << 24) | (tmp4 << 16) | (tmp1 << 8) | (tmp2);
+}
+:wsbw RD, RTsrc                 is prime=31 & (fct=32 | fct=24) & fct2=3 & rs =0 & RTsrc & RD  unimpl
+
+# 0111 1100 000t tttt dddd d100 0010 0000
+:seb RD, RTsrc                  is prime=31 & (fct=32 | fct=24) & fct2=16 & rs=0 & RTsrc & RD {
+    RD = sext( RTsrc:1 );
+}
+
+# 0111 1100 000t tttt dddd d110 0010 0000
+:seh RD, RTsrc                  is prime=31 & (fct=32 | fct=24) & fct2=24 & rs=0 & RTsrc & RD {
+    RD = sext( RTsrc:2 );
+}
+
+# 0111 1100 000t tttt dddd d100 0010 0000
+:bitrev RD, RTsrc               is prime=31 & (fct=32 | fct=24) & fct2=20 & rs=0 & RTsrc & RD  unimpl
 
 # 0000 10aa aaaa aaaa aaaa aaaa aaaa aaaa
 :j Abs26                        is prime=2 & Abs26 {
@@ -250,11 +278,6 @@
     RT = immed;
 }
 
-# 0111 1100 000t tttt dddd d000 0011 1011
-:rdhwr RT, RDsrc                is prime=31 & rs=0 & fct2=0 & fct=59 & RT & RDsrc {
-    RT = getHWRegister(RDsrc);
-}
-
 # 0100 0001 010t tttt dddd d000 0000 0000
 :rdpgpr RD, RT                  is prime=16 & rs=10 & bigfunct=0 & RD & RT {
     RD = getShadow(RT);
@@ -278,16 +301,6 @@
 # 1010 00bb bbbt tttt iiii iiii iiii iiii
 :sb RTsrc, OFF_BASE             is prime=40 & OFF_BASE & RTsrc {
     *[ram]:1 OFF_BASE = RTsrc:1;
-}
-
-# 0111 1100 000t tttt dddd d100 0010 0000
-:seb RD, RTsrc                  is prime=31 & rs=0 & fct2=16 & fct=32 & RD & RTsrc {
-    RD = sext( RTsrc:1 );
-}
-
-# 0111 1100 000t tttt dddd d110 0010 0000
-:seh RD, RTsrc                  is prime=31 & rs=0 & fct2=24 & fct=32 & RD & RTsrc {
-    RD = sext( RTsrc:2 );
 }
 
 # 1010 01bb bbbt tttt iiii iiii iiii iiii
@@ -437,15 +450,6 @@
 # 0100 0001 110t tttt dddd d000 0000 0000
 :wrpgpr  RD, RTsrc              is prime=16 & rs=14 & bigfunct=0 & RTsrc & RD  {
     setShadow(RD, RTsrc);
-}
-
-# 0111 1100 000t tttt dddd d000 1010 0000
-:wsbh RD, RTsrc                 is prime=31 & format=0 & RTsrc & RD & wsbh=2 & bshfl=32 {
-    tmp1:4 = RTsrc & 0xff;
-    tmp2:4 = (RTsrc >> 8) & 0xff;
-    tmp3:4 = (RTsrc >> 16) & 0xff;
-    tmp4:4 = (RTsrc >> 24) & 0xff;
-    RD = (tmp3 << 24) | (tmp4 << 16) | (tmp1 << 8) | (tmp2);
 }
 
 # 0000 00ss ssst tttt dddd d000 0010 0110
@@ -622,14 +626,6 @@
     lo = RSsrc;
 }
 
-# 0111 00ss ssst tttt dddd d000 0000 0010
-:mul RD, RSsrc, RTsrc           is prime=0x1C & sa=0x0 & fct=0x02 & RD & RSsrc & RTsrc {
-    tmp1:8 = sext( RSsrc );
-    tmp2:8 = sext( RTsrc );
-    prod:8 = tmp1 * tmp2;
-    RD = prod:4;
-}
-
 # 0000 00ss ssst tttt 0000 0000 0001 1000
 :mult RSsrc, RTsrc              is prime=0 & fct=24 & RSsrc & RTsrc & rd=0 & sa=0 {
     tmp1:8 = sext( RSsrc );
@@ -746,6 +742,9 @@
 :min RD, RSsrc, RTsrc           is prime=0 & sa=0 & fct=45 & RD & RSsrc & RTsrc {
     RD = zext(RSsrc:4 < RTsrc:4);
 }
+
+:mfic                           is prime=28 & sa=0 & rd=0 & rs=0 & rt=0 & fct=36 unimpl
+:mtic                           is prime=28 & sa=0 & rd=0 & rs=0 & rt=0 & fct=38 unimpl
 
 :halt                           is prime=28 & sa=0 & rd=0 & rs=0 & rt=0 & fct=0 {
 }

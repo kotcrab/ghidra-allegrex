@@ -105,10 +105,8 @@ define token instr(32)
     lsb         = (6,10)
     fct2        = (6,10)
     zero5       = (6,10)
-    wsbh        = (6,10)
     bigfunct    = (0,10)
     fct         = (0,5)
-    bshfl       = (0,5)
     bit6        = (6,6)
     zero3       = (0,4)
     bit5        = (5,5)
@@ -143,16 +141,23 @@ define token instr(32)
     vd_te       = (0,6)
     vd_cmp      = (0,6)
     vd_ctl      = (0,6)
+    vt_cst      = (16,20)
     vc0         = (7,7)
     vc1         = (15,15)
     vop3        = (23,25)
     vtop2       = (21,22)
     vtimm5      = (16,20)
     vwbnimm8    = (16,23)
-    vwbnop2     = (24,25)
+    vop2        = (24,25)
     vtop4       = (16,19)
     vndtf       = (16,17)
     vcc         = (18,20)
+    bit1        = (1,1)
+    vms_h       = (0,1)
+    vmq_h       = (0,0)
+    vm_l        = (16,20)
+    vcmov_op    = (19,21)
+    vcmov_cc    = (16,18)
 ;
 
 attach variables [ rs rt rd base ] [
@@ -167,7 +172,7 @@ attach variables [ fs ft fd fr ] [
     f16 f17 f18 f19 f20 f21 f22 f23 f24 f25 f26 f27 f28 f29 f30 f31
 ];
 
-# FIXME rename to kernel regs
+# TODO rename to kernel regs?
 attach names [ cop0d ] [
     zero  at  v0  v1  a0  a1  a2  a3
     t0    t1  t2  t3  t4  t5  t6  t7
@@ -273,14 +278,14 @@ attach names [ vt_tm vs_tm vd_tm ] [
 ];
 
 attach names [ vt_te vs_te vd_te ] [
-    R000.q R001.q R002.q R003.q R100.q R101.q R102.q R103.q R200.q R201.q R202.q R203.q R300.q R301.q R302.q R303.q
-    R400.q R401.q R402.q R403.q R500.q R501.q R502.q R503.q R600.q R601.q R602.q R603.q R700.q R701.q R702.q R703.q
-    C000.q C010.q C020.q C030.q C100.q C110.q C120.q C130.q C200.q C210.q C220.q C230.q C300.q C310.q C320.q C330.q
-    C400.q C410.q C420.q C430.q C500.q C510.q C520.q C530.q C600.q C610.q C620.q C630.q C700.q C710.q C720.q C730.q
-    R010.q R011.q R012.q R013.q R110.q R111.q R112.q R113.q R210.q R211.q R212.q R213.q R310.q R311.q R312.q R313.q
-    R410.q R411.q R412.q R413.q R510.q R511.q R512.q R513.q R610.q R611.q R612.q R613.q R710.q R711.q R712.q R713.q
-    C001.q C011.q C021.q C031.q C101.q C111.q C121.q C131.q C201.q C211.q C221.q C231.q C301.q C311.q C321.q C331.q
-    C401.q C411.q C421.q C431.q C501.q C511.q C521.q C531.q C601.q C611.q C621.q C631.q C701.q C711.q C721.q C731.q
+    E000.q E001.q E002.q E003.q E100.q E101.q E102.q E103.q E200.q E201.q E202.q E203.q E300.q E301.q E302.q E303.q
+    E400.q E401.q E402.q E403.q E500.q E501.q E502.q E503.q E600.q E601.q E602.q E603.q E700.q E701.q E702.q E703.q
+    M000.q M010.q M020.q M030.q M100.q M110.q M120.q M130.q M200.q M210.q M220.q M230.q M300.q M310.q M320.q M330.q
+    M400.q M410.q M420.q M430.q M500.q M510.q M520.q M530.q M600.q M610.q M620.q M630.q M700.q M710.q M720.q M730.q
+    E010.q E011.q E012.q E013.q E110.q E111.q E112.q E113.q E210.q E211.q E212.q E213.q E310.q E311.q E312.q E313.q
+    E410.q E411.q E412.q E413.q E510.q E511.q E512.q E513.q E610.q E611.q E612.q E613.q E710.q E711.q E712.q E713.q
+    M001.q M011.q M021.q M031.q M101.q M111.q M121.q M131.q M201.q M211.q M221.q M231.q M301.q M311.q M321.q M331.q
+    M401.q M411.q M421.q M431.q M501.q M511.q M521.q M531.q M601.q M611.q M621.q M631.q M701.q M711.q M721.q M731.q
 ];
 
 attach names [ vd_cmp ] [
@@ -303,6 +308,13 @@ attach names [ vd_ctl ] [
     S402.s S412.s S422.s S432.s S502.s S512.s S522.s S532.s S602.s S612.s S622.s S632.s S702.s S712.s S722.s S732.s
     S003.s S013.s S023.s S033.s S103.s S113.s S123.s S133.s S203.s S213.s S223.s S233.s S303.s S313.s S323.s S333.s
     S403.s S413.s S423.s S433.s S503.s S513.s S523.s S533.s S603.s S613.s S623.s S633.s S703.s S713.s S723.s S733.s
+];
+
+attach names [ vt_cst ] [
+    "(undef)" "MaxFloat" "Sqrt(2)"  "Sqrt(1/2)"  "2/Sqrt(PI)" "2/PI"      "1/PI"    "PI/4"
+    "PI/2"    "PI"       "e"        "Log2(e)"    "Log10(e)"   "ln(2)"     "ln(10)"  "2*PI"
+    "PI/6"    "Log10(2)" "Log2(10)" "Sqrt(3)/2"  "(undef)"    "(undef)"   "(undef)" "(undef)"
+    "(undef)" "(undef)"  "(undef)"  "(undef)"    "(undef)"    "(undef)"   "(undef)" "(undef)"
 ];
 
 attach names [ vcc ] [
@@ -333,13 +345,17 @@ macro ValCast(dest,src) {
     dest = src;
 }
 
-OFF_BASE:   simmed(base)    is simmed & base    { tmp:4 = base + simmed; tmpscaled:4 = 0; ValCast(tmpscaled,tmp); export tmpscaled; }
+OFF_BASE:   simmed(base)    is simmed & base { tmp:4 = base + simmed; tmpscaled:4 = 0; ValCast(tmpscaled,tmp); export tmpscaled; }
+OFF_VBASE:  vsimmed(base)   is simmed & base [ vsimmed = simmed & 0xFFFC; ] { export *:2 vsimmed; }
 
 Rel16: reloc        is off16    [ reloc=inst_start+4+4*off16; ]                                 { export *:4 reloc; }
 Abs26: reloc        is ind26    [ reloc=((inst_start+4) $and 0xfffffffff0000000) | 4*ind26; ]   { export *:4 reloc; }
 
 InsSize: mysize     is msbd & lsb   [ mysize = msbd - lsb + 1; ]      { tmp:1 = mysize; export tmp; }
 ExtSize: mysize     is msbd         [ mysize = msbd + 1; ]            { tmp:1 = mysize; export tmp; }
+
+VfpuMemS: mvts      is vms_h & vm_l [ mvts = (vms_h << 5) | vm_l; ] { export *:1 mvts; }
+VfpuMemQ: mvtq      is vmq_h & vm_l [ mvtq = (vmq_h << 5) | vm_l; ] { export *:1 mvtq; }
 
 # Floating point formats
 fmt1: "S"       is format=0x10   { }

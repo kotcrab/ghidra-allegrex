@@ -142,7 +142,7 @@ public class Allegrex_ElfExtension extends ElfExtension {
     @Override
     public Address evaluateElfSymbol (ElfLoadHelper elfLoadHelper, ElfSymbol elfSymbol, Address address, boolean isExternal) {
 
-        updateNonRelocatebleGotEntries(elfLoadHelper, elfSymbol, address);
+        updateNonRelocatableGotEntries(elfLoadHelper, elfSymbol, address);
 
         if (isExternal) {
             return address;
@@ -163,7 +163,7 @@ public class Allegrex_ElfExtension extends ElfExtension {
      * @param elfSymbol ELF symbol being processed
      * @param address dynamic symbol address
      */
-    private void updateNonRelocatebleGotEntries (ElfLoadHelper elfLoadHelper, ElfSymbol elfSymbol,
+    private void updateNonRelocatableGotEntries (ElfLoadHelper elfLoadHelper, ElfSymbol elfSymbol,
                                                  Address address) {
 
         ElfHeader elfHeader = elfLoadHelper.getElfHeader();
