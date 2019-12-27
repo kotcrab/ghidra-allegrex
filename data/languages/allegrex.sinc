@@ -317,7 +317,7 @@ attach names [ vt_cst ] [
     "(undef)" "(undef)"  "(undef)"  "(undef)"    "(undef)"    "(undef)"   "(undef)" "(undef)"
 ];
 
-attach names [ vcc ] [
+attach names [ vcc vcmov_cc ] [
    "CC[0]" "CC[1]" "CC[2]" "CC[3]" "CC[4]" "CC[5]" "CC[6]" "CC[7]"
 ];
 
