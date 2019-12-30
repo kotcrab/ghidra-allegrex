@@ -21,7 +21,8 @@ Future ideas:
 
 ### Installation
 
-Prebuilt package will be provided after more features are implemented.
+Download prebuilt package from the [Releases](https://github.com/kotcrab/ghidra-allegrex/releases) section.
+After extracting copy the `Allegrex` directory into `GHIDRA_INSTALL_DIR/Ghidra/Processors`
 
 ### VFPU Limitations
 
@@ -36,8 +37,6 @@ but Ghidra shows it as unsigned value.
 - Second operand of `vfim.s` will be shown as integer, should be float. Sleigh does not support float tokens.
 
 ### Building
-
-Note this project is still work in progress and breaking changes are likely.
 
 `GHIDRA_INSTALL_DIR` environment variable must be set to Ghidra root installation directory.
 
