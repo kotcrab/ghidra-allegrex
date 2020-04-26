@@ -32,6 +32,30 @@ define register offset=0x1200 size=4 [
     fir     fccr       fexr     fenr    fcsr
 ];
 
+# Coprocessor 0 control registers
+define register offset=0x2000 size=4 [
+    SavedEPC       SavedErrorEPC SavedStatus  SavedCause
+    SavedV0        SavedV1       SavedErrorV0 SavedErrorV1
+    ExceptionTable ErrorHandler  DebugHandler SyscallHandler
+    SyscallTable   SyscallMax    KernelSP     UserSP
+    TCB            cop0_reg17c   cop0_reg18c  cop0_reg19c
+    cop0_reg20c    cop0_reg21c   cop0_reg22c  cop0_reg23c
+    cop0_reg24c    cop0_reg25c   cop0_reg26c  cop0_reg27c
+    cop0_reg28c    cop0_reg29c   cop0_reg30c  cop0_reg31c
+];
+
+# Coprocessor 0 data registers
+define register offset=0x2100 size=4 [
+    cop0_reg0d  cop0_reg1d    cop0_reg2d  cop0_reg3d
+    cop0_reg4d  cop0_reg5d    cop0_reg6d  cop0_reg7d
+    BadVAddr    Count         cop0_reg10d Compare
+    Status      Cause         EPC         PRId
+    Config      cop0_reg17d   cop0_reg18d cop0_reg19d
+    cop0_reg20d SyscallCode   CpuId       cop0_reg23d
+    cop0_reg24d ExceptionBase cop0_reg26d cop0_reg27d
+    TagLo       TagHi         ErrorEPC    cop0_reg31d
+];
+
 # Some other internal registers
 define register offset=0x3000 size=4 [ hi lo ];
 
@@ -90,6 +114,7 @@ define token instr(32)
     tf          = (16,16)
     szero       = (11,25)
     rd          = (11,15)
+    cop0c       = (11,15)
     cop0d       = (11,15)
     fs          = (11,15)
     fs_unk      = (11,15)
@@ -172,12 +197,26 @@ attach variables [ fs ft fd fr ] [
     f16 f17 f18 f19 f20 f21 f22 f23 f24 f25 f26 f27 f28 f29 f30 f31
 ];
 
-# TODO rename to kernel regs?
-attach names [ cop0d ] [
-    zero  at  v0  v1  a0  a1  a2  a3
-    t0    t1  t2  t3  t4  t5  t6  t7
-    s0    s1  s2  s3  s4  s5  s6  s7
-    t8    t9  k0  k1  gp  sp  fp  ra
+attach variables [ cop0c ] [
+    SavedEPC       SavedErrorEPC SavedStatus  SavedCause
+    SavedV0        SavedV1       SavedErrorV0 SavedErrorV1
+    ExceptionTable ErrorHandler  DebugHandler SyscallHandler
+    SyscallTable   SyscallMax    KernelSP     UserSP
+    TCB            cop0_reg17c   cop0_reg18c  cop0_reg19c
+    cop0_reg20c    cop0_reg21c   cop0_reg22c  cop0_reg23c
+    cop0_reg24c    cop0_reg25c   cop0_reg26c  cop0_reg27c
+    cop0_reg28c    cop0_reg29c   cop0_reg30c  cop0_reg31c
+];
+
+attach variables [ cop0d ] [
+    cop0_reg0d  cop0_reg1d    cop0_reg2d  cop0_reg3d
+    cop0_reg4d  cop0_reg5d    cop0_reg6d  cop0_reg7d
+    BadVAddr    Count         cop0_reg10d Compare
+    Status      Cause         EPC         PRId
+    Config      cop0_reg17d   cop0_reg18d cop0_reg19d
+    cop0_reg20d SyscallCode   CpuId       cop0_reg23d
+    cop0_reg24d ExceptionBase cop0_reg26d cop0_reg27d
+    TagLo       TagHi         ErrorEPC    cop0_reg31d
 ];
 
 # Only a few Floating Point Control (FCR) registers are defined
@@ -335,6 +374,9 @@ RT: rt          is rt           { export rt; }
 RTsrc: rt       is rt           { export rt; }
 RTsrc: rt       is rt & rt=0    { export 0:4; }
 
+COP0C: cop0c    is cop0c        { export cop0c; }
+COP0D: cop0d    is cop0d        { export cop0d; }
+
 macro MemSrcCast(dest,src) {
     dest = *(src);
 }
@@ -380,6 +422,8 @@ define pcodeop bitrev;
 define pcodeop getCopCondition;
 define pcodeop setCopControlWord;       # setCopControlWord(cop_num, reg_num, value)
 define pcodeop getCopControlWord;       # getCopControlWord(cop_num, reg_num)
+define pcodeop setCopReg;               # setCopReg(cop_num, reg_num, value)
+define pcodeop getCopReg;               # getCopReg(cop_num, reg_num)
 define pcodeop countLeadingOnes;        # countLeadingOnes(val)
 define pcodeop countLeadingZeros;       # countLeadingZeros(val)
 define pcodeop getHWRegister;           # getHWRegister(regnum)

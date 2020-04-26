@@ -724,8 +724,21 @@
 
 # Allegrex specific
 
-:mfc0 RT, cop0d                 is prime=16 & mfmc0=0 & bigfunct=0 & RT & cop0d unimpl
-:mtc0 RT, cop0d                 is prime=16 & mfmc0=4 & bigfunct=0 & RT & cop0d unimpl
+:mfc0 RT, COP0D                 is prime=16 & mfmc0=0 & bigfunct=0 & RT & COP0D {
+    RT = getCopReg(0:1, COP0D);
+}
+
+:cfc0 RT, COP0C                 is prime=16 & mfmc0=2 & bigfunct=0 & RT & COP0C {
+    RT = getCopControlWord(0:1, COP0C);
+}
+
+:mtc0 RTsrc, COP0D              is prime=16 & mfmc0=4 & bigfunct=0 & RTsrc & COP0D {
+    setCopReg(0:1, COP0D, RTsrc);
+}
+
+:ctc0 RTsrc, COP0C              is prime=16 & mfmc0=6 & bigfunct=0 & RTsrc & COP0C {
+    setCopControlWord(0:1, COP0C, RTsrc);
+}
 
 :clz RD, RSsrc                  is prime=0 & sa=0 & rt=0 & fct=22 & RD & RSsrc {
     RD = countLeadingZeros( RSsrc );
