@@ -1,7 +1,6 @@
 *.sla
 *.zip
-*.jar
-
+libs/*.jar
 ## Java
 
 *.class
