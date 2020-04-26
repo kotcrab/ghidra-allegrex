@@ -156,7 +156,15 @@
     tmp4:4 = (RTsrc >> 24) & 0xff;
     RD = (tmp3 << 24) | (tmp4 << 16) | (tmp1 << 8) | (tmp2);
 }
-:wsbw RD, RTsrc                 is prime=31 & (fct=32 | fct=24) & fct2=3 & rs =0 & RTsrc & RD  unimpl
+
+# 0111 1100 000t tttt dddd d000 1110 0000
+:wsbw RD, RTsrc                 is prime=31 & (fct=32 | fct=24) & fct2=3 & rs =0 & RTsrc & RD {
+    tmp1:4 = RTsrc & 0xff;
+    tmp2:4 = (RTsrc >> 8) & 0xff;
+    tmp3:4 = (RTsrc >> 16) & 0xff;
+    tmp4:4 = (RTsrc >> 24) & 0xff;
+    RD = (tmp1 << 24) | (tmp2 << 16) | (tmp3 << 8) | (tmp4);
+}
 
 # 0111 1100 000t tttt dddd d100 0010 0000
 :seb RD, RTsrc                  is prime=31 & (fct=32 | fct=24) & fct2=16 & rs=0 & RTsrc & RD {
@@ -169,7 +177,15 @@
 }
 
 # 0111 1100 000t tttt dddd d100 0010 0000
-:bitrev RD, RTsrc               is prime=31 & (fct=32 | fct=24) & fct2=20 & rs=0 & RTsrc & RD  unimpl
+# Algorithm taken from https://graphics.stanford.edu/~seander/bithacks.html#ReverseParallel
+:bitrev RD, RTsrc               is prime=31 & (fct=32 | fct=24) & fct2=20 & rs=0 & RTsrc & RD {
+    tmp:4 = RTsrc;
+    tmp = ((tmp >> 1) & 0x55555555) | ((tmp & 0x55555555) << 1);
+    tmp = ((tmp >> 2) & 0x33333333) | ((tmp & 0x33333333) << 2);
+    tmp = ((tmp >> 4) & 0x0F0F0F0F) | ((tmp & 0x0F0F0F0F) << 4);
+    tmp = ((tmp >> 8) & 0x00FF00FF) | ((tmp & 0x00FF00FF) << 8);
+    RD  = (tmp >> 16)               | (tmp << 16);
+}
 
 # 0000 10aa aaaa aaaa aaaa aaaa aaaa aaaa
 :j Abs26                        is prime=2 & Abs26 {
@@ -756,8 +772,19 @@
     RD = zext(RSsrc:4 < RTsrc:4);
 }
 
-:mfic                           is prime=28 & sa=0 & rd=0 & rs=0 & rt=0 & fct=36 unimpl
-:mtic                           is prime=28 & sa=0 & rd=0 & rs=0 & rt=0 & fct=38 unimpl
+# 0111 0000 000t tttt 0000 0000 0010 0100
+# RD would usually specify "which" IC register to select.
+# However it that the same register is selected for all RD values.
+:mfic RT                        is prime=28 & sa=0 & rd=0 & rs=0 & RT & fct=36 {
+    RT = getInterruptMask();
+}
+
+# 0111 0000 000t tttt 0000 0000 0010 0110
+# RD would usually specify "which" IC register to select.
+# However it that the same register is selected for all RD values.
+:mtic RTsrc                     is prime=28 & sa=0 & rd=0 & rs=0 & RTsrc & fct=38 {
+    setInterruptMask(RTsrc);
+}
 
 :halt                           is prime=28 & sa=0 & rd=0 & rs=0 & rt=0 & fct=0 {
 }
