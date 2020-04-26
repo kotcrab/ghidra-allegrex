@@ -774,14 +774,14 @@
 
 # 0111 0000 000t tttt 0000 0000 0010 0100
 # RD would usually specify "which" IC register to select.
-# However it that the same register is selected for all RD values.
+# However, it seems that the same register is selected for all RD values.
 :mfic RT                        is prime=28 & sa=0 & rd=0 & rs=0 & RT & fct=36 {
     RT = getInterruptMask();
 }
 
 # 0111 0000 000t tttt 0000 0000 0010 0110
 # RD would usually specify "which" IC register to select.
-# However it that the same register is selected for all RD values.
+# However, it seems that the same register is selected for all RD values.
 :mtic RTsrc                     is prime=28 & sa=0 & rd=0 & rs=0 & RTsrc & fct=38 {
     setInterruptMask(RTsrc);
 }
