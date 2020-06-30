@@ -440,11 +440,10 @@ public class Allegrex_ElfExtension extends ElfExtension {
     @Override
     public void processGotPlt (ElfLoadHelper elfLoadHelper, TaskMonitor monitor) throws CancelledException {
         monitor.setMessage("Updating stored relocations...");
-        if (storedRelocationUpdater.finalizeUpdate(elfLoadHelper) == false) {
+        if (storedRelocationUpdater.finalizeUpdate(elfLoadHelper)) {
             elfLoadHelper.log("Failed to fully update stored relocation tables to Allegrex format. " +
                     "Image rebase may not work correctly.");
         }
-//
         monitor.setMessage("Processing PLT/GOT...");
         fixupGot(elfLoadHelper, monitor);
         fixupMipsGot(elfLoadHelper, monitor);

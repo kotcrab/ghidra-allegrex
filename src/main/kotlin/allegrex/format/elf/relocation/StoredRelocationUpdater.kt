@@ -3,9 +3,10 @@ package allegrex.format.elf.relocation
 import ghidra.app.util.bin.format.elf.ElfLoadHelper
 import ghidra.app.util.bin.format.elf.relocation.AllegrexElfRelocationConstants
 import ghidra.program.model.address.Address
+import ghidra.util.Msg
 
 class StoredRelocationUpdater {
-    private val updates = mutableMapOf<Address, PendingUpdate>()
+    private val updates = mutableListOf<PendingUpdate>()
 
     fun resetAndCollectForUpdate(loadHelper: ElfLoadHelper) {
         reset()
@@ -28,7 +29,6 @@ class StoredRelocationUpdater {
 
             table.relocations.forEach { elfReloc ->
                 val reloc = AllegrexRelocation.fromElf(elfHeader, elfReloc, 0)
-                val elfAddr = baseAddr.add(reloc.offset.toLong())
                 val addr = baseAddr.add(reloc.offset.toLong()).add(reloc.relative.toLong())
 
                 val instrValue = memory.getInt(addr)
@@ -39,41 +39,49 @@ class StoredRelocationUpdater {
                     AllegrexElfRelocationConstants.R_MIPS_HI16 -> {
                         deferredHi16.add { linkedLoValue ->
                             val newReloc = AllegrexRelocation.fromElf(elfHeader, elfReloc, linkedLoValue)
-                            updates[elfAddr] = PendingUpdate(newReloc, instrBytes)
+                            updates.add(PendingUpdate(addr, newReloc, instrBytes))
                         }
                     }
                     AllegrexElfRelocationConstants.R_MIPS_LO16 -> {
                         deferredHi16.forEach { commit -> commit((instrValue and 0xFFFF).toShort().toInt()) }
-                        updates[elfAddr] = PendingUpdate(reloc, instrBytes)
+                        updates.add(PendingUpdate(addr, reloc, instrBytes))
                         deferredHi16.clear()
                     }
                     else -> {
-                        updates[elfAddr] = PendingUpdate(reloc, instrBytes)
+                        updates.add(PendingUpdate(addr, reloc, instrBytes))
                     }
                 }
+            }
+
+            if (deferredHi16.size != 0) {
+                Msg.warn(this, "Failed to update some deferred R_MIPS_HI16 relocations")
             }
         }
     }
 
     fun finalizeUpdate(loadHelper: ElfLoadHelper): Boolean {
-        val tables = loadHelper.program.relocationTable
-        val programRelocs = tables.relocations.asSequence().toList()
-        programRelocs.forEach {
-            tables.remove(it)
-        }
-        var allConverted = true
-        programRelocs.forEach {
-            val update = updates[it.address]
-            if (update == null) {
-                allConverted = false
-                return@forEach
+        val table = loadHelper.program.relocationTable
+        table.relocations
+            .asSequence()
+            .toList()
+            .forEach {
+                table.remove(it)
             }
+        var conflict = false
+        updates.forEach { update ->
             val allegrexReloc = update.reloc
-            val newAddr = it.address.add(allegrexReloc.relative.toLong())
-            tables.add(newAddr, allegrexReloc.type, allegrexReloc.toLongArray(), update.origInstr, it.symbolName)
+            if (table.getRelocation(update.address) != null) {
+                Msg.warn(this, "Duplicate relocation at ${update.address}")
+                conflict = true
+            }
+            table.add(update.address, allegrexReloc.type, allegrexReloc.toLongArray(), update.origInstr, null)
         }
-        return allConverted
+        return conflict
     }
 
-    class PendingUpdate(val reloc: AllegrexRelocation, val origInstr: ByteArray)
+    class PendingUpdate(
+        val address: Address,
+        val reloc: AllegrexRelocation,
+        val origInstr: ByteArray
+    )
 }

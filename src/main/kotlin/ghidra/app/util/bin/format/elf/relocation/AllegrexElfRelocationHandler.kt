@@ -32,10 +32,10 @@ open class AllegrexElfRelocationHandler : ElfRelocationHandler() {
 
         val info = relocation.relocationInfo.toInt()
         val type = info and 0xFF
-        val relative = info shr 8 and 0xFF
+        val relativeIndex = info shr 8 and 0xFF
         val relocateToIndex = info shr 16 and 0xFF
 
-        val relativeSect = programHeaders[relative].virtualAddress.toInt()
+        val relativeSect = programHeaders[relativeIndex].virtualAddress.toInt()
         val addr = relocationAddress.add(relativeSect.toLong())
         val relocateToSect = program.imageBase.add(programHeaders[relocateToIndex].virtualAddress).offset.toInt()
 

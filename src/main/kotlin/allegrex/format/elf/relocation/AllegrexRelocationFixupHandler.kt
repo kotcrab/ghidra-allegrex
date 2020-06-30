@@ -28,7 +28,7 @@ class AllegrexRelocationFixupHandler : RelocationFixupHandler() {
     ): Boolean {
         val memory = program.memory
         val allegrexReloc = AllegrexRelocation.fromLongArray(relocation.values)
-        val addr = relocation.address.add(allegrexReloc.relative.toLong())
+        val addr = relocation.address
         val relocateToSect = newImageBase.add(allegrexReloc.relocateTo.toLong()).offset.toInt()
         val initialValue = LittleEndianDataConverter.INSTANCE.getInt(relocation.bytes)
         val newValue: Int
@@ -58,7 +58,9 @@ class AllegrexRelocationFixupHandler : RelocationFixupHandler() {
             }
             else -> return false
         }
-        if (newValue == 0) return false
+        if (newValue == 0) {
+            return false
+        }
         val instructionStasher = MipsInstructionStasher(program, addr)
         memory.setInt(addr, newValue)
         instructionStasher.restore()

@@ -13,19 +13,20 @@ class AllegrexRelocation private constructor(
     val linkedLoValue: Int
 ) {
     companion object {
-        fun fromElf(header: ElfHeader, reloc: ElfRelocation, linkedLoValue: Int): AllegrexRelocation {
-            val info = reloc.relocationInfo.toInt()
+        fun fromElf(header: ElfHeader, relocation: ElfRelocation, linkedLoValue: Int): AllegrexRelocation {
+            val info = relocation.relocationInfo.toInt()
             val type = info and 0xFF
             val relativeIndex = info shr 8 and 0xFF
             val relocateToIndex = info shr 16 and 0xFF
-            val relative = header.programHeaders[relativeIndex].virtualAddress.toInt()
+
+            val relativeSect = header.programHeaders[relativeIndex].virtualAddress.toInt()
             val relocateTo = header.programHeaders[relocateToIndex].virtualAddress.toInt()
             return AllegrexRelocation(
-                reloc.offset.toInt(),
+                relocation.offset.toInt(),
                 type,
                 relativeIndex,
                 relocateToIndex,
-                relative,
+                relativeSect,
                 relocateTo,
                 linkedLoValue
             )
