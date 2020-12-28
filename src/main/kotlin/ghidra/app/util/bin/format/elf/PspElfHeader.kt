@@ -43,7 +43,7 @@ open class PspElfHeader : ElfHeader() {
                     ElfRelocationTable.createElfRelocationTable(
                         reader as FactoryBundledWithBinaryReader, this,
                         section, section.offset, section.address, section.size, section.entrySize,
-                        false, symbolTable, sectionToBeRelocated
+                        false, symbolTable, sectionToBeRelocated, ElfRelocationTable.TableFormat.DEFAULT
                     )
                 )
             }
