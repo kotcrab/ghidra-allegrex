@@ -1,3 +1,6 @@
+#### Version: 1.2 (built with Ghidra 9.2.1)
+- Updated to Ghidra 9.2.1
+
 #### Version: 1.1 (built with Ghidra 9.1.2)
 - [#6](https://github.com/kotcrab/ghidra-allegrex/issues/6) - Rebasing image after importing can fail
   - Note: This fix will only apply to new projects
