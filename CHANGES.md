@@ -1,3 +1,7 @@
+#### Version: 1.3 (built with Ghidra 10.0.2)
+- Updated to Ghidra 10.0.2
+- [#2](https://github.com/kotcrab/ghidra-allegrex/issues/2) - Fixed wrong endianness for `long long` return values
+
 #### Version: 1.2 (built with Ghidra 9.2.1)
 - Updated to Ghidra 9.2.1
 
