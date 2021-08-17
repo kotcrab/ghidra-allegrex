@@ -40,14 +40,14 @@ but Ghidra shows it as unsigned value.
 
 `GHIDRA_INSTALL_DIR` environment variable must be set to Ghidra root installation directory.
 
-- `gradle ghidraInstall` - build and install into Ghidra (warning: contents of `GHIDRA_INSTALL_DIR/Ghidra/Processors/Allegrex` will be deleted before installing)
-- `gradle shadowJar` - create single library jar file with all external dependencies included
+- `./gradlew ghidraInstall` - build and install into Ghidra (warning: contents of `GHIDRA_INSTALL_DIR/Ghidra/Processors/Allegrex` will be deleted before installing)
+- `./gradlew shadowJar` - create single library jar file with all external dependencies included
 
-After `gradle shadowJar` you can manually install extension by copying:
+After running `./gradlew shadowJar` you can manually install extension by copying:
  - `build/libs/ghidra-allegrex-all.jar` file to `GHIDRA_INSTALL_DIR/Ghidra/Processors/Allegrex/lib/Allegrex.jar`
  - `data` and `ghidra_scripts` directories to `GHIDRA_INSTALL_DIR/Ghidra/Processors/Allegrex/`
 
 Ghidra should automatically recompile Sleigh files when importing an executable, if not run:
 ```bash
-/ghidra_9.x.x/support$ ./sleigh -a ../Ghidra/Processors/Allegrex/data/languages/
+/ghidra_10.x.x/support$ ./sleigh -a ../Ghidra/Processors/Allegrex/data/languages/
 ```

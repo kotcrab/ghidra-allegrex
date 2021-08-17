@@ -1,14 +1,16 @@
 buildscript {
-    ext.kotlinVersion = '1.3.72'
+    ext.kotlinVersion = '1.5.21'
     repositories {
         mavenCentral()
-        jcenter()
     }
 
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
-        classpath 'com.github.jengelman.gradle.plugins:shadow:5.0.0'
     }
+}
+
+plugins {
+  id "com.github.johnrengelman.shadow" version "7.0.0"
 }
 
 repositories {
@@ -30,7 +32,7 @@ if (!ghidraInstallDir) {
 }
 
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
     shadow fileTree(dir: ghidraInstallDir + '/Ghidra/Framework', include: "**/*.jar")
     shadow fileTree(dir: ghidraInstallDir + '/Ghidra/Features', include: "**/*.jar")
 }
