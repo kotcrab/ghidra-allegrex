@@ -24,6 +24,16 @@ Future ideas:
 Download prebuilt package from the [Releases](https://github.com/kotcrab/ghidra-allegrex/releases) section.
 After extracting copy the `Allegrex` directory into `GHIDRA_INSTALL_DIR/Ghidra/Processors`
 
+### Usage
+
+Drag decrypted EBOOT into Ghidra. It should get automatically detected as PSP / Allegrex.
+Now is your chance to set initial base address by clicking `Options...` and changing `Image Base`.
+I highly recommend you set it to `08804000`. It you leave it at `0` Ghidra may create
+many useless labels and references it confuses as memory access. Rebasing the image later
+is possible but will not remove those labels.
+
+After importing and opening the file you should do the auto analysis. Default options are fine.
+
 ### VFPU Limitations
 
 Modelling the VFPU in Sleigh was pretty tricky due to how the same registers get different names depending
