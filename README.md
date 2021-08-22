@@ -11,10 +11,7 @@ Implemented:
 - Support for PSP specific ELF relocation section
   - Image rebase after loading is also supported
 - Disassembly of VFPU instructions (see limitations bellow)
-- Script for importing PPSSPP `.sym` files (importing function labels)
-
-To be done:
-- Exporting `.sym` files for PPSSPP
+- Scripts for importing and exporting PPSSPP `.sym` files (function labels)
 
 In progress:
 - Integration with PPSSPP debugger (experimental early stage, not yet released)
@@ -33,6 +30,20 @@ If you leave it at `0` Ghidra may create many useless labels and references it c
 as memory access. Rebasing the image later is possible but will not remove those labels.
 
 After importing and opening the file you should do the auto analysis. Default options are fine.
+
+#### Using PPSSPP .sym scripts
+
+PPSSPP identifies many functions automatically, it's useful to get those into Ghidra
+after doing the initial analysis. Export the `.sym` file from PPSSPP and in Ghidra run script
+`PpssppImportSymFile`. Select the `.sym` file. Enter `0` when asked for offset if your image base is already 
+at `08804000`.
+It's usually fine to run this script after you've started renaming functions in the binary. The script by 
+default skips unknown names from PPSSPP so your work can only get overwritten if you've renamed
+one of the autodetected function.
+
+Likewise, you can use `PpssppExportSymFile` to export your work as `.sym` file which can be imported
+into PPSSPP. Enter `0` when asked for offset if your image base is already  at `08804000`.
+You need to do `Reset symbol table` before importing the file in PPSSPP.
 
 ### VFPU Limitations
 
