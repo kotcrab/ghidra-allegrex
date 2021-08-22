@@ -1,6 +1,5 @@
 *.sla
 *.zip
-libs/*.jar
 ## Java
 
 *.class
@@ -8,14 +7,13 @@ libs/*.jar
 *.ear
 hs_err_pid*
 
-## Android Studio and Intellij
+## IntelliJ IDEA
 
 .idea/
 *.ipr
 *.iws
 *.iml
 out/
-com_crashlytics_export_strings.xml
 
 ## Eclipse
 
@@ -37,7 +35,6 @@ local.properties
 ## NetBeans
 
 nbproject/private/
-build/
 nbbuild/
 dist/
 nbdist/
