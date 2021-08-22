@@ -16,8 +16,8 @@ Implemented:
 To be done:
 - Exporting `.sym` files for PPSSPP
 
-Future ideas:
-- Integration with PPSSPP debugger
+In progress:
+- Integration with PPSSPP debugger (experimental early stage, not yet released)
 
 ### Installation
 
@@ -26,11 +26,11 @@ After extracting copy the `Allegrex` directory into `GHIDRA_INSTALL_DIR/Ghidra/P
 
 ### Usage
 
-Drag decrypted EBOOT into Ghidra. It should get automatically detected as PSP / Allegrex.
-Now is your chance to set initial base address by clicking `Options...` and changing `Image Base`.
-I highly recommend you set it to `08804000`. It you leave it at `0` Ghidra may create
-many useless labels and references it confuses as memory access. Rebasing the image later
-is possible but will not remove those labels.
+Drag decrypted EBOOT in ELF format into Ghidra. It should get automatically detected 
+as `PSP Executable (ELF)` / `Allegrex`. Now is your chance to set initial base address by 
+clicking `Options...` and changing `Image Base`. I highly recommend you set it to `08804000`. 
+If you leave it at `0` Ghidra may create many useless labels and references it confuses 
+as memory access. Rebasing the image later is possible but will not remove those labels.
 
 After importing and opening the file you should do the auto analysis. Default options are fine.
 
