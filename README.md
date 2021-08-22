@@ -41,7 +41,7 @@ It's usually fine to run this script after you've started renaming functions in 
 default skips unknown names from PPSSPP so your work can only get overwritten if you've renamed
 one of the autodetected function.
 
-Likewise, you can use `PpssppExportSymFile` to export your work as `.sym` file which can be imported
+Likewise, you can use `PpssppExportSymFile` to export your work as a `.sym` file which can be imported
 into PPSSPP. Enter `0` when asked for offset if your image base is already  at `08804000`.
 You need to do `Reset symbol table` before importing the file in PPSSPP.
 
