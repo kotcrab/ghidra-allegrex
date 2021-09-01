@@ -1,6 +1,7 @@
 package allegrex.format.elf.relocation
 
 import ghidra.app.util.bin.format.elf.ElfLoadHelper
+import ghidra.app.util.bin.format.elf.PspElfConstants
 import ghidra.app.util.bin.format.elf.relocation.AllegrexElfRelocationConstants
 import ghidra.program.model.address.Address
 import ghidra.util.Msg
@@ -25,7 +26,16 @@ class StoredRelocationUpdater {
     val baseAddr = program.imageBase
 
     elfTables.forEach { table ->
+      if (table.relocations.isEmpty()) {
+        return@forEach
+      }
+
       val deferredHi16 = mutableListOf<(loValue: Int) -> Unit>()
+
+      if (table.tableSectionHeader?.type != PspElfConstants.SHT_PSP_REL) {
+        Msg.warn(this, "Found relocation table in non-PSP format (section ${table.sectionToBeRelocated.nameAsString} won't be relocated)")
+        return@forEach
+      }
 
       table.relocations.forEach { elfReloc ->
         val reloc = AllegrexRelocation.fromElf(elfHeader, elfReloc, 0)

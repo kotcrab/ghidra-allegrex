@@ -1,3 +1,6 @@
+#### Version: 1.5 (built with Ghidra 10.0.2)
+- [#9](https://github.com/kotcrab/ghidra-allegrex/issues/9) - Fixed issues with loading binaries with debug symbols
+
 #### Version: 1.4 (built with Ghidra 10.0.2)
 - Added `PpssppExportSymFile` script
 

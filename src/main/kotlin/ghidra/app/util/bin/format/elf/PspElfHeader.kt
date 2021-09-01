@@ -15,6 +15,9 @@ open class PspElfHeader : ElfHeader() {
 
   private fun parsePspRelocationTables() {
     val relocTables = relocationTables.toMutableList()
+    if (relocTables.isNotEmpty()) {
+      Msg.info(this, "Relocation tables contains ${relocTables.size} sections before update.")
+    }
     for (section in sections) {
       parsePspSectionBasedRelocationTable(section, relocTables)
     }

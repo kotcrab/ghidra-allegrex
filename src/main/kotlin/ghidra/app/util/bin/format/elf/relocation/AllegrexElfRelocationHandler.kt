@@ -7,7 +7,6 @@ import ghidra.app.util.bin.format.elf.ElfRelocationTable
 import ghidra.app.util.bin.format.elf.ElfSymbol
 import ghidra.app.util.bin.format.elf.PspElfConstants
 import ghidra.program.model.address.Address
-import java.util.ArrayList
 
 open class AllegrexElfRelocationHandler : ElfRelocationHandler() {
   override fun canRelocate(elf: ElfHeader): Boolean {
@@ -24,11 +23,21 @@ open class AllegrexElfRelocationHandler : ElfRelocationHandler() {
     if (elfContext.elfHeader.e_machine() != PspElfConstants.EM_MIPS_PSP_HACK) {
       return
     }
+
     val context = elfContext as AllegrexElfRelocationContext
     val program = context.getProgram()
     val memory = program.memory
     val programHeaders = context.elfHeader.programHeaders
     val log = context.log
+
+    if (elfContext.relocationTable.tableSectionHeader?.type != PspElfConstants.SHT_PSP_REL) {
+      ElfRelocationHandler.markAsUnhandled(
+        program, relocationAddress, relocation.type.toLong(),
+        relocation.symbolIndex.toLong(), elfContext.getSymbol(relocation.symbolIndex).nameAsString,
+        log
+      )
+      return
+    }
 
     val info = relocation.relocationInfo.toInt()
     val type = info and 0xFF
