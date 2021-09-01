@@ -396,8 +396,8 @@ Abs26: reloc        is ind26    [ reloc=((inst_start+4) $and 0xfffffffff0000000)
 InsSize: mysize     is msbd & lsb   [ mysize = msbd - lsb + 1; ]      { tmp:1 = mysize; export tmp; }
 ExtSize: mysize     is msbd         [ mysize = msbd + 1; ]            { tmp:1 = mysize; export tmp; }
 
-VfpuMemS: mvts      is vms_h & vm_l [ mvts = (vms_h << 5) | vm_l; ] { export *:1 mvts; }
-VfpuMemQ: mvtq      is vmq_h & vm_l [ mvtq = (vmq_h << 5) | vm_l; ] { export *:1 mvtq; }
+VfpuMemS: mvts      is vms_h & vm_l [ mvts = (vms_h << 5) | vm_l; ] { tmp:1 = mvts; export tmp; }
+VfpuMemQ: mvtq      is vmq_h & vm_l [ mvtq = (vmq_h << 5) | vm_l; ] { tmp:1 = mvtq; export tmp; }
 
 # Floating point formats
 fmt1: "S"       is format=0x10   { }
