@@ -5,11 +5,12 @@ Ghidra processor module adding support for the Allegrex CPU used in the PlayStat
 
 Derived from the built-in MIPS module.
 
-Implemented:
+Features:
 - PSP calling convention
-- Processor type auto detection for ELF files
-- Support for PSP specific ELF relocation section
+- Processor type auto-detection for ELF files
+- Support for PSP specific ELF relocation sections
   - Image rebase after loading is also supported
+  - Relocations found in kernel modules are not yet supported
 - Disassembly of VFPU instructions (see limitations bellow)
 - Scripts for importing and exporting PPSSPP `.sym` files (function labels)
 
