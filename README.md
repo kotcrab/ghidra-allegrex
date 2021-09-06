@@ -24,7 +24,7 @@ After extracting copy the `Allegrex` directory into `GHIDRA_INSTALL_DIR/Ghidra/P
 
 ### Usage
 
-Drag decrypted EBOOT in ELF format into Ghidra. It should get automatically detected 
+Drag decrypted EBOOT in ELF/PRX format into Ghidra. It should get automatically detected 
 as `PSP Executable (ELF)` / `Allegrex`. Now is your chance to set initial base address by 
 clicking `Options...` and changing `Image Base`. I highly recommend you set it to `08804000`. 
 If you leave it at `0` Ghidra may create many useless labels and references it confuses 
