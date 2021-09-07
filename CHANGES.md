@@ -1,3 +1,6 @@
+#### Version: 1.7 (built with Ghidra 10.0.2)
+- Fixed decompilation of `ins`
+
 #### Version: 1.6 (built with Ghidra 10.0.2)
 - Fixed VFPU load and store instructions creating references to DAT instead of just showing register number
 

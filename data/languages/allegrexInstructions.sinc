@@ -135,7 +135,7 @@
 :ins RT, RSsrc, lsb, InsSize    is prime=31 & fct=4 & RT & RTsrc & RSsrc & lsb & msbd & InsSize {
     # Insert Bit Field
     tmpa:4 = -1;
-    tmpa = tmpa >> (4 - InsSize);
+    tmpa = tmpa >> (32 - InsSize);
     tmpb:4 = RSsrc & tmpa;
     tmpa = tmpa << lsb;
     tmpa = ~tmpa;
