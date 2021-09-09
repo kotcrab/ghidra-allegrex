@@ -8,6 +8,9 @@ import ghidra.util.Msg
 import org.apache.commons.lang3.reflect.FieldUtils
 
 open class PspElfHeader : ElfHeader() {
+  var useRebootBinTypeBMapping: Boolean = false
+    private set
+
   override fun parse() {
     super.parse()
     parsePspRelocationTables()
@@ -65,14 +68,19 @@ open class PspElfHeader : ElfHeader() {
     )
   }
 
+  private fun initOptions(useRebootBinTypeBMapping: Boolean) {
+    this.useRebootBinTypeBMapping = useRebootBinTypeBMapping
+  }
+
   override fun e_machine(): Short {
     return PspElfConstants.EM_MIPS_PSP_HACK
   }
 
   companion object {
-    fun createElfHeader(factory: GenericFactory, provider: ByteProvider): PspElfHeader {
+    fun createElfHeader(factory: GenericFactory, provider: ByteProvider, useRebootBinTypeBMapping: Boolean): PspElfHeader {
       val elfHeader = factory.create(PspElfHeader::class.java) as PspElfHeader
       elfHeader.initElfHeader(factory, provider)
+      elfHeader.initOptions(useRebootBinTypeBMapping)
       return elfHeader
     }
   }

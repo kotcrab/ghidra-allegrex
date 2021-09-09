@@ -8,6 +8,7 @@ import ghidra.app.util.bin.format.elf.ElfSymbol
 import ghidra.app.util.bin.format.elf.PspElfConstants
 import ghidra.program.model.address.Address
 
+@SuppressWarnings("unused")
 open class AllegrexElfRelocationHandler : ElfRelocationHandler() {
   override fun canRelocate(elf: ElfHeader): Boolean {
     return elf.e_machine() == PspElfConstants.EM_MIPS_PSP_HACK

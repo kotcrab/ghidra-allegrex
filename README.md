@@ -3,14 +3,11 @@ ghidra-allegrex
 
 Ghidra processor module adding support for the Allegrex CPU used in the PlayStation Portable.
 
-Derived from the built-in MIPS module.
-
 Features:
 - PSP calling convention
 - Processor type auto-detection for ELF files
-- Support for PSP specific ELF relocation sections
+- Support for PSP specific ELF relocation sections (type A and B)
   - Image rebase after loading is also supported
-  - Relocations found in kernel modules are not yet supported
 - Disassembly of VFPU instructions (see limitations bellow)
 - Scripts for importing and exporting PPSSPP `.sym` files (function labels)
 
@@ -23,6 +20,8 @@ Download prebuilt package from the [Releases](https://github.com/kotcrab/ghidra-
 After extracting copy the `Allegrex` directory into `GHIDRA_INSTALL_DIR/Ghidra/Processors`
 
 ### Usage
+
+#### Games
 
 Drag decrypted EBOOT in ELF/PRX format into Ghidra. It should get automatically detected 
 as `PSP Executable (ELF)` / `Allegrex`. Now is your chance to set initial base address by 
@@ -45,6 +44,18 @@ one of the autodetected function.
 Likewise, you can use `PpssppExportSymFile` to export your work as a `.sym` file which can be imported
 into PPSSPP. Enter `0` when asked for offset if your image base is already  at `08804000`.
 You need to do `Reset symbol table` before importing the file in PPSSPP.
+
+#### Kernel modules
+
+Since version 1.7 relocations found in kernel modules are supported. Usage is very similar as when
+importing games though kernel modules are usually loaded starting from address `88000000`. Note that
+for some files (e.g. `sysmem`, `loadcore`) you will need to click `Options...` during import and
+select option to use `reboot.bin` type B relocation mapping.
+
+#### Raw binaries
+
+Raw binaries are also supported. In that case you will need to manually select Allegrex as the processor
+and set image base.
 
 ### VFPU Limitations
 
@@ -73,3 +84,11 @@ Ghidra should automatically recompile Sleigh files when importing an executable,
 ```bash
 /ghidra_10.x.x/support$ ./sleigh -a ../Ghidra/Processors/Allegrex/data/languages/
 ```
+
+### License
+
+Licensed under Apache License 2.0.
+
+Derived from Ghidra MIPS module licensed under Apache License 2.0.
+
+Type B relocation parsing based on [prxtool](https://github.com/pspdev/prxtool) licensed under AFL v2.0.

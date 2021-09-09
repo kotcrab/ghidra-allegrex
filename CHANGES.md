@@ -1,5 +1,7 @@
 #### Version: 1.7 (built with Ghidra 10.0.2)
 - Fixed decompilation of `ins`
+- [#7](https://github.com/kotcrab/ghidra-allegrex/issues/7) - Added support for type B relocations (found in kernel modules)
+  - This also adds new option during import to use alternative relocation mapping (must be checked for some files)
 
 #### Version: 1.6 (built with Ghidra 10.0.2)
 - Fixed VFPU load and store instructions creating references to DAT instead of just showing register number

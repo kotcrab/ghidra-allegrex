@@ -38,7 +38,7 @@ class StoredRelocationUpdater {
       }
 
       table.relocations.forEach { elfReloc ->
-        val reloc = AllegrexRelocation.fromElf(elfHeader, elfReloc, 0)
+        val reloc = AllegrexRelocation.TypeA.fromElf(elfHeader, elfReloc, 0)
         val addr = baseAddr.add(reloc.offset.toLong()).add(reloc.relative.toLong())
 
         val instrValue = memory.getInt(addr)
@@ -48,7 +48,7 @@ class StoredRelocationUpdater {
         when (reloc.type) {
           AllegrexElfRelocationConstants.R_MIPS_HI16 -> {
             deferredHi16.add { linkedLoValue ->
-              val newReloc = AllegrexRelocation.fromElf(elfHeader, elfReloc, linkedLoValue)
+              val newReloc = AllegrexRelocation.TypeA.fromElf(elfHeader, elfReloc, linkedLoValue)
               updates.add(PendingUpdate(addr, newReloc, instrBytes))
             }
           }
@@ -91,7 +91,7 @@ class StoredRelocationUpdater {
 
   class PendingUpdate(
     val address: Address,
-    val reloc: AllegrexRelocation,
+    val reloc: AllegrexRelocation.TypeA,
     val origInstr: ByteArray
   )
 }

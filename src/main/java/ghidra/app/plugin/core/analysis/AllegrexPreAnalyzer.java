@@ -42,6 +42,7 @@ import ghidra.util.task.TaskMonitor;
 
 import java.math.BigInteger;
 
+@SuppressWarnings("unused")
 public class AllegrexPreAnalyzer extends AbstractAnalyzer {
   private static final String NAME = "MIPS UnAlligned Instruction Fix";
   private static final String DESCRIPTION =

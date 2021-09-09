@@ -10,6 +10,7 @@ import ghidra.program.model.listing.Program
 import ghidra.program.model.reloc.Relocation
 import ghidra.util.LittleEndianDataConverter
 
+@Suppress("unused")
 class AllegrexRelocationFixupHandler : RelocationFixupHandler() {
   override fun handlesProgram(program: Program): Boolean {
     if (PspElfLoader.PSP_ELF_NAME != program.executableFormat) {
@@ -26,8 +27,23 @@ class AllegrexRelocationFixupHandler : RelocationFixupHandler() {
   override fun processRelocation(
     program: Program, relocation: Relocation, oldImageBase: Address, newImageBase: Address
   ): Boolean {
+    return when (val allegrexReloc = AllegrexRelocation.fromLongArray(relocation.values)) {
+      is AllegrexRelocation.TypeA -> processRelocationTypeA(program, relocation, allegrexReloc, newImageBase)
+      is AllegrexRelocation.TypeB -> {
+        AllegrexRelocationApplicator.applyTo(
+          program, newImageBase, allegrexReloc,
+          origBytesProvider = { relocation.bytes },
+          useInstructionStasher = true, addToRelocationTable = false
+        )
+        true
+      }
+    }
+  }
+
+  private fun processRelocationTypeA(
+    program: Program, relocation: Relocation, allegrexReloc: AllegrexRelocation.TypeA, newImageBase: Address
+  ): Boolean {
     val memory = program.memory
-    val allegrexReloc = AllegrexRelocation.fromLongArray(relocation.values)
     val addr = relocation.address
     val relocateToSect = newImageBase.add(allegrexReloc.relocateTo.toLong()).offset.toInt()
     val initialValue = LittleEndianDataConverter.INSTANCE.getInt(relocation.bytes)

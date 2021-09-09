@@ -57,6 +57,7 @@ import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.HashSet;
 
+@SuppressWarnings("unused")
 public class AllegrexAddressAnalyzer extends ConstantPropagationAnalyzer {
 
   private static final int MAX_UNIQUE_GP_SYMBOLS = 50;
