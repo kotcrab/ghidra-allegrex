@@ -62,12 +62,9 @@ and set image base.
 Modelling the VFPU in Sleigh was pretty tricky due to how the same registers get different names depending
 on the instruction. There are few instructions I couldn't get quite right:
 - Only disassembly is possible with current implementation, decompiler won't be implemented.
-- All VFPU memory load and stores (`lv.s`, `lv.q`, `lvl.q` etc.): name of VFPU register is not shown, only register number is visible.
-This is because the VFPU register id is not continuous bitrange in the instruction. Additionally the memory offset should be signed short
-but Ghidra shows it as unsigned value.
 - First operand of `vpfxs`, `vpfxt` and `vpfxd` won't be decoded, requires too complex logic.
 - Last operand of `vrot.s`, `vrot.p`, `vrot.t` and `vrot.q` won't be decoded, requires too complex logic.
-- Second operand of `vfim.s` will be shown as integer, should be float. Sleigh does not support float tokens.
+- Second operand of `vfim.s` will be shown as integer, should be shown as float. Sleigh does not support float tokens.
 
 ### Building
 

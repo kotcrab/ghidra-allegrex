@@ -357,8 +357,8 @@
 :vpfxt "--can't decode--"         is prime=55 & vop2 = 1                                               unimpl
 :vpfxd "--can't decode--"         is prime=55 & vop2 = 2                                               unimpl
 
-:viim.s vt_s, immed              is prime=55 & vop3 = 6 & vt_s & immed                               unimpl
-:vfim.s vt_s, immed              is prime=55 & vop3 = 7 & vt_s & immed                               unimpl
+:viim.s vt_s, immed               is prime=55 & vop3 = 6 & vt_s & immed                                unimpl
+:vfim.s vt_s, immed               is prime=55 & vop3 = 7 & vt_s & immed                                unimpl
 
 :vmmul.s vd_m, vs_e, vt_m         is prime=60 & vop3 = 0 & vc1 = 0 & vc0 = 0 & vd_m & vs_e & vt_m      unimpl
 :vmmul.p vd_m, vs_e, vt_m         is prime=60 & vop3 = 0 & vc1 = 0 & vc0 = 1 & vd_m & vs_e & vt_m      unimpl
@@ -378,8 +378,8 @@
 :vmscl.t vd_tm, vs_tm, vt_s       is prime=60 & vop3 = 4 & vc1 = 1 & vc0 = 0 & vd_tm & vs_tm & vt_s    unimpl
 :vmscl.q vd_m, vs_m, vt_s         is prime=60 & vop3 = 4 & vc1 = 1 & vc0 = 1 & vd_m & vs_m & vt_s      unimpl
 
-:vcrsp.t vd_t, vs_t, vt_t         is prime=60 & vop3 = 5 & vc1 = 1 & vc0 = 0 & vd_t & vs_t & vt_t     unimpl
-:vqmul.q vd_q, vs_q, vt_q         is prime=60 & vop3 = 5 & vc1 = 1 & vc0 = 1 & vd_q & vs_q & vt_q     unimpl
+:vcrsp.t vd_t, vs_t, vt_t         is prime=60 & vop3 = 5 & vc1 = 1 & vc0 = 0 & vd_t & vs_t & vt_t      unimpl
+:vqmul.q vd_q, vs_q, vt_q         is prime=60 & vop3 = 5 & vc1 = 1 & vc0 = 1 & vd_q & vs_q & vt_q      unimpl
 
 :vmmov.s vd_m, vs_m               is prime=60 & vop3 = 7 & vtop2 = 0 & vtop4 = 0 & vc1 = 0 & vc0 = 0 & vd_m & vs_m      unimpl
 :vmmov.p vd_m, vs_m               is prime=60 & vop3 = 7 & vtop2 = 0 & vtop4 = 0 & vc1 = 0 & vc0 = 1 & vd_m & vs_m      unimpl
@@ -401,10 +401,10 @@
 :vmone.t vd_tm                    is prime=60 & vop3 = 7 & vtop2 = 0 & vtop4 = 7 & vc1 = 1 & vc0 = 0 & vd_tm    unimpl
 :vmone.q vd_m                     is prime=60 & vop3 = 7 & vtop2 = 0 & vtop4 = 7 & vc1 = 1 & vc0 = 1 & vd_m     unimpl
 
-:vrot.s vd_s, vs_s, "--can't decode--"  is prime=60 & vop3 = 7 & vtop2 = 1 & vc1 = 0 & vc0 = 0 & vd_s & vs_s     unimpl
-:vrot.p vd_p, vs_s, "--can't decode--"  is prime=60 & vop3 = 7 & vtop2 = 1 & vc1 = 0 & vc0 = 1 & vd_p & vs_s     unimpl
-:vrot.t vd_t, vs_s, "--can't decode--"  is prime=60 & vop3 = 7 & vtop2 = 1 & vc1 = 1 & vc0 = 0 & vd_t & vs_s     unimpl
-:vrot.q vd_q, vs_s, "--can't decode--"  is prime=60 & vop3 = 7 & vtop2 = 1 & vc1 = 1 & vc0 = 1 & vd_q & vs_s     unimpl
+:vrot.s vd_s, vs_s, "--can't decode--"  is prime=60 & vop3 = 7 & vtop2 = 1 & vc1 = 0 & vc0 = 0 & vd_s & vs_s    unimpl
+:vrot.p vd_p, vs_s, "--can't decode--"  is prime=60 & vop3 = 7 & vtop2 = 1 & vc1 = 0 & vc0 = 1 & vd_p & vs_s    unimpl
+:vrot.t vd_t, vs_s, "--can't decode--"  is prime=60 & vop3 = 7 & vtop2 = 1 & vc1 = 1 & vc0 = 0 & vd_t & vs_s    unimpl
+:vrot.q vd_q, vs_s, "--can't decode--"  is prime=60 & vop3 = 7 & vtop2 = 1 & vc1 = 1 & vc0 = 1 & vd_q & vs_s    unimpl
 
 :vflush                           is prime=63 {
 }
@@ -442,14 +442,14 @@
 :mtv rt, vd_s                     is prime=18 & copop = 7 & vc0 = 0  & rt & vd_s   unimpl
 :mtvc rt, vd_ctl                  is prime=18 & copop = 7 & vc0 != 0 & rt & vd_ctl unimpl
 
-:lv.s "vfpu_reg"[VfpuMemS], OFF_VBASE         is prime=50 & OFF_VBASE & VfpuMemS           unimpl
-:lvl.q "vfpu_reg"[VfpuMemQ], OFF_VBASE        is prime=53 & bit1=0 & OFF_VBASE & VfpuMemQ  unimpl
-:lvr.q "vfpu_reg"[VfpuMemQ], OFF_VBASE        is prime=53 & bit1=1 & OFF_VBASE & VfpuMemQ  unimpl
-:lv.q "vfpu_reg"[VfpuMemQ], OFF_VBASE         is prime=54 & bit1=0 & OFF_VBASE & VfpuMemQ  unimpl
-:lv.q "vfpu_reg"[VfpuMemQ], OFF_VBASE, "wb"   is prime=54 & bit1=1 & OFF_VBASE & VfpuMemQ  unimpl
+:lv.s VfpuMemS, OFF_VBASE         is prime=50 & OFF_VBASE & VfpuMemS           unimpl
+:lvl.q VfpuMemQ, OFF_VBASE        is prime=53 & bit1=0 & OFF_VBASE & VfpuMemQ  unimpl
+:lvr.q VfpuMemQ, OFF_VBASE        is prime=53 & bit1=1 & OFF_VBASE & VfpuMemQ  unimpl
+:lv.q VfpuMemQ, OFF_VBASE         is prime=54 & bit1=0 & OFF_VBASE & VfpuMemQ  unimpl
+:lv.q VfpuMemQ, OFF_VBASE, "wb"   is prime=54 & bit1=1 & OFF_VBASE & VfpuMemQ  unimpl
 
-:sv.s "vfpu_reg"[VfpuMemS], OFF_VBASE         is prime=58 & OFF_VBASE & VfpuMemS           unimpl
-:svl.q "vfpu_reg"[VfpuMemQ], OFF_VBASE        is prime=61 & bit1=0 & OFF_VBASE & VfpuMemQ  unimpl
-:svr.q "vfpu_reg"[VfpuMemQ], OFF_VBASE        is prime=61 & bit1=1 & OFF_VBASE & VfpuMemQ  unimpl
-:sv.q "vfpu_reg"[VfpuMemQ], OFF_VBASE         is prime=62 & bit1=0 & OFF_VBASE & VfpuMemQ  unimpl
-:sv.q "vfpu_reg"[VfpuMemQ], OFF_VBASE, "wb"   is prime=62 & bit1=1 & OFF_VBASE & VfpuMemQ  unimpl
+:sv.s VfpuMemS, OFF_VBASE         is prime=58 & OFF_VBASE & VfpuMemS           unimpl
+:svl.q VfpuMemQ, OFF_VBASE        is prime=61 & bit1=0 & OFF_VBASE & VfpuMemQ  unimpl
+:svr.q VfpuMemQ, OFF_VBASE        is prime=61 & bit1=1 & OFF_VBASE & VfpuMemQ  unimpl
+:sv.q VfpuMemQ, OFF_VBASE         is prime=62 & bit1=0 & OFF_VBASE & VfpuMemQ  unimpl
+:sv.q VfpuMemQ, OFF_VBASE, "wb"   is prime=62 & bit1=1 & OFF_VBASE & VfpuMemQ  unimpl
