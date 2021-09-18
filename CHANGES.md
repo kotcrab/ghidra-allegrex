@@ -1,7 +1,10 @@
 #### Version: 1.8 (built with Ghidra 10.0.2)
 - Improved disassembly of VFPU load and store instructions: register name and offset is now shown correctly
-  - Warning: For existing projects you will need to clear the affected instructions and disassemble them again. Otherwise, you will see wrong disassembly
-  - Hint: If the project was created before version 1.6 then you can spot wrongly disassembled instruction easily as they will have invalid references to `DAT` (e.g. `lv.q C000.q=>DAT_00000004,0x0(a0)`)  
+  - Warning: For existing projects you will need to clear the affected instructions and disassemble them again. Otherwise,
+you will see wrong disassembly
+  - Hint: If the project was created before version 1.6 then you can easily spot wrongly disassembled instruction as they will
+have invalid references to `DAT` (e.g. `lv.q C000=>DAT_00000004,0x0(a0)`) or you can search bookmarks for "unimplemented: lv." etc. 
+- Removed type suffixes for VFPU registers in disassembly
 
 #### Version: 1.7 (built with Ghidra 10.0.2)
 - Fixed decompilation of `ins`
