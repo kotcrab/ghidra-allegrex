@@ -1,0 +1,1887 @@
+# DO NOT MODIFY. THIS FILE IS AUTO-GENERATED.
+
+VpfxdOp0: ""      is vpfxd_op0 = 0   { export 1:1; }
+VpfxdOp0: "0:1"   is vpfxd_op0 = 1   { export 2:1; }
+VpfxdOp0: "X"     is vpfxd_op0 = 2   { export 3:1; }
+VpfxdOp0: "-1:1"  is vpfxd_op0 = 3   { export 4:1; }
+VpfxdMask0: ""    is vpfxd_mask0 = 0 { export 0:1; }
+VpfxdMask0: "M"   is vpfxd_mask0 = 1 { export 1:1; }
+Vpfxd0: VpfxdOp0^VpfxdMask0 is VpfxdOp0 & VpfxdMask0 {
+    local tmpOp:1 = (VpfxdMask0 << 2) | VpfxdOp0;
+    export tmpOp;
+}
+
+VpfxdOp1: ""      is vpfxd_op1 = 0   { export 1:1; }
+VpfxdOp1: "0:1"   is vpfxd_op1 = 1   { export 2:1; }
+VpfxdOp1: "X"     is vpfxd_op1 = 2   { export 3:1; }
+VpfxdOp1: "-1:1"  is vpfxd_op1 = 3   { export 4:1; }
+VpfxdMask1: ""    is vpfxd_mask1 = 0 { export 0:1; }
+VpfxdMask1: "M"   is vpfxd_mask1 = 1 { export 1:1; }
+Vpfxd1: VpfxdOp1^VpfxdMask1 is VpfxdOp1 & VpfxdMask1 {
+    local tmpOp:1 = (VpfxdMask1 << 2) | VpfxdOp1;
+    export tmpOp;
+}
+
+VpfxdOp2: ""      is vpfxd_op2 = 0   { export 1:1; }
+VpfxdOp2: "0:1"   is vpfxd_op2 = 1   { export 2:1; }
+VpfxdOp2: "X"     is vpfxd_op2 = 2   { export 3:1; }
+VpfxdOp2: "-1:1"  is vpfxd_op2 = 3   { export 4:1; }
+VpfxdMask2: ""    is vpfxd_mask2 = 0 { export 0:1; }
+VpfxdMask2: "M"   is vpfxd_mask2 = 1 { export 1:1; }
+Vpfxd2: VpfxdOp2^VpfxdMask2 is VpfxdOp2 & VpfxdMask2 {
+    local tmpOp:1 = (VpfxdMask2 << 2) | VpfxdOp2;
+    export tmpOp;
+}
+
+VpfxdOp3: ""      is vpfxd_op3 = 0   { export 1:1; }
+VpfxdOp3: "0:1"   is vpfxd_op3 = 1   { export 2:1; }
+VpfxdOp3: "X"     is vpfxd_op3 = 2   { export 3:1; }
+VpfxdOp3: "-1:1"  is vpfxd_op3 = 3   { export 4:1; }
+VpfxdMask3: ""    is vpfxd_mask3 = 0 { export 0:1; }
+VpfxdMask3: "M"   is vpfxd_mask3 = 1 { export 1:1; }
+Vpfxd3: VpfxdOp3^VpfxdMask3 is VpfxdOp3 & VpfxdMask3 {
+    local tmpOp:1 = (VpfxdMask3 << 2) | VpfxdOp3;
+    export tmpOp;
+}
+
+VpfxstNeg0: ""      is vpfxst_neg0 = 0                   { export 0:1; }
+VpfxstNeg0: "-"     is vpfxst_neg0 = 1                   { export 1:1; }
+VpfxstPreAbs0: ""   is (vpfxst_abs0 = 0 & vpfxst_cst0 = 0) | (vpfxst_abs0 = 0 & vpfxst_cst0 = 1) | (vpfxst_abs0 = 1 & vpfxst_cst0 = 1) { export 0:1; }
+VpfxstPreAbs0: "|"  is vpfxst_abs0 = 1 & vpfxst_cst0 = 0 { export 1:1; }
+VpfxstPostAbs0: ""  is (vpfxst_abs0 = 0 & vpfxst_cst0 = 0) | (vpfxst_abs0 = 0 & vpfxst_cst0 = 1) | (vpfxst_abs0 = 1 & vpfxst_cst0 = 1) { export 0:1; }
+VpfxstPostAbs0: "|" is vpfxst_abs0 = 1 & vpfxst_cst0 = 0 { export 1:1; }
+VpfxstOp0: "X"      is vpfxst_op0  = 0 & vpfxst_cst0 = 0 { export 0:1; }
+VpfxstOp0: "Y"      is vpfxst_op0  = 1 & vpfxst_cst0 = 0 { export 1:1; }
+VpfxstOp0: "Z"      is vpfxst_op0  = 2 & vpfxst_cst0 = 0 { export 2:1; }
+VpfxstOp0: "W"      is vpfxst_op0  = 3 & vpfxst_cst0 = 0 { export 3:1; }
+VpfxstOp0: "0"      is vpfxst_op0  = 0 & vpfxst_cst0 = 1 & vpfxst_abs0 = 0 { export 0:1; }
+VpfxstOp0: "1"      is vpfxst_op0  = 1 & vpfxst_cst0 = 1 & vpfxst_abs0 = 0 { export 1:1; }
+VpfxstOp0: "2"      is vpfxst_op0  = 2 & vpfxst_cst0 = 1 & vpfxst_abs0 = 0 { export 2:1; }
+VpfxstOp0: "1/2"    is vpfxst_op0  = 3 & vpfxst_cst0 = 1 & vpfxst_abs0 = 0 { export 3:1; }
+VpfxstOp0: "3"      is vpfxst_op0  = 0 & vpfxst_cst0 = 1 & vpfxst_abs0 = 1 { export 4:1; }
+VpfxstOp0: "1/3"    is vpfxst_op0  = 1 & vpfxst_cst0 = 1 & vpfxst_abs0 = 1 { export 5:1; }
+VpfxstOp0: "1/4"    is vpfxst_op0  = 2 & vpfxst_cst0 = 1 & vpfxst_abs0 = 1 { export 6:1; }
+VpfxstOp0: "1/6"    is vpfxst_op0  = 3 & vpfxst_cst0 = 1 & vpfxst_abs0 = 1 { export 7:1; }
+Vpfxst0: VpfxstNeg0^VpfxstPreAbs0^VpfxstOp0^VpfxstPostAbs0 is VpfxstNeg0 & VpfxstPreAbs0 & VpfxstOp0 & VpfxstPostAbs0 & vpfxst_cst0 {
+    local tmpOp:1 = (VpfxstNeg0 << 4) | (VpfxstPreAbs0 << 3) | (vpfxst_cst0 << 2) |  VpfxstOp0;
+    export tmpOp;
+}
+
+VpfxstNeg1: ""      is vpfxst_neg1 = 0                   { export 0:1; }
+VpfxstNeg1: "-"     is vpfxst_neg1 = 1                   { export 1:1; }
+VpfxstPreAbs1: ""   is (vpfxst_abs1 = 0 & vpfxst_cst1 = 0) | (vpfxst_abs1 = 0 & vpfxst_cst1 = 1) | (vpfxst_abs1 = 1 & vpfxst_cst1 = 1) { export 0:1; }
+VpfxstPreAbs1: "|"  is vpfxst_abs1 = 1 & vpfxst_cst1 = 0 { export 1:1; }
+VpfxstPostAbs1: ""  is (vpfxst_abs1 = 0 & vpfxst_cst1 = 0) | (vpfxst_abs1 = 0 & vpfxst_cst1 = 1) | (vpfxst_abs1 = 1 & vpfxst_cst1 = 1) { export 0:1; }
+VpfxstPostAbs1: "|" is vpfxst_abs1 = 1 & vpfxst_cst1 = 0 { export 1:1; }
+VpfxstOp1: "X"      is vpfxst_op1  = 0 & vpfxst_cst1 = 0 { export 0:1; }
+VpfxstOp1: "Y"      is vpfxst_op1  = 1 & vpfxst_cst1 = 0 { export 1:1; }
+VpfxstOp1: "Z"      is vpfxst_op1  = 2 & vpfxst_cst1 = 0 { export 2:1; }
+VpfxstOp1: "W"      is vpfxst_op1  = 3 & vpfxst_cst1 = 0 { export 3:1; }
+VpfxstOp1: "0"      is vpfxst_op1  = 0 & vpfxst_cst1 = 1 & vpfxst_abs1 = 0 { export 0:1; }
+VpfxstOp1: "1"      is vpfxst_op1  = 1 & vpfxst_cst1 = 1 & vpfxst_abs1 = 0 { export 1:1; }
+VpfxstOp1: "2"      is vpfxst_op1  = 2 & vpfxst_cst1 = 1 & vpfxst_abs1 = 0 { export 2:1; }
+VpfxstOp1: "1/2"    is vpfxst_op1  = 3 & vpfxst_cst1 = 1 & vpfxst_abs1 = 0 { export 3:1; }
+VpfxstOp1: "3"      is vpfxst_op1  = 0 & vpfxst_cst1 = 1 & vpfxst_abs1 = 1 { export 4:1; }
+VpfxstOp1: "1/3"    is vpfxst_op1  = 1 & vpfxst_cst1 = 1 & vpfxst_abs1 = 1 { export 5:1; }
+VpfxstOp1: "1/4"    is vpfxst_op1  = 2 & vpfxst_cst1 = 1 & vpfxst_abs1 = 1 { export 6:1; }
+VpfxstOp1: "1/6"    is vpfxst_op1  = 3 & vpfxst_cst1 = 1 & vpfxst_abs1 = 1 { export 7:1; }
+Vpfxst1: VpfxstNeg1^VpfxstPreAbs1^VpfxstOp1^VpfxstPostAbs1 is VpfxstNeg1 & VpfxstPreAbs1 & VpfxstOp1 & VpfxstPostAbs1 & vpfxst_cst1 {
+    local tmpOp:1 = (VpfxstNeg1 << 4) | (VpfxstPreAbs1 << 3) | (vpfxst_cst1 << 2) |  VpfxstOp1;
+    export tmpOp;
+}
+
+VpfxstNeg2: ""      is vpfxst_neg2 = 0                   { export 0:1; }
+VpfxstNeg2: "-"     is vpfxst_neg2 = 1                   { export 1:1; }
+VpfxstPreAbs2: ""   is (vpfxst_abs2 = 0 & vpfxst_cst2 = 0) | (vpfxst_abs2 = 0 & vpfxst_cst2 = 1) | (vpfxst_abs2 = 1 & vpfxst_cst2 = 1) { export 0:1; }
+VpfxstPreAbs2: "|"  is vpfxst_abs2 = 1 & vpfxst_cst2 = 0 { export 1:1; }
+VpfxstPostAbs2: ""  is (vpfxst_abs2 = 0 & vpfxst_cst2 = 0) | (vpfxst_abs2 = 0 & vpfxst_cst2 = 1) | (vpfxst_abs2 = 1 & vpfxst_cst2 = 1) { export 0:1; }
+VpfxstPostAbs2: "|" is vpfxst_abs2 = 1 & vpfxst_cst2 = 0 { export 1:1; }
+VpfxstOp2: "X"      is vpfxst_op2  = 0 & vpfxst_cst2 = 0 { export 0:1; }
+VpfxstOp2: "Y"      is vpfxst_op2  = 1 & vpfxst_cst2 = 0 { export 1:1; }
+VpfxstOp2: "Z"      is vpfxst_op2  = 2 & vpfxst_cst2 = 0 { export 2:1; }
+VpfxstOp2: "W"      is vpfxst_op2  = 3 & vpfxst_cst2 = 0 { export 3:1; }
+VpfxstOp2: "0"      is vpfxst_op2  = 0 & vpfxst_cst2 = 1 & vpfxst_abs2 = 0 { export 0:1; }
+VpfxstOp2: "1"      is vpfxst_op2  = 1 & vpfxst_cst2 = 1 & vpfxst_abs2 = 0 { export 1:1; }
+VpfxstOp2: "2"      is vpfxst_op2  = 2 & vpfxst_cst2 = 1 & vpfxst_abs2 = 0 { export 2:1; }
+VpfxstOp2: "1/2"    is vpfxst_op2  = 3 & vpfxst_cst2 = 1 & vpfxst_abs2 = 0 { export 3:1; }
+VpfxstOp2: "3"      is vpfxst_op2  = 0 & vpfxst_cst2 = 1 & vpfxst_abs2 = 1 { export 4:1; }
+VpfxstOp2: "1/3"    is vpfxst_op2  = 1 & vpfxst_cst2 = 1 & vpfxst_abs2 = 1 { export 5:1; }
+VpfxstOp2: "1/4"    is vpfxst_op2  = 2 & vpfxst_cst2 = 1 & vpfxst_abs2 = 1 { export 6:1; }
+VpfxstOp2: "1/6"    is vpfxst_op2  = 3 & vpfxst_cst2 = 1 & vpfxst_abs2 = 1 { export 7:1; }
+Vpfxst2: VpfxstNeg2^VpfxstPreAbs2^VpfxstOp2^VpfxstPostAbs2 is VpfxstNeg2 & VpfxstPreAbs2 & VpfxstOp2 & VpfxstPostAbs2 & vpfxst_cst2 {
+    local tmpOp:1 = (VpfxstNeg2 << 4) | (VpfxstPreAbs2 << 3) | (vpfxst_cst2 << 2) |  VpfxstOp2;
+    export tmpOp;
+}
+
+VpfxstNeg3: ""      is vpfxst_neg3 = 0                   { export 0:1; }
+VpfxstNeg3: "-"     is vpfxst_neg3 = 1                   { export 1:1; }
+VpfxstPreAbs3: ""   is (vpfxst_abs3 = 0 & vpfxst_cst3 = 0) | (vpfxst_abs3 = 0 & vpfxst_cst3 = 1) | (vpfxst_abs3 = 1 & vpfxst_cst3 = 1) { export 0:1; }
+VpfxstPreAbs3: "|"  is vpfxst_abs3 = 1 & vpfxst_cst3 = 0 { export 1:1; }
+VpfxstPostAbs3: ""  is (vpfxst_abs3 = 0 & vpfxst_cst3 = 0) | (vpfxst_abs3 = 0 & vpfxst_cst3 = 1) | (vpfxst_abs3 = 1 & vpfxst_cst3 = 1) { export 0:1; }
+VpfxstPostAbs3: "|" is vpfxst_abs3 = 1 & vpfxst_cst3 = 0 { export 1:1; }
+VpfxstOp3: "X"      is vpfxst_op3  = 0 & vpfxst_cst3 = 0 { export 0:1; }
+VpfxstOp3: "Y"      is vpfxst_op3  = 1 & vpfxst_cst3 = 0 { export 1:1; }
+VpfxstOp3: "Z"      is vpfxst_op3  = 2 & vpfxst_cst3 = 0 { export 2:1; }
+VpfxstOp3: "W"      is vpfxst_op3  = 3 & vpfxst_cst3 = 0 { export 3:1; }
+VpfxstOp3: "0"      is vpfxst_op3  = 0 & vpfxst_cst3 = 1 & vpfxst_abs3 = 0 { export 0:1; }
+VpfxstOp3: "1"      is vpfxst_op3  = 1 & vpfxst_cst3 = 1 & vpfxst_abs3 = 0 { export 1:1; }
+VpfxstOp3: "2"      is vpfxst_op3  = 2 & vpfxst_cst3 = 1 & vpfxst_abs3 = 0 { export 2:1; }
+VpfxstOp3: "1/2"    is vpfxst_op3  = 3 & vpfxst_cst3 = 1 & vpfxst_abs3 = 0 { export 3:1; }
+VpfxstOp3: "3"      is vpfxst_op3  = 0 & vpfxst_cst3 = 1 & vpfxst_abs3 = 1 { export 4:1; }
+VpfxstOp3: "1/3"    is vpfxst_op3  = 1 & vpfxst_cst3 = 1 & vpfxst_abs3 = 1 { export 5:1; }
+VpfxstOp3: "1/4"    is vpfxst_op3  = 2 & vpfxst_cst3 = 1 & vpfxst_abs3 = 1 { export 6:1; }
+VpfxstOp3: "1/6"    is vpfxst_op3  = 3 & vpfxst_cst3 = 1 & vpfxst_abs3 = 1 { export 7:1; }
+Vpfxst3: VpfxstNeg3^VpfxstPreAbs3^VpfxstOp3^VpfxstPostAbs3 is VpfxstNeg3 & VpfxstPreAbs3 & VpfxstOp3 & VpfxstPostAbs3 & vpfxst_cst3 {
+    local tmpOp:1 = (VpfxstNeg3 << 4) | (VpfxstPreAbs3 << 3) | (vpfxst_cst3 << 2) |  VpfxstOp3;
+    export tmpOp;
+}
+
+VfpuRot0: "C"  is vrot_imm0 = 0                                          { export 1:1; }
+VfpuRot0: "-S" is vrot_neg = 1 & (vrot_imm1 = 0 | vrot_imm0 = vrot_imm1) { export 3:1; }
+VfpuRot0: "S"  is vrot_imm1 = 0                                          { export 2:1; }
+VfpuRot0: "S"  is vrot_imm0 = vrot_imm1                                     { export 2:1; }
+VfpuRot0: "0"  is epsilon                                                   { export 0:1; } # epsilon matches all
+
+VfpuRot1: "C"  is vrot_imm0 = 1                                          { export 1:1; }
+VfpuRot1: "-S" is vrot_neg = 1 & (vrot_imm1 = 1 | vrot_imm0 = vrot_imm1) { export 3:1; }
+VfpuRot1: "S"  is vrot_imm1 = 1                                          { export 2:1; }
+VfpuRot1: "S"  is vrot_imm0 = vrot_imm1                                     { export 2:1; }
+VfpuRot1: "0"  is epsilon                                                   { export 0:1; } # epsilon matches all
+
+VfpuRot2: "C"  is vrot_imm0 = 2                                          { export 1:1; }
+VfpuRot2: "-S" is vrot_neg = 1 & (vrot_imm1 = 2 | vrot_imm0 = vrot_imm1) { export 3:1; }
+VfpuRot2: "S"  is vrot_imm1 = 2                                          { export 2:1; }
+VfpuRot2: "S"  is vrot_imm0 = vrot_imm1                                     { export 2:1; }
+VfpuRot2: "0"  is epsilon                                                   { export 0:1; } # epsilon matches all
+
+VfpuRot3: "C"  is vrot_imm0 = 3                                          { export 1:1; }
+VfpuRot3: "-S" is vrot_neg = 1 & (vrot_imm1 = 3 | vrot_imm0 = vrot_imm1) { export 3:1; }
+VfpuRot3: "S"  is vrot_imm1 = 3                                          { export 2:1; }
+VfpuRot3: "S"  is vrot_imm0 = vrot_imm1                                     { export 2:1; }
+VfpuRot3: "0"  is epsilon                                                   { export 0:1; } # epsilon matches all
+
+VfpuCC: "CC[0]" is vcc = 0 { local tmpCc:1 = CC[0,1]; export tmpCc; }
+VfpuCC: "CC[1]" is vcc = 1 { local tmpCc:1 = CC[1,1]; export tmpCc; }
+VfpuCC: "CC[2]" is vcc = 2 { local tmpCc:1 = CC[2,1]; export tmpCc; }
+VfpuCC: "CC[3]" is vcc = 3 { local tmpCc:1 = CC[3,1]; export tmpCc; }
+VfpuCC: "CC[4]" is vcc = 4 { local tmpCc:1 = CC[4,1]; export tmpCc; }
+VfpuCC: "CC[5]" is vcc = 5 { local tmpCc:1 = CC[5,1]; export tmpCc; }
+VfpuCC: "CC[6]" is vcc = 6 { local tmpCc:1 = CC[6,1]; export tmpCc; }
+VfpuCC: "CC[7]" is vcc = 7 { local tmpCc:1 = CC[7,1]; export tmpCc; }
+
+VfpuCmovCC: "CC[0]" is vcmov_cc = 0 { local tmpCc:1 = CC[0,1]; export tmpCc; }
+VfpuCmovCC: "CC[1]" is vcmov_cc = 1 { local tmpCc:1 = CC[1,1]; export tmpCc; }
+VfpuCmovCC: "CC[2]" is vcmov_cc = 2 { local tmpCc:1 = CC[2,1]; export tmpCc; }
+VfpuCmovCC: "CC[3]" is vcmov_cc = 3 { local tmpCc:1 = CC[3,1]; export tmpCc; }
+VfpuCmovCC: "CC[4]" is vcmov_cc = 4 { local tmpCc:1 = CC[4,1]; export tmpCc; }
+VfpuCmovCC: "CC[5]" is vcmov_cc = 5 { local tmpCc:1 = CC[5,1]; export tmpCc; }
+VfpuCmovCC: "CC[6]" is vcmov_cc = 6 { local tmpCc:1 = CC[6,1]; export tmpCc; }
+VfpuCmovCC: "CC[7]" is vcmov_cc = 7 { local tmpCc:1 = CC[7,1]; export tmpCc; }
+
+define pcodeop vadd_s;
+:vadd.s vd_s, vs_s, vt_s          is prime = 24 & vop3 = 0 & vc1 = 0 & vc0 = 0 & vd_s & vd & vs_s & vs & vt_s & vt   {
+    local op1:4 = vs;
+    local op2:4 = vt;
+    local result:4 = vadd_s(op1, op2);
+    vd = result;
+}
+define pcodeop vadd_p;
+:vadd.p vd_p, vs_p, vt_p          is prime = 24 & vop3 = 0 & vc1 = 0 & vc0 = 1 & vd_p & vd & vs_p & vs & vt_p & vt   {
+    local op1:8 = vfpuReadP(vs);
+    local op2:8 = vfpuReadP(vt);
+    local result:8 = vadd_p(op1, op2);
+    vfpuWriteP(vd, result[0,32], result[32,32]);
+}
+define pcodeop vadd_t;
+:vadd.t vd_t, vs_t, vt_t          is prime = 24 & vop3 = 0 & vc1 = 1 & vc0 = 0 & vd_t & vd & vs_t & vs & vt_t & vt   {
+    local op1:12 = vfpuReadT(vs);
+    local op2:12 = vfpuReadT(vt);
+    local result:12 = vadd_t(op1, op2);
+    vfpuWriteT(vd, result[0,32], result[32,32], result[64,32]);
+}
+define pcodeop vadd_q;
+:vadd.q vd_q, vs_q, vt_q          is prime = 24 & vop3 = 0 & vc1 = 1 & vc0 = 1 & vd_q & vd & vs_q & vs & vt_q & vt   {
+    local op1:16 = vfpuReadQ(vs);
+    local op2:16 = vfpuReadQ(vt);
+    local result:16 = vadd_q(op1, op2);
+    vfpuWriteQ(vd, result[0,32], result[32,32], result[64,32], result[96,32]);
+}
+
+define pcodeop vsub_s;
+:vsub.s vd_s, vs_s, vt_s          is prime = 24 & vop3 = 1 & vc1 = 0 & vc0 = 0 & vd_s & vd & vs_s & vs & vt_s & vt   {
+    local op1:4 = vs;
+    local op2:4 = vt;
+    local result:4 = vsub_s(op1, op2);
+    vd = result;
+}
+define pcodeop vsub_p;
+:vsub.p vd_p, vs_p, vt_p          is prime = 24 & vop3 = 1 & vc1 = 0 & vc0 = 1 & vd_p & vd & vs_p & vs & vt_p & vt   {
+    local op1:8 = vfpuReadP(vs);
+    local op2:8 = vfpuReadP(vt);
+    local result:8 = vsub_p(op1, op2);
+    vfpuWriteP(vd, result[0,32], result[32,32]);
+}
+define pcodeop vsub_t;
+:vsub.t vd_t, vs_t, vt_t          is prime = 24 & vop3 = 1 & vc1 = 1 & vc0 = 0 & vd_t & vd & vs_t & vs & vt_t & vt   {
+    local op1:12 = vfpuReadT(vs);
+    local op2:12 = vfpuReadT(vt);
+    local result:12 = vsub_t(op1, op2);
+    vfpuWriteT(vd, result[0,32], result[32,32], result[64,32]);
+}
+define pcodeop vsub_q;
+:vsub.q vd_q, vs_q, vt_q          is prime = 24 & vop3 = 1 & vc1 = 1 & vc0 = 1 & vd_q & vd & vs_q & vs & vt_q & vt   {
+    local op1:16 = vfpuReadQ(vs);
+    local op2:16 = vfpuReadQ(vt);
+    local result:16 = vsub_q(op1, op2);
+    vfpuWriteQ(vd, result[0,32], result[32,32], result[64,32], result[96,32]);
+}
+
+define pcodeop vsbn_s;
+:vsbn.s vd_s, vs_s, vt_s          is prime = 24 & vop3 = 2 & vc1 = 0 & vc0 = 0 & vd_s & vd & vs_s & vs & vt_s & vt   {
+    local op1:4 = vs;
+    local op2:4 = vt;
+    local result:4 = vsbn_s(op1, op2);
+    vd = result;
+}
+define pcodeop vsbn_p;
+:vsbn.p vd_p, vs_p, vt_p          is prime = 24 & vop3 = 2 & vc1 = 0 & vc0 = 1 & vd_p & vd & vs_p & vs & vt_p & vt   {
+    local op1:8 = vfpuReadP(vs);
+    local op2:8 = vfpuReadP(vt);
+    local result:8 = vsbn_p(op1, op2);
+    vfpuWriteP(vd, result[0,32], result[32,32]);
+}
+define pcodeop vsbn_t;
+:vsbn.t vd_t, vs_t, vt_t          is prime = 24 & vop3 = 2 & vc1 = 1 & vc0 = 0 & vd_t & vd & vs_t & vs & vt_t & vt   {
+    local op1:12 = vfpuReadT(vs);
+    local op2:12 = vfpuReadT(vt);
+    local result:12 = vsbn_t(op1, op2);
+    vfpuWriteT(vd, result[0,32], result[32,32], result[64,32]);
+}
+define pcodeop vsbn_q;
+:vsbn.q vd_q, vs_q, vt_q          is prime = 24 & vop3 = 2 & vc1 = 1 & vc0 = 1 & vd_q & vd & vs_q & vs & vt_q & vt   {
+    local op1:16 = vfpuReadQ(vs);
+    local op2:16 = vfpuReadQ(vt);
+    local result:16 = vsbn_q(op1, op2);
+    vfpuWriteQ(vd, result[0,32], result[32,32], result[64,32], result[96,32]);
+}
+
+define pcodeop vdiv_s;
+:vdiv.s vd_s, vs_s, vt_s          is prime = 24 & vop3 = 7 & vc1 = 0 & vc0 = 0 & vd_s & vd & vs_s & vs & vt_s & vt   {
+    local op1:4 = vs;
+    local op2:4 = vt;
+    local result:4 = vdiv_s(op1, op2);
+    vd = result;
+}
+define pcodeop vdiv_p;
+:vdiv.p vd_p, vs_p, vt_p          is prime = 24 & vop3 = 7 & vc1 = 0 & vc0 = 1 & vd_p & vd & vs_p & vs & vt_p & vt   {
+    local op1:8 = vfpuReadP(vs);
+    local op2:8 = vfpuReadP(vt);
+    local result:8 = vdiv_p(op1, op2);
+    vfpuWriteP(vd, result[0,32], result[32,32]);
+}
+define pcodeop vdiv_t;
+:vdiv.t vd_t, vs_t, vt_t          is prime = 24 & vop3 = 7 & vc1 = 1 & vc0 = 0 & vd_t & vd & vs_t & vs & vt_t & vt   {
+    local op1:12 = vfpuReadT(vs);
+    local op2:12 = vfpuReadT(vt);
+    local result:12 = vdiv_t(op1, op2);
+    vfpuWriteT(vd, result[0,32], result[32,32], result[64,32]);
+}
+define pcodeop vdiv_q;
+:vdiv.q vd_q, vs_q, vt_q          is prime = 24 & vop3 = 7 & vc1 = 1 & vc0 = 1 & vd_q & vd & vs_q & vs & vt_q & vt   {
+    local op1:16 = vfpuReadQ(vs);
+    local op2:16 = vfpuReadQ(vt);
+    local result:16 = vdiv_q(op1, op2);
+    vfpuWriteQ(vd, result[0,32], result[32,32], result[64,32], result[96,32]);
+}
+
+define pcodeop vmul_s;
+:vmul.s vd_s, vs_s, vt_s          is prime = 25 & vop3 = 0 & vc1 = 0 & vc0 = 0 & vd_s & vd & vs_s & vs & vt_s & vt   {
+    local op1:4 = vs;
+    local op2:4 = vt;
+    local result:4 = vmul_s(op1, op2);
+    vd = result;
+}
+define pcodeop vmul_p;
+:vmul.p vd_p, vs_p, vt_p          is prime = 25 & vop3 = 0 & vc1 = 0 & vc0 = 1 & vd_p & vd & vs_p & vs & vt_p & vt   {
+    local op1:8 = vfpuReadP(vs);
+    local op2:8 = vfpuReadP(vt);
+    local result:8 = vmul_p(op1, op2);
+    vfpuWriteP(vd, result[0,32], result[32,32]);
+}
+define pcodeop vmul_t;
+:vmul.t vd_t, vs_t, vt_t          is prime = 25 & vop3 = 0 & vc1 = 1 & vc0 = 0 & vd_t & vd & vs_t & vs & vt_t & vt   {
+    local op1:12 = vfpuReadT(vs);
+    local op2:12 = vfpuReadT(vt);
+    local result:12 = vmul_t(op1, op2);
+    vfpuWriteT(vd, result[0,32], result[32,32], result[64,32]);
+}
+define pcodeop vmul_q;
+:vmul.q vd_q, vs_q, vt_q          is prime = 25 & vop3 = 0 & vc1 = 1 & vc0 = 1 & vd_q & vd & vs_q & vs & vt_q & vt   {
+    local op1:16 = vfpuReadQ(vs);
+    local op2:16 = vfpuReadQ(vt);
+    local result:16 = vmul_q(op1, op2);
+    vfpuWriteQ(vd, result[0,32], result[32,32], result[64,32], result[96,32]);
+}
+
+define pcodeop vdot_s;
+:vdot.s vd_s, vs_s, vt_s          is prime = 25 & vop3 = 1 & vc1 = 0 & vc0 = 0 & vd_s & vd & vs_s & vs & vt_s & vt   {
+    local op1:4 = vs;
+    local op2:4 = vt;
+    local result:4 = vdot_s(op1, op2);
+    vd = result;
+}
+define pcodeop vdot_p;
+:vdot.p vd_s, vs_p, vt_p          is prime = 25 & vop3 = 1 & vc1 = 0 & vc0 = 1 & vd_s & vd & vs_p & vs & vt_p & vt   {
+    local op1:8 = vfpuReadP(vs);
+    local op2:8 = vfpuReadP(vt);
+    local result:4 = vdot_p(op1, op2);
+    vd = result;
+}
+define pcodeop vdot_t;
+:vdot.t vd_s, vs_t, vt_t          is prime = 25 & vop3 = 1 & vc1 = 1 & vc0 = 0 & vd_s & vd & vs_t & vs & vt_t & vt   {
+    local op1:12 = vfpuReadT(vs);
+    local op2:12 = vfpuReadT(vt);
+    local result:4 = vdot_t(op1, op2);
+    vd = result;
+}
+define pcodeop vdot_q;
+:vdot.q vd_s, vs_q, vt_q          is prime = 25 & vop3 = 1 & vc1 = 1 & vc0 = 1 & vd_s & vd & vs_q & vs & vt_q & vt   {
+    local op1:16 = vfpuReadQ(vs);
+    local op2:16 = vfpuReadQ(vt);
+    local result:4 = vdot_q(op1, op2);
+    vd = result;
+}
+
+define pcodeop vscl_s;
+:vscl.s vd_s, vs_s, vt_s          is prime = 25 & vop3 = 2 & vc1 = 0 & vc0 = 0 & vd_s & vd & vs_s & vs & vt_s & vt   {
+    local op1:4 = vs;
+    local op2:4 = vt;
+    local result:4 = vscl_s(op1, op2);
+    vd = result;
+}
+define pcodeop vscl_p;
+:vscl.p vd_p, vs_p, vt_s          is prime = 25 & vop3 = 2 & vc1 = 0 & vc0 = 1 & vd_p & vd & vs_p & vs & vt_s & vt   {
+    local op1:8 = vfpuReadP(vs);
+    local op2:4 = vt;
+    local result:8 = vscl_p(op1, op2);
+    vfpuWriteP(vd, result[0,32], result[32,32]);
+}
+define pcodeop vscl_t;
+:vscl.t vd_t, vs_t, vt_s          is prime = 25 & vop3 = 2 & vc1 = 1 & vc0 = 0 & vd_t & vd & vs_t & vs & vt_s & vt   {
+    local op1:12 = vfpuReadT(vs);
+    local op2:4 = vt;
+    local result:12 = vscl_t(op1, op2);
+    vfpuWriteT(vd, result[0,32], result[32,32], result[64,32]);
+}
+define pcodeop vscl_q;
+:vscl.q vd_q, vs_q, vt_s          is prime = 25 & vop3 = 2 & vc1 = 1 & vc0 = 1 & vd_q & vd & vs_q & vs & vt_s & vt   {
+    local op1:16 = vfpuReadQ(vs);
+    local op2:4 = vt;
+    local result:16 = vscl_q(op1, op2);
+    vfpuWriteQ(vd, result[0,32], result[32,32], result[64,32], result[96,32]);
+}
+
+define pcodeop vhdp_s;
+:vhdp.s vd_s, vs_s, vt_s          is prime = 25 & vop3 = 4 & vc1 = 0 & vc0 = 0 & vd_s & vd & vs_s & vs & vt_s & vt   {
+    local op1:4 = vs;
+    local op2:4 = vt;
+    local result:4 = vhdp_s(op1, op2);
+    vd = result;
+}
+define pcodeop vhdp_p;
+:vhdp.p vd_s, vs_p, vt_p          is prime = 25 & vop3 = 4 & vc1 = 0 & vc0 = 1 & vd_s & vd & vs_p & vs & vt_p & vt   {
+    local op1:8 = vfpuReadP(vs);
+    local op2:8 = vfpuReadP(vt);
+    local result:4 = vhdp_p(op1, op2);
+    vd = result;
+}
+define pcodeop vhdp_t;
+:vhdp.t vd_s, vs_t, vt_t          is prime = 25 & vop3 = 4 & vc1 = 1 & vc0 = 0 & vd_s & vd & vs_t & vs & vt_t & vt   {
+    local op1:12 = vfpuReadT(vs);
+    local op2:12 = vfpuReadT(vt);
+    local result:4 = vhdp_t(op1, op2);
+    vd = result;
+}
+define pcodeop vhdp_q;
+:vhdp.q vd_s, vs_q, vt_q          is prime = 25 & vop3 = 4 & vc1 = 1 & vc0 = 1 & vd_s & vd & vs_q & vs & vt_q & vt   {
+    local op1:16 = vfpuReadQ(vs);
+    local op2:16 = vfpuReadQ(vt);
+    local result:4 = vhdp_q(op1, op2);
+    vd = result;
+}
+
+define pcodeop vcrs_t;
+:vcrs.t vd_t, vs_t, vt_t          is prime = 25 & vop3 = 5 & vc1 = 1 & vc0 = 0 & vd_t & vd & vs_t & vs & vt_t & vt   {
+    local op1:12 = vfpuReadT(vs);
+    local op2:12 = vfpuReadT(vt);
+    local result:12 = vcrs_t(op1, op2);
+    vfpuWriteT(vd, result[0,32], result[32,32], result[64,32]);
+}
+
+define pcodeop vdet_s;
+:vdet.s vd_s, vs_s, vt_s          is prime = 25 & vop3 = 6 & vc1 = 0 & vc0 = 0 & vd_s & vd & vs_s & vs & vt_s & vt   {
+    local op1:4 = vs;
+    local op2:4 = vt;
+    local result:4 = vdet_s(op1, op2);
+    vd = result;
+}
+define pcodeop vdet_p;
+:vdet.p vd_s, vs_p, vt_p          is prime = 25 & vop3 = 6 & vc1 = 0 & vc0 = 1 & vd_s & vd & vs_p & vs & vt_p & vt   {
+    local op1:8 = vfpuReadP(vs);
+    local op2:8 = vfpuReadP(vt);
+    local result:4 = vdet_p(op1, op2);
+    vd = result;
+}
+define pcodeop vdet_t;
+:vdet.t vd_s, vs_t, vt_t          is prime = 25 & vop3 = 6 & vc1 = 1 & vc0 = 0 & vd_s & vd & vs_t & vs & vt_t & vt   {
+    local op1:12 = vfpuReadT(vs);
+    local op2:12 = vfpuReadT(vt);
+    local result:4 = vdet_t(op1, op2);
+    vd = result;
+}
+define pcodeop vdet_q;
+:vdet.q vd_s, vs_q, vt_q          is prime = 25 & vop3 = 6 & vc1 = 1 & vc0 = 1 & vd_s & vd & vs_q & vs & vt_q & vt   {
+    local op1:16 = vfpuReadQ(vs);
+    local op2:16 = vfpuReadQ(vt);
+    local result:4 = vdet_q(op1, op2);
+    vd = result;
+}
+
+define pcodeop vmin_s;
+:vmin.s vd_s, vs_s, vt_s          is prime = 27 & vop3 = 2 & vc1 = 0 & vc0 = 0 & vd_s & vd & vs_s & vs & vt_s & vt   {
+    local op1:4 = vs;
+    local op2:4 = vt;
+    local result:4 = vmin_s(op1, op2);
+    vd = result;
+}
+define pcodeop vmin_p;
+:vmin.p vd_p, vs_p, vt_p          is prime = 27 & vop3 = 2 & vc1 = 0 & vc0 = 1 & vd_p & vd & vs_p & vs & vt_p & vt   {
+    local op1:8 = vfpuReadP(vs);
+    local op2:8 = vfpuReadP(vt);
+    local result:8 = vmin_p(op1, op2);
+    vfpuWriteP(vd, result[0,32], result[32,32]);
+}
+define pcodeop vmin_t;
+:vmin.t vd_t, vs_t, vt_t          is prime = 27 & vop3 = 2 & vc1 = 1 & vc0 = 0 & vd_t & vd & vs_t & vs & vt_t & vt   {
+    local op1:12 = vfpuReadT(vs);
+    local op2:12 = vfpuReadT(vt);
+    local result:12 = vmin_t(op1, op2);
+    vfpuWriteT(vd, result[0,32], result[32,32], result[64,32]);
+}
+define pcodeop vmin_q;
+:vmin.q vd_q, vs_q, vt_q          is prime = 27 & vop3 = 2 & vc1 = 1 & vc0 = 1 & vd_q & vd & vs_q & vs & vt_q & vt   {
+    local op1:16 = vfpuReadQ(vs);
+    local op2:16 = vfpuReadQ(vt);
+    local result:16 = vmin_q(op1, op2);
+    vfpuWriteQ(vd, result[0,32], result[32,32], result[64,32], result[96,32]);
+}
+
+define pcodeop vmax_s;
+:vmax.s vd_s, vs_s, vt_s          is prime = 27 & vop3 = 3 & vc1 = 0 & vc0 = 0 & vd_s & vd & vs_s & vs & vt_s & vt   {
+    local op1:4 = vs;
+    local op2:4 = vt;
+    local result:4 = vmax_s(op1, op2);
+    vd = result;
+}
+define pcodeop vmax_p;
+:vmax.p vd_p, vs_p, vt_p          is prime = 27 & vop3 = 3 & vc1 = 0 & vc0 = 1 & vd_p & vd & vs_p & vs & vt_p & vt   {
+    local op1:8 = vfpuReadP(vs);
+    local op2:8 = vfpuReadP(vt);
+    local result:8 = vmax_p(op1, op2);
+    vfpuWriteP(vd, result[0,32], result[32,32]);
+}
+define pcodeop vmax_t;
+:vmax.t vd_t, vs_t, vt_t          is prime = 27 & vop3 = 3 & vc1 = 1 & vc0 = 0 & vd_t & vd & vs_t & vs & vt_t & vt   {
+    local op1:12 = vfpuReadT(vs);
+    local op2:12 = vfpuReadT(vt);
+    local result:12 = vmax_t(op1, op2);
+    vfpuWriteT(vd, result[0,32], result[32,32], result[64,32]);
+}
+define pcodeop vmax_q;
+:vmax.q vd_q, vs_q, vt_q          is prime = 27 & vop3 = 3 & vc1 = 1 & vc0 = 1 & vd_q & vd & vs_q & vs & vt_q & vt   {
+    local op1:16 = vfpuReadQ(vs);
+    local op2:16 = vfpuReadQ(vt);
+    local result:16 = vmax_q(op1, op2);
+    vfpuWriteQ(vd, result[0,32], result[32,32], result[64,32], result[96,32]);
+}
+
+define pcodeop vscmp_s;
+:vscmp.s vd_s, vs_s, vt_s         is prime = 27 & vop3 = 5 & vc1 = 0 & vc0 = 0 & vd_s & vd & vs_s & vs & vt_s & vt   {
+    local op1:4 = vs;
+    local op2:4 = vt;
+    local result:4 = vscmp_s(op1, op2);
+    vd = result;
+}
+define pcodeop vscmp_p;
+:vscmp.p vd_p, vs_p, vt_p         is prime = 27 & vop3 = 5 & vc1 = 0 & vc0 = 1 & vd_p & vd & vs_p & vs & vt_p & vt   {
+    local op1:8 = vfpuReadP(vs);
+    local op2:8 = vfpuReadP(vt);
+    local result:8 = vscmp_p(op1, op2);
+    vfpuWriteP(vd, result[0,32], result[32,32]);
+}
+define pcodeop vscmp_t;
+:vscmp.t vd_t, vs_t, vt_t         is prime = 27 & vop3 = 5 & vc1 = 1 & vc0 = 0 & vd_t & vd & vs_t & vs & vt_t & vt   {
+    local op1:12 = vfpuReadT(vs);
+    local op2:12 = vfpuReadT(vt);
+    local result:12 = vscmp_t(op1, op2);
+    vfpuWriteT(vd, result[0,32], result[32,32], result[64,32]);
+}
+define pcodeop vscmp_q;
+:vscmp.q vd_q, vs_q, vt_q         is prime = 27 & vop3 = 5 & vc1 = 1 & vc0 = 1 & vd_q & vd & vs_q & vs & vt_q & vt   {
+    local op1:16 = vfpuReadQ(vs);
+    local op2:16 = vfpuReadQ(vt);
+    local result:16 = vscmp_q(op1, op2);
+    vfpuWriteQ(vd, result[0,32], result[32,32], result[64,32], result[96,32]);
+}
+
+define pcodeop vsge_s;
+:vsge.s vd_s, vs_s, vt_s          is prime = 27 & vop3 = 6 & vc1 = 0 & vc0 = 0 & vd_s & vd & vs_s & vs & vt_s & vt   {
+    local op1:4 = vs;
+    local op2:4 = vt;
+    local result:4 = vsge_s(op1, op2);
+    vd = result;
+}
+define pcodeop vsge_p;
+:vsge.p vd_p, vs_p, vt_p          is prime = 27 & vop3 = 6 & vc1 = 0 & vc0 = 1 & vd_p & vd & vs_p & vs & vt_p & vt   {
+    local op1:8 = vfpuReadP(vs);
+    local op2:8 = vfpuReadP(vt);
+    local result:8 = vsge_p(op1, op2);
+    vfpuWriteP(vd, result[0,32], result[32,32]);
+}
+define pcodeop vsge_t;
+:vsge.t vd_t, vs_t, vt_t          is prime = 27 & vop3 = 6 & vc1 = 1 & vc0 = 0 & vd_t & vd & vs_t & vs & vt_t & vt   {
+    local op1:12 = vfpuReadT(vs);
+    local op2:12 = vfpuReadT(vt);
+    local result:12 = vsge_t(op1, op2);
+    vfpuWriteT(vd, result[0,32], result[32,32], result[64,32]);
+}
+define pcodeop vsge_q;
+:vsge.q vd_q, vs_q, vt_q          is prime = 27 & vop3 = 6 & vc1 = 1 & vc0 = 1 & vd_q & vd & vs_q & vs & vt_q & vt   {
+    local op1:16 = vfpuReadQ(vs);
+    local op2:16 = vfpuReadQ(vt);
+    local result:16 = vsge_q(op1, op2);
+    vfpuWriteQ(vd, result[0,32], result[32,32], result[64,32], result[96,32]);
+}
+
+define pcodeop vslt_s;
+:vslt.s vd_s, vs_s, vt_s          is prime = 27 & vop3 = 7 & vc1 = 0 & vc0 = 0 & vd_s & vd & vs_s & vs & vt_s & vt   {
+    local op1:4 = vs;
+    local op2:4 = vt;
+    local result:4 = vslt_s(op1, op2);
+    vd = result;
+}
+define pcodeop vslt_p;
+:vslt.p vd_p, vs_p, vt_p          is prime = 27 & vop3 = 7 & vc1 = 0 & vc0 = 1 & vd_p & vd & vs_p & vs & vt_p & vt   {
+    local op1:8 = vfpuReadP(vs);
+    local op2:8 = vfpuReadP(vt);
+    local result:8 = vslt_p(op1, op2);
+    vfpuWriteP(vd, result[0,32], result[32,32]);
+}
+define pcodeop vslt_t;
+:vslt.t vd_t, vs_t, vt_t          is prime = 27 & vop3 = 7 & vc1 = 1 & vc0 = 0 & vd_t & vd & vs_t & vs & vt_t & vt   {
+    local op1:12 = vfpuReadT(vs);
+    local op2:12 = vfpuReadT(vt);
+    local result:12 = vslt_t(op1, op2);
+    vfpuWriteT(vd, result[0,32], result[32,32], result[64,32]);
+}
+define pcodeop vslt_q;
+:vslt.q vd_q, vs_q, vt_q          is prime = 27 & vop3 = 7 & vc1 = 1 & vc0 = 1 & vd_q & vd & vs_q & vs & vt_q & vt   {
+    local op1:16 = vfpuReadQ(vs);
+    local op2:16 = vfpuReadQ(vt);
+    local result:16 = vslt_q(op1, op2);
+    vfpuWriteQ(vd, result[0,32], result[32,32], result[64,32], result[96,32]);
+}
+
+define pcodeop vmov_s;
+:vmov.s vd_s, vs_s                is prime = 52 & vop3 = 0 & vt = 0 & vc1 = 0 & vc0 = 0 & vd_s & vd & vs_s & vs   {
+    local op1:4 = vs;
+    local result:4 = vmov_s(op1);
+    vd = result;
+}
+define pcodeop vmov_p;
+:vmov.p vd_p, vs_p                is prime = 52 & vop3 = 0 & vt = 0 & vc1 = 0 & vc0 = 1 & vd_p & vd & vs_p & vs   {
+    local op1:8 = vfpuReadP(vs);
+    local result:8 = vmov_p(op1);
+    vfpuWriteP(vd, result[0,32], result[32,32]);
+}
+define pcodeop vmov_t;
+:vmov.t vd_t, vs_t                is prime = 52 & vop3 = 0 & vt = 0 & vc1 = 1 & vc0 = 0 & vd_t & vd & vs_t & vs   {
+    local op1:12 = vfpuReadT(vs);
+    local result:12 = vmov_t(op1);
+    vfpuWriteT(vd, result[0,32], result[32,32], result[64,32]);
+}
+define pcodeop vmov_q;
+:vmov.q vd_q, vs_q                is prime = 52 & vop3 = 0 & vt = 0 & vc1 = 1 & vc0 = 1 & vd_q & vd & vs_q & vs   {
+    local op1:16 = vfpuReadQ(vs);
+    local result:16 = vmov_q(op1);
+    vfpuWriteQ(vd, result[0,32], result[32,32], result[64,32], result[96,32]);
+}
+
+define pcodeop vabs_s;
+:vabs.s vd_s, vs_s                is prime = 52 & vop3 = 0 & vt = 1 & vc1 = 0 & vc0 = 0 & vd_s & vd & vs_s & vs   {
+    local op1:4 = vs;
+    local result:4 = vabs_s(op1);
+    vd = result;
+}
+define pcodeop vabs_p;
+:vabs.p vd_p, vs_p                is prime = 52 & vop3 = 0 & vt = 1 & vc1 = 0 & vc0 = 1 & vd_p & vd & vs_p & vs   {
+    local op1:8 = vfpuReadP(vs);
+    local result:8 = vabs_p(op1);
+    vfpuWriteP(vd, result[0,32], result[32,32]);
+}
+define pcodeop vabs_t;
+:vabs.t vd_t, vs_t                is prime = 52 & vop3 = 0 & vt = 1 & vc1 = 1 & vc0 = 0 & vd_t & vd & vs_t & vs   {
+    local op1:12 = vfpuReadT(vs);
+    local result:12 = vabs_t(op1);
+    vfpuWriteT(vd, result[0,32], result[32,32], result[64,32]);
+}
+define pcodeop vabs_q;
+:vabs.q vd_q, vs_q                is prime = 52 & vop3 = 0 & vt = 1 & vc1 = 1 & vc0 = 1 & vd_q & vd & vs_q & vs   {
+    local op1:16 = vfpuReadQ(vs);
+    local result:16 = vabs_q(op1);
+    vfpuWriteQ(vd, result[0,32], result[32,32], result[64,32], result[96,32]);
+}
+
+define pcodeop vneg_s;
+:vneg.s vd_s, vs_s                is prime = 52 & vop3 = 0 & vt = 2 & vc1 = 0 & vc0 = 0 & vd_s & vd & vs_s & vs   {
+    local op1:4 = vs;
+    local result:4 = vneg_s(op1);
+    vd = result;
+}
+define pcodeop vneg_p;
+:vneg.p vd_p, vs_p                is prime = 52 & vop3 = 0 & vt = 2 & vc1 = 0 & vc0 = 1 & vd_p & vd & vs_p & vs   {
+    local op1:8 = vfpuReadP(vs);
+    local result:8 = vneg_p(op1);
+    vfpuWriteP(vd, result[0,32], result[32,32]);
+}
+define pcodeop vneg_t;
+:vneg.t vd_t, vs_t                is prime = 52 & vop3 = 0 & vt = 2 & vc1 = 1 & vc0 = 0 & vd_t & vd & vs_t & vs   {
+    local op1:12 = vfpuReadT(vs);
+    local result:12 = vneg_t(op1);
+    vfpuWriteT(vd, result[0,32], result[32,32], result[64,32]);
+}
+define pcodeop vneg_q;
+:vneg.q vd_q, vs_q                is prime = 52 & vop3 = 0 & vt = 2 & vc1 = 1 & vc0 = 1 & vd_q & vd & vs_q & vs   {
+    local op1:16 = vfpuReadQ(vs);
+    local result:16 = vneg_q(op1);
+    vfpuWriteQ(vd, result[0,32], result[32,32], result[64,32], result[96,32]);
+}
+
+define pcodeop vidt_s;
+:vidt.s vd_s                      is prime = 52 & vop3 = 0 & vt = 3 & vc1 = 0 & vc0 = 0 & vd_s & vd   {
+    local result:4 = vidt_s();
+    vd = result;
+}
+
+define pcodeop vidt_p;
+:vidt.p vd_p                      is prime = 52 & vop3 = 0 & vt = 3 & vc1 = 0 & vc0 = 1 & vd_p & vd   {
+    local result:8 = vidt_p();
+    vfpuWriteP(vd, result[0,32], result[32,32]);
+}
+
+define pcodeop vidt_t;
+:vidt.t vd_t                      is prime = 52 & vop3 = 0 & vt = 3 & vc1 = 1 & vc0 = 0 & vd_t & vd   {
+    local result:12 = vidt_t();
+    vfpuWriteT(vd, result[0,32], result[32,32], result[64,32]);
+}
+
+define pcodeop vidt_q;
+:vidt.q vd_q                      is prime = 52 & vop3 = 0 & vt = 3 & vc1 = 1 & vc0 = 1 & vd_q & vd   {
+    local result:16 = vidt_q();
+    vfpuWriteQ(vd, result[0,32], result[32,32], result[64,32], result[96,32]);
+}
+
+
+define pcodeop vsat0_s;
+:vsat0.s vd_s, vs_s               is prime = 52 & vop3 = 0 & vt = 4 & vc1 = 0 & vc0 = 0 & vd_s & vd & vs_s & vs   {
+    local op1:4 = vs;
+    local result:4 = vsat0_s(op1);
+    vd = result;
+}
+define pcodeop vsat0_p;
+:vsat0.p vd_p, vs_p               is prime = 52 & vop3 = 0 & vt = 4 & vc1 = 0 & vc0 = 1 & vd_p & vd & vs_p & vs   {
+    local op1:8 = vfpuReadP(vs);
+    local result:8 = vsat0_p(op1);
+    vfpuWriteP(vd, result[0,32], result[32,32]);
+}
+define pcodeop vsat0_t;
+:vsat0.t vd_t, vs_t               is prime = 52 & vop3 = 0 & vt = 4 & vc1 = 1 & vc0 = 0 & vd_t & vd & vs_t & vs   {
+    local op1:12 = vfpuReadT(vs);
+    local result:12 = vsat0_t(op1);
+    vfpuWriteT(vd, result[0,32], result[32,32], result[64,32]);
+}
+define pcodeop vsat0_q;
+:vsat0.q vd_q, vs_q               is prime = 52 & vop3 = 0 & vt = 4 & vc1 = 1 & vc0 = 1 & vd_q & vd & vs_q & vs   {
+    local op1:16 = vfpuReadQ(vs);
+    local result:16 = vsat0_q(op1);
+    vfpuWriteQ(vd, result[0,32], result[32,32], result[64,32], result[96,32]);
+}
+
+define pcodeop vsat1_s;
+:vsat1.s vd_s, vs_s               is prime = 52 & vop3 = 0 & vt = 5 & vc1 = 0 & vc0 = 0 & vd_s & vd & vs_s & vs   {
+    local op1:4 = vs;
+    local result:4 = vsat1_s(op1);
+    vd = result;
+}
+define pcodeop vsat1_p;
+:vsat1.p vd_p, vs_p               is prime = 52 & vop3 = 0 & vt = 5 & vc1 = 0 & vc0 = 1 & vd_p & vd & vs_p & vs   {
+    local op1:8 = vfpuReadP(vs);
+    local result:8 = vsat1_p(op1);
+    vfpuWriteP(vd, result[0,32], result[32,32]);
+}
+define pcodeop vsat1_t;
+:vsat1.t vd_t, vs_t               is prime = 52 & vop3 = 0 & vt = 5 & vc1 = 1 & vc0 = 0 & vd_t & vd & vs_t & vs   {
+    local op1:12 = vfpuReadT(vs);
+    local result:12 = vsat1_t(op1);
+    vfpuWriteT(vd, result[0,32], result[32,32], result[64,32]);
+}
+define pcodeop vsat1_q;
+:vsat1.q vd_q, vs_q               is prime = 52 & vop3 = 0 & vt = 5 & vc1 = 1 & vc0 = 1 & vd_q & vd & vs_q & vs   {
+    local op1:16 = vfpuReadQ(vs);
+    local result:16 = vsat1_q(op1);
+    vfpuWriteQ(vd, result[0,32], result[32,32], result[64,32], result[96,32]);
+}
+
+define pcodeop vzero_s;
+:vzero.s vd_s                     is prime = 52 & vop3 = 0 & vt = 6 & vc1 = 0 & vc0 = 0 & vd_s & vd   {
+    local result:4 = vzero_s();
+    vd = result;
+}
+
+define pcodeop vzero_p;
+:vzero.p vd_p                     is prime = 52 & vop3 = 0 & vt = 6 & vc1 = 0 & vc0 = 1 & vd_p & vd   {
+    local result:8 = vzero_p();
+    vfpuWriteP(vd, result[0,32], result[32,32]);
+}
+
+define pcodeop vzero_t;
+:vzero.t vd_t                     is prime = 52 & vop3 = 0 & vt = 6 & vc1 = 1 & vc0 = 0 & vd_t & vd   {
+    local result:12 = vzero_t();
+    vfpuWriteT(vd, result[0,32], result[32,32], result[64,32]);
+}
+
+define pcodeop vzero_q;
+:vzero.q vd_q                     is prime = 52 & vop3 = 0 & vt = 6 & vc1 = 1 & vc0 = 1 & vd_q & vd   {
+    local result:16 = vzero_q();
+    vfpuWriteQ(vd, result[0,32], result[32,32], result[64,32], result[96,32]);
+}
+
+
+define pcodeop vone_s;
+:vone.s vd_s                      is prime = 52 & vop3 = 0 & vt = 7 & vc1 = 0 & vc0 = 0 & vd_s & vd   {
+    local result:4 = vone_s();
+    vd = result;
+}
+
+define pcodeop vone_p;
+:vone.p vd_p                      is prime = 52 & vop3 = 0 & vt = 7 & vc1 = 0 & vc0 = 1 & vd_p & vd   {
+    local result:8 = vone_p();
+    vfpuWriteP(vd, result[0,32], result[32,32]);
+}
+
+define pcodeop vone_t;
+:vone.t vd_t                      is prime = 52 & vop3 = 0 & vt = 7 & vc1 = 1 & vc0 = 0 & vd_t & vd   {
+    local result:12 = vone_t();
+    vfpuWriteT(vd, result[0,32], result[32,32], result[64,32]);
+}
+
+define pcodeop vone_q;
+:vone.q vd_q                      is prime = 52 & vop3 = 0 & vt = 7 & vc1 = 1 & vc0 = 1 & vd_q & vd   {
+    local result:16 = vone_q();
+    vfpuWriteQ(vd, result[0,32], result[32,32], result[64,32], result[96,32]);
+}
+
+
+define pcodeop vrcp_s;
+:vrcp.s vd_s, vs_s                is prime = 52 & vop3 = 0 & vt = 16 & vc1 = 0 & vc0 = 0 & vd_s & vd & vs_s & vs   {
+    local op1:4 = vs;
+    local result:4 = vrcp_s(op1);
+    vd = result;
+}
+define pcodeop vrcp_p;
+:vrcp.p vd_p, vs_p                is prime = 52 & vop3 = 0 & vt = 16 & vc1 = 0 & vc0 = 1 & vd_p & vd & vs_p & vs   {
+    local op1:8 = vfpuReadP(vs);
+    local result:8 = vrcp_p(op1);
+    vfpuWriteP(vd, result[0,32], result[32,32]);
+}
+define pcodeop vrcp_t;
+:vrcp.t vd_t, vs_t                is prime = 52 & vop3 = 0 & vt = 16 & vc1 = 1 & vc0 = 0 & vd_t & vd & vs_t & vs   {
+    local op1:12 = vfpuReadT(vs);
+    local result:12 = vrcp_t(op1);
+    vfpuWriteT(vd, result[0,32], result[32,32], result[64,32]);
+}
+define pcodeop vrcp_q;
+:vrcp.q vd_q, vs_q                is prime = 52 & vop3 = 0 & vt = 16 & vc1 = 1 & vc0 = 1 & vd_q & vd & vs_q & vs   {
+    local op1:16 = vfpuReadQ(vs);
+    local result:16 = vrcp_q(op1);
+    vfpuWriteQ(vd, result[0,32], result[32,32], result[64,32], result[96,32]);
+}
+
+define pcodeop vrsq_s;
+:vrsq.s vd_s, vs_s                is prime = 52 & vop3 = 0 & vt = 17 & vc1 = 0 & vc0 = 0 & vd_s & vd & vs_s & vs   {
+    local op1:4 = vs;
+    local result:4 = vrsq_s(op1);
+    vd = result;
+}
+define pcodeop vrsq_p;
+:vrsq.p vd_p, vs_p                is prime = 52 & vop3 = 0 & vt = 17 & vc1 = 0 & vc0 = 1 & vd_p & vd & vs_p & vs   {
+    local op1:8 = vfpuReadP(vs);
+    local result:8 = vrsq_p(op1);
+    vfpuWriteP(vd, result[0,32], result[32,32]);
+}
+define pcodeop vrsq_t;
+:vrsq.t vd_t, vs_t                is prime = 52 & vop3 = 0 & vt = 17 & vc1 = 1 & vc0 = 0 & vd_t & vd & vs_t & vs   {
+    local op1:12 = vfpuReadT(vs);
+    local result:12 = vrsq_t(op1);
+    vfpuWriteT(vd, result[0,32], result[32,32], result[64,32]);
+}
+define pcodeop vrsq_q;
+:vrsq.q vd_q, vs_q                is prime = 52 & vop3 = 0 & vt = 17 & vc1 = 1 & vc0 = 1 & vd_q & vd & vs_q & vs   {
+    local op1:16 = vfpuReadQ(vs);
+    local result:16 = vrsq_q(op1);
+    vfpuWriteQ(vd, result[0,32], result[32,32], result[64,32], result[96,32]);
+}
+
+define pcodeop vsin_s;
+:vsin.s vd_s, vs_s                is prime = 52 & vop3 = 0 & vt = 18 & vc1 = 0 & vc0 = 0 & vd_s & vd & vs_s & vs   {
+    local op1:4 = vs;
+    local result:4 = vsin_s(op1);
+    vd = result;
+}
+define pcodeop vsin_p;
+:vsin.p vd_p, vs_p                is prime = 52 & vop3 = 0 & vt = 18 & vc1 = 0 & vc0 = 1 & vd_p & vd & vs_p & vs   {
+    local op1:8 = vfpuReadP(vs);
+    local result:8 = vsin_p(op1);
+    vfpuWriteP(vd, result[0,32], result[32,32]);
+}
+define pcodeop vsin_t;
+:vsin.t vd_t, vs_t                is prime = 52 & vop3 = 0 & vt = 18 & vc1 = 1 & vc0 = 0 & vd_t & vd & vs_t & vs   {
+    local op1:12 = vfpuReadT(vs);
+    local result:12 = vsin_t(op1);
+    vfpuWriteT(vd, result[0,32], result[32,32], result[64,32]);
+}
+define pcodeop vsin_q;
+:vsin.q vd_q, vs_q                is prime = 52 & vop3 = 0 & vt = 18 & vc1 = 1 & vc0 = 1 & vd_q & vd & vs_q & vs   {
+    local op1:16 = vfpuReadQ(vs);
+    local result:16 = vsin_q(op1);
+    vfpuWriteQ(vd, result[0,32], result[32,32], result[64,32], result[96,32]);
+}
+
+define pcodeop vcos_s;
+:vcos.s vd_s, vs_s                is prime = 52 & vop3 = 0 & vt = 19 & vc1 = 0 & vc0 = 0 & vd_s & vd & vs_s & vs   {
+    local op1:4 = vs;
+    local result:4 = vcos_s(op1);
+    vd = result;
+}
+define pcodeop vcos_p;
+:vcos.p vd_p, vs_p                is prime = 52 & vop3 = 0 & vt = 19 & vc1 = 0 & vc0 = 1 & vd_p & vd & vs_p & vs   {
+    local op1:8 = vfpuReadP(vs);
+    local result:8 = vcos_p(op1);
+    vfpuWriteP(vd, result[0,32], result[32,32]);
+}
+define pcodeop vcos_t;
+:vcos.t vd_t, vs_t                is prime = 52 & vop3 = 0 & vt = 19 & vc1 = 1 & vc0 = 0 & vd_t & vd & vs_t & vs   {
+    local op1:12 = vfpuReadT(vs);
+    local result:12 = vcos_t(op1);
+    vfpuWriteT(vd, result[0,32], result[32,32], result[64,32]);
+}
+define pcodeop vcos_q;
+:vcos.q vd_q, vs_q                is prime = 52 & vop3 = 0 & vt = 19 & vc1 = 1 & vc0 = 1 & vd_q & vd & vs_q & vs   {
+    local op1:16 = vfpuReadQ(vs);
+    local result:16 = vcos_q(op1);
+    vfpuWriteQ(vd, result[0,32], result[32,32], result[64,32], result[96,32]);
+}
+
+define pcodeop vexp2_s;
+:vexp2.s vd_s, vs_s               is prime = 52 & vop3 = 0 & vt = 20 & vc1 = 0 & vc0 = 0 & vd_s & vd & vs_s & vs   {
+    local op1:4 = vs;
+    local result:4 = vexp2_s(op1);
+    vd = result;
+}
+define pcodeop vexp2_p;
+:vexp2.p vd_p, vs_p               is prime = 52 & vop3 = 0 & vt = 20 & vc1 = 0 & vc0 = 1 & vd_p & vd & vs_p & vs   {
+    local op1:8 = vfpuReadP(vs);
+    local result:8 = vexp2_p(op1);
+    vfpuWriteP(vd, result[0,32], result[32,32]);
+}
+define pcodeop vexp2_t;
+:vexp2.t vd_t, vs_t               is prime = 52 & vop3 = 0 & vt = 20 & vc1 = 1 & vc0 = 0 & vd_t & vd & vs_t & vs   {
+    local op1:12 = vfpuReadT(vs);
+    local result:12 = vexp2_t(op1);
+    vfpuWriteT(vd, result[0,32], result[32,32], result[64,32]);
+}
+define pcodeop vexp2_q;
+:vexp2.q vd_q, vs_q               is prime = 52 & vop3 = 0 & vt = 20 & vc1 = 1 & vc0 = 1 & vd_q & vd & vs_q & vs   {
+    local op1:16 = vfpuReadQ(vs);
+    local result:16 = vexp2_q(op1);
+    vfpuWriteQ(vd, result[0,32], result[32,32], result[64,32], result[96,32]);
+}
+
+define pcodeop vlog2_s;
+:vlog2.s vd_s, vs_s               is prime = 52 & vop3 = 0 & vt = 21 & vc1 = 0 & vc0 = 0 & vd_s & vd & vs_s & vs   {
+    local op1:4 = vs;
+    local result:4 = vlog2_s(op1);
+    vd = result;
+}
+define pcodeop vlog2_p;
+:vlog2.p vd_p, vs_p               is prime = 52 & vop3 = 0 & vt = 21 & vc1 = 0 & vc0 = 1 & vd_p & vd & vs_p & vs   {
+    local op1:8 = vfpuReadP(vs);
+    local result:8 = vlog2_p(op1);
+    vfpuWriteP(vd, result[0,32], result[32,32]);
+}
+define pcodeop vlog2_t;
+:vlog2.t vd_t, vs_t               is prime = 52 & vop3 = 0 & vt = 21 & vc1 = 1 & vc0 = 0 & vd_t & vd & vs_t & vs   {
+    local op1:12 = vfpuReadT(vs);
+    local result:12 = vlog2_t(op1);
+    vfpuWriteT(vd, result[0,32], result[32,32], result[64,32]);
+}
+define pcodeop vlog2_q;
+:vlog2.q vd_q, vs_q               is prime = 52 & vop3 = 0 & vt = 21 & vc1 = 1 & vc0 = 1 & vd_q & vd & vs_q & vs   {
+    local op1:16 = vfpuReadQ(vs);
+    local result:16 = vlog2_q(op1);
+    vfpuWriteQ(vd, result[0,32], result[32,32], result[64,32], result[96,32]);
+}
+
+define pcodeop vsqrt_s;
+:vsqrt.s vd_s, vs_s               is prime = 52 & vop3 = 0 & vt = 22 & vc1 = 0 & vc0 = 0 & vd_s & vd & vs_s & vs   {
+    local op1:4 = vs;
+    local result:4 = vsqrt_s(op1);
+    vd = result;
+}
+define pcodeop vsqrt_p;
+:vsqrt.p vd_p, vs_p               is prime = 52 & vop3 = 0 & vt = 22 & vc1 = 0 & vc0 = 1 & vd_p & vd & vs_p & vs   {
+    local op1:8 = vfpuReadP(vs);
+    local result:8 = vsqrt_p(op1);
+    vfpuWriteP(vd, result[0,32], result[32,32]);
+}
+define pcodeop vsqrt_t;
+:vsqrt.t vd_t, vs_t               is prime = 52 & vop3 = 0 & vt = 22 & vc1 = 1 & vc0 = 0 & vd_t & vd & vs_t & vs   {
+    local op1:12 = vfpuReadT(vs);
+    local result:12 = vsqrt_t(op1);
+    vfpuWriteT(vd, result[0,32], result[32,32], result[64,32]);
+}
+define pcodeop vsqrt_q;
+:vsqrt.q vd_q, vs_q               is prime = 52 & vop3 = 0 & vt = 22 & vc1 = 1 & vc0 = 1 & vd_q & vd & vs_q & vs   {
+    local op1:16 = vfpuReadQ(vs);
+    local result:16 = vsqrt_q(op1);
+    vfpuWriteQ(vd, result[0,32], result[32,32], result[64,32], result[96,32]);
+}
+
+define pcodeop vasin_s;
+:vasin.s vd_s, vs_s               is prime = 52 & vop3 = 0 & vt = 23 & vc1 = 0 & vc0 = 0 & vd_s & vd & vs_s & vs   {
+    local op1:4 = vs;
+    local result:4 = vasin_s(op1);
+    vd = result;
+}
+define pcodeop vasin_p;
+:vasin.p vd_p, vs_p               is prime = 52 & vop3 = 0 & vt = 23 & vc1 = 0 & vc0 = 1 & vd_p & vd & vs_p & vs   {
+    local op1:8 = vfpuReadP(vs);
+    local result:8 = vasin_p(op1);
+    vfpuWriteP(vd, result[0,32], result[32,32]);
+}
+define pcodeop vasin_t;
+:vasin.t vd_t, vs_t               is prime = 52 & vop3 = 0 & vt = 23 & vc1 = 1 & vc0 = 0 & vd_t & vd & vs_t & vs   {
+    local op1:12 = vfpuReadT(vs);
+    local result:12 = vasin_t(op1);
+    vfpuWriteT(vd, result[0,32], result[32,32], result[64,32]);
+}
+define pcodeop vasin_q;
+:vasin.q vd_q, vs_q               is prime = 52 & vop3 = 0 & vt = 23 & vc1 = 1 & vc0 = 1 & vd_q & vd & vs_q & vs   {
+    local op1:16 = vfpuReadQ(vs);
+    local result:16 = vasin_q(op1);
+    vfpuWriteQ(vd, result[0,32], result[32,32], result[64,32], result[96,32]);
+}
+
+define pcodeop vnrcp_s;
+:vnrcp.s vd_s, vs_s               is prime = 52 & vop3 = 0 & vt = 24 & vc1 = 0 & vc0 = 0 & vd_s & vd & vs_s & vs   {
+    local op1:4 = vs;
+    local result:4 = vnrcp_s(op1);
+    vd = result;
+}
+define pcodeop vnrcp_p;
+:vnrcp.p vd_p, vs_p               is prime = 52 & vop3 = 0 & vt = 24 & vc1 = 0 & vc0 = 1 & vd_p & vd & vs_p & vs   {
+    local op1:8 = vfpuReadP(vs);
+    local result:8 = vnrcp_p(op1);
+    vfpuWriteP(vd, result[0,32], result[32,32]);
+}
+define pcodeop vnrcp_t;
+:vnrcp.t vd_t, vs_t               is prime = 52 & vop3 = 0 & vt = 24 & vc1 = 1 & vc0 = 0 & vd_t & vd & vs_t & vs   {
+    local op1:12 = vfpuReadT(vs);
+    local result:12 = vnrcp_t(op1);
+    vfpuWriteT(vd, result[0,32], result[32,32], result[64,32]);
+}
+define pcodeop vnrcp_q;
+:vnrcp.q vd_q, vs_q               is prime = 52 & vop3 = 0 & vt = 24 & vc1 = 1 & vc0 = 1 & vd_q & vd & vs_q & vs   {
+    local op1:16 = vfpuReadQ(vs);
+    local result:16 = vnrcp_q(op1);
+    vfpuWriteQ(vd, result[0,32], result[32,32], result[64,32], result[96,32]);
+}
+
+define pcodeop vnsin_s;
+:vnsin.s vd_s, vs_s               is prime = 52 & vop3 = 0 & vt = 26 & vc1 = 0 & vc0 = 0 & vd_s & vd & vs_s & vs   {
+    local op1:4 = vs;
+    local result:4 = vnsin_s(op1);
+    vd = result;
+}
+define pcodeop vnsin_p;
+:vnsin.p vd_p, vs_p               is prime = 52 & vop3 = 0 & vt = 26 & vc1 = 0 & vc0 = 1 & vd_p & vd & vs_p & vs   {
+    local op1:8 = vfpuReadP(vs);
+    local result:8 = vnsin_p(op1);
+    vfpuWriteP(vd, result[0,32], result[32,32]);
+}
+define pcodeop vnsin_t;
+:vnsin.t vd_t, vs_t               is prime = 52 & vop3 = 0 & vt = 26 & vc1 = 1 & vc0 = 0 & vd_t & vd & vs_t & vs   {
+    local op1:12 = vfpuReadT(vs);
+    local result:12 = vnsin_t(op1);
+    vfpuWriteT(vd, result[0,32], result[32,32], result[64,32]);
+}
+define pcodeop vnsin_q;
+:vnsin.q vd_q, vs_q               is prime = 52 & vop3 = 0 & vt = 26 & vc1 = 1 & vc0 = 1 & vd_q & vd & vs_q & vs   {
+    local op1:16 = vfpuReadQ(vs);
+    local result:16 = vnsin_q(op1);
+    vfpuWriteQ(vd, result[0,32], result[32,32], result[64,32], result[96,32]);
+}
+
+define pcodeop vrexp2_s;
+:vrexp2.s vd_s, vs_s              is prime = 52 & vop3 = 0 & vt = 28 & vc1 = 0 & vc0 = 0 & vd_s & vd & vs_s & vs   {
+    local op1:4 = vs;
+    local result:4 = vrexp2_s(op1);
+    vd = result;
+}
+define pcodeop vrexp2_p;
+:vrexp2.p vd_p, vs_p              is prime = 52 & vop3 = 0 & vt = 28 & vc1 = 0 & vc0 = 1 & vd_p & vd & vs_p & vs   {
+    local op1:8 = vfpuReadP(vs);
+    local result:8 = vrexp2_p(op1);
+    vfpuWriteP(vd, result[0,32], result[32,32]);
+}
+define pcodeop vrexp2_t;
+:vrexp2.t vd_t, vs_t              is prime = 52 & vop3 = 0 & vt = 28 & vc1 = 1 & vc0 = 0 & vd_t & vd & vs_t & vs   {
+    local op1:12 = vfpuReadT(vs);
+    local result:12 = vrexp2_t(op1);
+    vfpuWriteT(vd, result[0,32], result[32,32], result[64,32]);
+}
+define pcodeop vrexp2_q;
+:vrexp2.q vd_q, vs_q              is prime = 52 & vop3 = 0 & vt = 28 & vc1 = 1 & vc0 = 1 & vd_q & vd & vs_q & vs   {
+    local op1:16 = vfpuReadQ(vs);
+    local result:16 = vrexp2_q(op1);
+    vfpuWriteQ(vd, result[0,32], result[32,32], result[64,32], result[96,32]);
+}
+
+define pcodeop vrnds_s;
+:vrnds.s vd_s                     is prime = 52 & vop3 = 0 & vt = 32 & vc1 = 0 & vc0 = 0 & vd_s & vd   {
+    local result:4 = vrnds_s();
+    vd = result;
+}
+
+define pcodeop vrnds_p;
+:vrnds.p vd_s                     is prime = 52 & vop3 = 0 & vt = 32 & vc1 = 0 & vc0 = 1 & vd_s & vd   {
+    local result:4 = vrnds_p();
+    vd = result;
+}
+
+define pcodeop vrnds_t;
+:vrnds.t vd_s                     is prime = 52 & vop3 = 0 & vt = 32 & vc1 = 1 & vc0 = 0 & vd_s & vd   {
+    local result:4 = vrnds_t();
+    vd = result;
+}
+
+define pcodeop vrnds_q;
+:vrnds.q vd_s                     is prime = 52 & vop3 = 0 & vt = 32 & vc1 = 1 & vc0 = 1 & vd_s & vd   {
+    local result:4 = vrnds_q();
+    vd = result;
+}
+
+
+define pcodeop vrndi_s;
+:vrndi.s vd_s                     is prime = 52 & vop3 = 0 & vt = 33 & vc1 = 0 & vc0 = 0 & vd_s & vd   {
+    local result:4 = vrndi_s();
+    vd = result;
+}
+
+define pcodeop vrndi_p;
+:vrndi.p vd_p                     is prime = 52 & vop3 = 0 & vt = 33 & vc1 = 0 & vc0 = 1 & vd_p & vd   {
+    local result:8 = vrndi_p();
+    vfpuWriteP(vd, result[0,32], result[32,32]);
+}
+
+define pcodeop vrndi_t;
+:vrndi.t vd_t                     is prime = 52 & vop3 = 0 & vt = 33 & vc1 = 1 & vc0 = 0 & vd_t & vd   {
+    local result:12 = vrndi_t();
+    vfpuWriteT(vd, result[0,32], result[32,32], result[64,32]);
+}
+
+define pcodeop vrndi_q;
+:vrndi.q vd_q                     is prime = 52 & vop3 = 0 & vt = 33 & vc1 = 1 & vc0 = 1 & vd_q & vd   {
+    local result:16 = vrndi_q();
+    vfpuWriteQ(vd, result[0,32], result[32,32], result[64,32], result[96,32]);
+}
+
+
+define pcodeop vrndf1_s;
+:vrndf1.s vd_s                    is prime = 52 & vop3 = 0 & vt = 34 & vc1 = 0 & vc0 = 0 & vd_s & vd   {
+    local result:4 = vrndf1_s();
+    vd = result;
+}
+
+define pcodeop vrndf1_p;
+:vrndf1.p vd_p                    is prime = 52 & vop3 = 0 & vt = 34 & vc1 = 0 & vc0 = 1 & vd_p & vd   {
+    local result:8 = vrndf1_p();
+    vfpuWriteP(vd, result[0,32], result[32,32]);
+}
+
+define pcodeop vrndf1_t;
+:vrndf1.t vd_t                    is prime = 52 & vop3 = 0 & vt = 34 & vc1 = 1 & vc0 = 0 & vd_t & vd   {
+    local result:12 = vrndf1_t();
+    vfpuWriteT(vd, result[0,32], result[32,32], result[64,32]);
+}
+
+define pcodeop vrndf1_q;
+:vrndf1.q vd_q                    is prime = 52 & vop3 = 0 & vt = 34 & vc1 = 1 & vc0 = 1 & vd_q & vd   {
+    local result:16 = vrndf1_q();
+    vfpuWriteQ(vd, result[0,32], result[32,32], result[64,32], result[96,32]);
+}
+
+
+define pcodeop vrndf2_s;
+:vrndf2.s vd_s                    is prime = 52 & vop3 = 0 & vt = 35 & vc1 = 0 & vc0 = 0 & vd_s & vd   {
+    local result:4 = vrndf2_s();
+    vd = result;
+}
+
+define pcodeop vrndf2_p;
+:vrndf2.p vd_p                    is prime = 52 & vop3 = 0 & vt = 35 & vc1 = 0 & vc0 = 1 & vd_p & vd   {
+    local result:8 = vrndf2_p();
+    vfpuWriteP(vd, result[0,32], result[32,32]);
+}
+
+define pcodeop vrndf2_t;
+:vrndf2.t vd_t                    is prime = 52 & vop3 = 0 & vt = 35 & vc1 = 1 & vc0 = 0 & vd_t & vd   {
+    local result:12 = vrndf2_t();
+    vfpuWriteT(vd, result[0,32], result[32,32], result[64,32]);
+}
+
+define pcodeop vrndf2_q;
+:vrndf2.q vd_q                    is prime = 52 & vop3 = 0 & vt = 35 & vc1 = 1 & vc0 = 1 & vd_q & vd   {
+    local result:16 = vrndf2_q();
+    vfpuWriteQ(vd, result[0,32], result[32,32], result[64,32], result[96,32]);
+}
+
+
+define pcodeop vsbz;
+:vsbz vd_s, vs_s                  is prime = 52 & vop3 = 0 & vt = 44 & vd_s & vd & vs_s & vs   {
+    local op1:4 = vs;
+    local result:4 = vsbz(op1);
+    vd = result;
+}
+
+define pcodeop vf2h_p;
+:vf2h.p vd_s, vs_p                is prime = 52 & vop3 = 0 & vt = 50 & vc1 = 0 & vc0 = 1 & vd_s & vd & vs_p & vs   {
+    local op1:8 = vfpuReadP(vs);
+    local result:4 = vf2h_p(op1);
+    vd = result;
+}
+define pcodeop vf2h_q;
+:vf2h.q vd_p, vs_q                is prime = 52 & vop3 = 0 & vt = 50 & vc1 = 1 & vc0 = 1 & vd_p & vd & vs_q & vs   {
+    local op1:16 = vfpuReadQ(vs);
+    local result:8 = vf2h_q(op1);
+    vfpuWriteP(vd, result[0,32], result[32,32]);
+}
+
+define pcodeop vh2f_s;
+:vh2f.s vd_p, vs_s                is prime = 52 & vop3 = 0 & vt = 51 & vc1 = 0 & vc0 = 0 & vd_p & vd & vs_s & vs   {
+    local op1:4 = vs;
+    local result:8 = vh2f_s(op1);
+    vfpuWriteP(vd, result[0,32], result[32,32]);
+}
+define pcodeop vh2f_p;
+:vh2f.p vd_p, vs_p                is prime = 52 & vop3 = 0 & vt = 51 & vc1 = 0 & vc0 = 1 & vd_p & vd & vs_p & vs   {
+    local op1:8 = vfpuReadP(vs);
+    local result:8 = vh2f_p(op1);
+    vfpuWriteP(vd, result[0,32], result[32,32]);
+}
+
+define pcodeop vlgb;
+:vlgb vd_s, vs_s                  is prime = 52 & vop3 = 0 & vt = 55 & vd_s & vd & vs_s & vs   {
+    local op1:4 = vs;
+    local result:4 = vlgb(op1);
+    vd = result;
+}
+
+define pcodeop vuc2i_s;
+:vuc2i.s vd_s, vs_s               is prime = 52 & vop3 = 0 & vt = 56 & vc1 = 0 & vc0 = 0 & vd_s & vd & vs_s & vs   {
+    local op1:4 = vs;
+    local result:4 = vuc2i_s(op1);
+    vd = result;
+}
+define pcodeop vuc2i_p;
+:vuc2i.p vd_p, vs_p               is prime = 52 & vop3 = 0 & vt = 56 & vc1 = 0 & vc0 = 1 & vd_p & vd & vs_p & vs   {
+    local op1:8 = vfpuReadP(vs);
+    local result:8 = vuc2i_p(op1);
+    vfpuWriteP(vd, result[0,32], result[32,32]);
+}
+define pcodeop vuc2i_t;
+:vuc2i.t vd_t, vs_t               is prime = 52 & vop3 = 0 & vt = 56 & vc1 = 1 & vc0 = 0 & vd_t & vd & vs_t & vs   {
+    local op1:12 = vfpuReadT(vs);
+    local result:12 = vuc2i_t(op1);
+    vfpuWriteT(vd, result[0,32], result[32,32], result[64,32]);
+}
+define pcodeop vuc2i_q;
+:vuc2i.q vd_q, vs_q               is prime = 52 & vop3 = 0 & vt = 56 & vc1 = 1 & vc0 = 1 & vd_q & vd & vs_q & vs   {
+    local op1:16 = vfpuReadQ(vs);
+    local result:16 = vuc2i_q(op1);
+    vfpuWriteQ(vd, result[0,32], result[32,32], result[64,32], result[96,32]);
+}
+
+define pcodeop vc2i_s;
+:vc2i.s vd_s, vs_s                is prime = 52 & vop3 = 0 & vt = 57 & vc1 = 0 & vc0 = 0 & vd_s & vd & vs_s & vs   {
+    local op1:4 = vs;
+    local result:4 = vc2i_s(op1);
+    vd = result;
+}
+define pcodeop vc2i_p;
+:vc2i.p vd_p, vs_p                is prime = 52 & vop3 = 0 & vt = 57 & vc1 = 0 & vc0 = 1 & vd_p & vd & vs_p & vs   {
+    local op1:8 = vfpuReadP(vs);
+    local result:8 = vc2i_p(op1);
+    vfpuWriteP(vd, result[0,32], result[32,32]);
+}
+define pcodeop vc2i_t;
+:vc2i.t vd_t, vs_t                is prime = 52 & vop3 = 0 & vt = 57 & vc1 = 1 & vc0 = 0 & vd_t & vd & vs_t & vs   {
+    local op1:12 = vfpuReadT(vs);
+    local result:12 = vc2i_t(op1);
+    vfpuWriteT(vd, result[0,32], result[32,32], result[64,32]);
+}
+define pcodeop vc2i_q;
+:vc2i.q vd_q, vs_q                is prime = 52 & vop3 = 0 & vt = 57 & vc1 = 1 & vc0 = 1 & vd_q & vd & vs_q & vs   {
+    local op1:16 = vfpuReadQ(vs);
+    local result:16 = vc2i_q(op1);
+    vfpuWriteQ(vd, result[0,32], result[32,32], result[64,32], result[96,32]);
+}
+
+define pcodeop vus2i_s;
+:vus2i.s vd_s, vs_s               is prime = 52 & vop3 = 0 & vt = 58 & vc1 = 0 & vc0 = 0 & vd_s & vd & vs_s & vs   {
+    local op1:4 = vs;
+    local result:4 = vus2i_s(op1);
+    vd = result;
+}
+define pcodeop vus2i_p;
+:vus2i.p vd_p, vs_p               is prime = 52 & vop3 = 0 & vt = 58 & vc1 = 0 & vc0 = 1 & vd_p & vd & vs_p & vs   {
+    local op1:8 = vfpuReadP(vs);
+    local result:8 = vus2i_p(op1);
+    vfpuWriteP(vd, result[0,32], result[32,32]);
+}
+define pcodeop vus2i_t;
+:vus2i.t vd_t, vs_t               is prime = 52 & vop3 = 0 & vt = 58 & vc1 = 1 & vc0 = 0 & vd_t & vd & vs_t & vs   {
+    local op1:12 = vfpuReadT(vs);
+    local result:12 = vus2i_t(op1);
+    vfpuWriteT(vd, result[0,32], result[32,32], result[64,32]);
+}
+define pcodeop vus2i_q;
+:vus2i.q vd_q, vs_q               is prime = 52 & vop3 = 0 & vt = 58 & vc1 = 1 & vc0 = 1 & vd_q & vd & vs_q & vs   {
+    local op1:16 = vfpuReadQ(vs);
+    local result:16 = vus2i_q(op1);
+    vfpuWriteQ(vd, result[0,32], result[32,32], result[64,32], result[96,32]);
+}
+
+define pcodeop vs2i_s;
+:vs2i.s vd_s, vs_s                is prime = 52 & vop3 = 0 & vt = 59 & vc1 = 0 & vc0 = 0 & vd_s & vd & vs_s & vs   {
+    local op1:4 = vs;
+    local result:4 = vs2i_s(op1);
+    vd = result;
+}
+define pcodeop vs2i_p;
+:vs2i.p vd_p, vs_p                is prime = 52 & vop3 = 0 & vt = 59 & vc1 = 0 & vc0 = 1 & vd_p & vd & vs_p & vs   {
+    local op1:8 = vfpuReadP(vs);
+    local result:8 = vs2i_p(op1);
+    vfpuWriteP(vd, result[0,32], result[32,32]);
+}
+define pcodeop vs2i_t;
+:vs2i.t vd_t, vs_t                is prime = 52 & vop3 = 0 & vt = 59 & vc1 = 1 & vc0 = 0 & vd_t & vd & vs_t & vs   {
+    local op1:12 = vfpuReadT(vs);
+    local result:12 = vs2i_t(op1);
+    vfpuWriteT(vd, result[0,32], result[32,32], result[64,32]);
+}
+define pcodeop vs2i_q;
+:vs2i.q vd_q, vs_q                is prime = 52 & vop3 = 0 & vt = 59 & vc1 = 1 & vc0 = 1 & vd_q & vd & vs_q & vs   {
+    local op1:16 = vfpuReadQ(vs);
+    local result:16 = vs2i_q(op1);
+    vfpuWriteQ(vd, result[0,32], result[32,32], result[64,32], result[96,32]);
+}
+
+define pcodeop vi2uc_s;
+:vi2uc.s vd_s, vs_s               is prime = 52 & vop3 = 0 & vt = 60 & vc1 = 0 & vc0 = 0 & vd_s & vd & vs_s & vs   {
+    local op1:4 = vs;
+    local result:4 = vi2uc_s(op1);
+    vd = result;
+}
+define pcodeop vi2uc_p;
+:vi2uc.p vd_s, vs_p               is prime = 52 & vop3 = 0 & vt = 60 & vc1 = 0 & vc0 = 1 & vd_s & vd & vs_p & vs   {
+    local op1:8 = vfpuReadP(vs);
+    local result:4 = vi2uc_p(op1);
+    vd = result;
+}
+define pcodeop vi2uc_t;
+:vi2uc.t vd_s, vs_t               is prime = 52 & vop3 = 0 & vt = 60 & vc1 = 1 & vc0 = 0 & vd_s & vd & vs_t & vs   {
+    local op1:12 = vfpuReadT(vs);
+    local result:4 = vi2uc_t(op1);
+    vd = result;
+}
+define pcodeop vi2uc_q;
+:vi2uc.q vd_s, vs_q               is prime = 52 & vop3 = 0 & vt = 60 & vc1 = 1 & vc0 = 1 & vd_s & vd & vs_q & vs   {
+    local op1:16 = vfpuReadQ(vs);
+    local result:4 = vi2uc_q(op1);
+    vd = result;
+}
+
+define pcodeop vi2c_p;
+:vi2c.p vd_s, vs_p                is prime = 52 & vop3 = 0 & vt = 61 & vc1 = 0 & vc0 = 1 & vd_s & vd & vs_p & vs   {
+    local op1:8 = vfpuReadP(vs);
+    local result:4 = vi2c_p(op1);
+    vd = result;
+}
+define pcodeop vi2c_q;
+:vi2c.q vd_q, vs_q                is prime = 52 & vop3 = 0 & vt = 61 & vc1 = 1 & vc0 = 1 & vd_q & vd & vs_q & vs   {
+    local op1:16 = vfpuReadQ(vs);
+    local result:16 = vi2c_q(op1);
+    vfpuWriteQ(vd, result[0,32], result[32,32], result[64,32], result[96,32]);
+}
+
+define pcodeop vi2us_p;
+:vi2us.p vd_s, vs_p               is prime = 52 & vop3 = 0 & vt = 62 & vc1 = 0 & vc0 = 1 & vd_s & vd & vs_p & vs   {
+    local op1:8 = vfpuReadP(vs);
+    local result:4 = vi2us_p(op1);
+    vd = result;
+}
+define pcodeop vi2us_q;
+:vi2us.q vd_q, vs_q               is prime = 52 & vop3 = 0 & vt = 62 & vc1 = 1 & vc0 = 1 & vd_q & vd & vs_q & vs   {
+    local op1:16 = vfpuReadQ(vs);
+    local result:16 = vi2us_q(op1);
+    vfpuWriteQ(vd, result[0,32], result[32,32], result[64,32], result[96,32]);
+}
+
+define pcodeop vi2s_p;
+:vi2s.p vd_s, vs_p                is prime = 52 & vop3 = 0 & vt = 63 & vc1 = 0 & vc0 = 1 & vd_s & vd & vs_p & vs   {
+    local op1:8 = vfpuReadP(vs);
+    local result:4 = vi2s_p(op1);
+    vd = result;
+}
+define pcodeop vi2s_q;
+:vi2s.q vd_q, vs_q                is prime = 52 & vop3 = 0 & vt = 63 & vc1 = 1 & vc0 = 1 & vd_q & vd & vs_q & vs   {
+    local op1:16 = vfpuReadQ(vs);
+    local result:16 = vi2s_q(op1);
+    vfpuWriteQ(vd, result[0,32], result[32,32], result[64,32], result[96,32]);
+}
+
+define pcodeop vsrt1_s;
+:vsrt1.s vd_s, vs_s               is prime = 52 & vop3 = 0 & vt = 64 & vc1 = 0 & vc0 = 0 & vd_s & vd & vs_s & vs   {
+    local op1:4 = vs;
+    local result:4 = vsrt1_s(op1);
+    vd = result;
+}
+define pcodeop vsrt1_p;
+:vsrt1.p vd_p, vs_p               is prime = 52 & vop3 = 0 & vt = 64 & vc1 = 0 & vc0 = 1 & vd_p & vd & vs_p & vs   {
+    local op1:8 = vfpuReadP(vs);
+    local result:8 = vsrt1_p(op1);
+    vfpuWriteP(vd, result[0,32], result[32,32]);
+}
+define pcodeop vsrt1_t;
+:vsrt1.t vd_t, vs_t               is prime = 52 & vop3 = 0 & vt = 64 & vc1 = 1 & vc0 = 0 & vd_t & vd & vs_t & vs   {
+    local op1:12 = vfpuReadT(vs);
+    local result:12 = vsrt1_t(op1);
+    vfpuWriteT(vd, result[0,32], result[32,32], result[64,32]);
+}
+define pcodeop vsrt1_q;
+:vsrt1.q vd_q, vs_q               is prime = 52 & vop3 = 0 & vt = 64 & vc1 = 1 & vc0 = 1 & vd_q & vd & vs_q & vs   {
+    local op1:16 = vfpuReadQ(vs);
+    local result:16 = vsrt1_q(op1);
+    vfpuWriteQ(vd, result[0,32], result[32,32], result[64,32], result[96,32]);
+}
+
+define pcodeop vsrt2_s;
+:vsrt2.s vd_s, vs_s               is prime = 52 & vop3 = 0 & vt = 65 & vc1 = 0 & vc0 = 0 & vd_s & vd & vs_s & vs   {
+    local op1:4 = vs;
+    local result:4 = vsrt2_s(op1);
+    vd = result;
+}
+define pcodeop vsrt2_p;
+:vsrt2.p vd_p, vs_p               is prime = 52 & vop3 = 0 & vt = 65 & vc1 = 0 & vc0 = 1 & vd_p & vd & vs_p & vs   {
+    local op1:8 = vfpuReadP(vs);
+    local result:8 = vsrt2_p(op1);
+    vfpuWriteP(vd, result[0,32], result[32,32]);
+}
+define pcodeop vsrt2_t;
+:vsrt2.t vd_t, vs_t               is prime = 52 & vop3 = 0 & vt = 65 & vc1 = 1 & vc0 = 0 & vd_t & vd & vs_t & vs   {
+    local op1:12 = vfpuReadT(vs);
+    local result:12 = vsrt2_t(op1);
+    vfpuWriteT(vd, result[0,32], result[32,32], result[64,32]);
+}
+define pcodeop vsrt2_q;
+:vsrt2.q vd_q, vs_q               is prime = 52 & vop3 = 0 & vt = 65 & vc1 = 1 & vc0 = 1 & vd_q & vd & vs_q & vs   {
+    local op1:16 = vfpuReadQ(vs);
+    local result:16 = vsrt2_q(op1);
+    vfpuWriteQ(vd, result[0,32], result[32,32], result[64,32], result[96,32]);
+}
+
+define pcodeop vbfy1_s;
+:vbfy1.s vd_s, vs_s               is prime = 52 & vop3 = 0 & vt = 66 & vc1 = 0 & vc0 = 0 & vd_s & vd & vs_s & vs   {
+    local op1:4 = vs;
+    local result:4 = vbfy1_s(op1);
+    vd = result;
+}
+define pcodeop vbfy1_p;
+:vbfy1.p vd_p, vs_p               is prime = 52 & vop3 = 0 & vt = 66 & vc1 = 0 & vc0 = 1 & vd_p & vd & vs_p & vs   {
+    local op1:8 = vfpuReadP(vs);
+    local result:8 = vbfy1_p(op1);
+    vfpuWriteP(vd, result[0,32], result[32,32]);
+}
+define pcodeop vbfy1_t;
+:vbfy1.t vd_t, vs_t               is prime = 52 & vop3 = 0 & vt = 66 & vc1 = 1 & vc0 = 0 & vd_t & vd & vs_t & vs   {
+    local op1:12 = vfpuReadT(vs);
+    local result:12 = vbfy1_t(op1);
+    vfpuWriteT(vd, result[0,32], result[32,32], result[64,32]);
+}
+define pcodeop vbfy1_q;
+:vbfy1.q vd_q, vs_q               is prime = 52 & vop3 = 0 & vt = 66 & vc1 = 1 & vc0 = 1 & vd_q & vd & vs_q & vs   {
+    local op1:16 = vfpuReadQ(vs);
+    local result:16 = vbfy1_q(op1);
+    vfpuWriteQ(vd, result[0,32], result[32,32], result[64,32], result[96,32]);
+}
+
+define pcodeop vbfy2_s;
+:vbfy2.s vd_s, vs_s               is prime = 52 & vop3 = 0 & vt = 67 & vc1 = 0 & vc0 = 0 & vd_s & vd & vs_s & vs   {
+    local op1:4 = vs;
+    local result:4 = vbfy2_s(op1);
+    vd = result;
+}
+define pcodeop vbfy2_p;
+:vbfy2.p vd_p, vs_p               is prime = 52 & vop3 = 0 & vt = 67 & vc1 = 0 & vc0 = 1 & vd_p & vd & vs_p & vs   {
+    local op1:8 = vfpuReadP(vs);
+    local result:8 = vbfy2_p(op1);
+    vfpuWriteP(vd, result[0,32], result[32,32]);
+}
+define pcodeop vbfy2_t;
+:vbfy2.t vd_t, vs_t               is prime = 52 & vop3 = 0 & vt = 67 & vc1 = 1 & vc0 = 0 & vd_t & vd & vs_t & vs   {
+    local op1:12 = vfpuReadT(vs);
+    local result:12 = vbfy2_t(op1);
+    vfpuWriteT(vd, result[0,32], result[32,32], result[64,32]);
+}
+define pcodeop vbfy2_q;
+:vbfy2.q vd_q, vs_q               is prime = 52 & vop3 = 0 & vt = 67 & vc1 = 1 & vc0 = 1 & vd_q & vd & vs_q & vs   {
+    local op1:16 = vfpuReadQ(vs);
+    local result:16 = vbfy2_q(op1);
+    vfpuWriteQ(vd, result[0,32], result[32,32], result[64,32], result[96,32]);
+}
+
+define pcodeop vocp_s;
+:vocp.s vd_s, vs_s                is prime = 52 & vop3 = 0 & vt = 68 & vc1 = 0 & vc0 = 0 & vd_s & vd & vs_s & vs   {
+    local op1:4 = vs;
+    local result:4 = vocp_s(op1);
+    vd = result;
+}
+define pcodeop vocp_p;
+:vocp.p vd_p, vs_p                is prime = 52 & vop3 = 0 & vt = 68 & vc1 = 0 & vc0 = 1 & vd_p & vd & vs_p & vs   {
+    local op1:8 = vfpuReadP(vs);
+    local result:8 = vocp_p(op1);
+    vfpuWriteP(vd, result[0,32], result[32,32]);
+}
+define pcodeop vocp_t;
+:vocp.t vd_t, vs_t                is prime = 52 & vop3 = 0 & vt = 68 & vc1 = 1 & vc0 = 0 & vd_t & vd & vs_t & vs   {
+    local op1:12 = vfpuReadT(vs);
+    local result:12 = vocp_t(op1);
+    vfpuWriteT(vd, result[0,32], result[32,32], result[64,32]);
+}
+define pcodeop vocp_q;
+:vocp.q vd_q, vs_q                is prime = 52 & vop3 = 0 & vt = 68 & vc1 = 1 & vc0 = 1 & vd_q & vd & vs_q & vs   {
+    local op1:16 = vfpuReadQ(vs);
+    local result:16 = vocp_q(op1);
+    vfpuWriteQ(vd, result[0,32], result[32,32], result[64,32], result[96,32]);
+}
+
+define pcodeop vsocp_s;
+:vsocp.s vd_s, vs_s               is prime = 52 & vop3 = 0 & vt = 69 & vc1 = 0 & vc0 = 0 & vd_s & vd & vs_s & vs   {
+    local op1:4 = vs;
+    local result:4 = vsocp_s(op1);
+    vd = result;
+}
+define pcodeop vsocp_p;
+:vsocp.p vd_p, vs_p               is prime = 52 & vop3 = 0 & vt = 69 & vc1 = 0 & vc0 = 1 & vd_p & vd & vs_p & vs   {
+    local op1:8 = vfpuReadP(vs);
+    local result:8 = vsocp_p(op1);
+    vfpuWriteP(vd, result[0,32], result[32,32]);
+}
+define pcodeop vsocp_t;
+:vsocp.t vd_t, vs_t               is prime = 52 & vop3 = 0 & vt = 69 & vc1 = 1 & vc0 = 0 & vd_t & vd & vs_t & vs   {
+    local op1:12 = vfpuReadT(vs);
+    local result:12 = vsocp_t(op1);
+    vfpuWriteT(vd, result[0,32], result[32,32], result[64,32]);
+}
+define pcodeop vsocp_q;
+:vsocp.q vd_q, vs_q               is prime = 52 & vop3 = 0 & vt = 69 & vc1 = 1 & vc0 = 1 & vd_q & vd & vs_q & vs   {
+    local op1:16 = vfpuReadQ(vs);
+    local result:16 = vsocp_q(op1);
+    vfpuWriteQ(vd, result[0,32], result[32,32], result[64,32], result[96,32]);
+}
+
+define pcodeop vfad_s;
+:vfad.s vd_s, vs_s                is prime = 52 & vop3 = 0 & vt = 70 & vc1 = 0 & vc0 = 0 & vd_s & vd & vs_s & vs   {
+    local op1:4 = vs;
+    local result:4 = vfad_s(op1);
+    vd = result;
+}
+define pcodeop vfad_p;
+:vfad.p vd_s, vs_p                is prime = 52 & vop3 = 0 & vt = 70 & vc1 = 0 & vc0 = 1 & vd_s & vd & vs_p & vs   {
+    local op1:8 = vfpuReadP(vs);
+    local result:4 = vfad_p(op1);
+    vd = result;
+}
+define pcodeop vfad_t;
+:vfad.t vd_s, vs_t                is prime = 52 & vop3 = 0 & vt = 70 & vc1 = 1 & vc0 = 0 & vd_s & vd & vs_t & vs   {
+    local op1:12 = vfpuReadT(vs);
+    local result:4 = vfad_t(op1);
+    vd = result;
+}
+define pcodeop vfad_q;
+:vfad.q vd_s, vs_q                is prime = 52 & vop3 = 0 & vt = 70 & vc1 = 1 & vc0 = 1 & vd_s & vd & vs_q & vs   {
+    local op1:16 = vfpuReadQ(vs);
+    local result:4 = vfad_q(op1);
+    vd = result;
+}
+
+define pcodeop vavg_s;
+:vavg.s vd_s, vs_s                is prime = 52 & vop3 = 0 & vt = 71 & vc1 = 0 & vc0 = 0 & vd_s & vd & vs_s & vs   {
+    local op1:4 = vs;
+    local result:4 = vavg_s(op1);
+    vd = result;
+}
+define pcodeop vavg_p;
+:vavg.p vd_s, vs_p                is prime = 52 & vop3 = 0 & vt = 71 & vc1 = 0 & vc0 = 1 & vd_s & vd & vs_p & vs   {
+    local op1:8 = vfpuReadP(vs);
+    local result:4 = vavg_p(op1);
+    vd = result;
+}
+define pcodeop vavg_t;
+:vavg.t vd_s, vs_t                is prime = 52 & vop3 = 0 & vt = 71 & vc1 = 1 & vc0 = 0 & vd_s & vd & vs_t & vs   {
+    local op1:12 = vfpuReadT(vs);
+    local result:4 = vavg_t(op1);
+    vd = result;
+}
+define pcodeop vavg_q;
+:vavg.q vd_s, vs_q                is prime = 52 & vop3 = 0 & vt = 71 & vc1 = 1 & vc0 = 1 & vd_s & vd & vs_q & vs   {
+    local op1:16 = vfpuReadQ(vs);
+    local result:4 = vavg_q(op1);
+    vd = result;
+}
+
+define pcodeop vsrt3_s;
+:vsrt3.s vd_s, vs_s               is prime = 52 & vop3 = 0 & vt = 72 & vc1 = 0 & vc0 = 0 & vd_s & vd & vs_s & vs   {
+    local op1:4 = vs;
+    local result:4 = vsrt3_s(op1);
+    vd = result;
+}
+define pcodeop vsrt3_p;
+:vsrt3.p vd_p, vs_p               is prime = 52 & vop3 = 0 & vt = 72 & vc1 = 0 & vc0 = 1 & vd_p & vd & vs_p & vs   {
+    local op1:8 = vfpuReadP(vs);
+    local result:8 = vsrt3_p(op1);
+    vfpuWriteP(vd, result[0,32], result[32,32]);
+}
+define pcodeop vsrt3_t;
+:vsrt3.t vd_t, vs_t               is prime = 52 & vop3 = 0 & vt = 72 & vc1 = 1 & vc0 = 0 & vd_t & vd & vs_t & vs   {
+    local op1:12 = vfpuReadT(vs);
+    local result:12 = vsrt3_t(op1);
+    vfpuWriteT(vd, result[0,32], result[32,32], result[64,32]);
+}
+define pcodeop vsrt3_q;
+:vsrt3.q vd_q, vs_q               is prime = 52 & vop3 = 0 & vt = 72 & vc1 = 1 & vc0 = 1 & vd_q & vd & vs_q & vs   {
+    local op1:16 = vfpuReadQ(vs);
+    local result:16 = vsrt3_q(op1);
+    vfpuWriteQ(vd, result[0,32], result[32,32], result[64,32], result[96,32]);
+}
+
+define pcodeop vsrt4_s;
+:vsrt4.s vd_s, vs_s               is prime = 52 & vop3 = 0 & vt = 73 & vc1 = 0 & vc0 = 0 & vd_s & vd & vs_s & vs   {
+    local op1:4 = vs;
+    local result:4 = vsrt4_s(op1);
+    vd = result;
+}
+define pcodeop vsrt4_p;
+:vsrt4.p vd_p, vs_p               is prime = 52 & vop3 = 0 & vt = 73 & vc1 = 0 & vc0 = 1 & vd_p & vd & vs_p & vs   {
+    local op1:8 = vfpuReadP(vs);
+    local result:8 = vsrt4_p(op1);
+    vfpuWriteP(vd, result[0,32], result[32,32]);
+}
+define pcodeop vsrt4_t;
+:vsrt4.t vd_t, vs_t               is prime = 52 & vop3 = 0 & vt = 73 & vc1 = 1 & vc0 = 0 & vd_t & vd & vs_t & vs   {
+    local op1:12 = vfpuReadT(vs);
+    local result:12 = vsrt4_t(op1);
+    vfpuWriteT(vd, result[0,32], result[32,32], result[64,32]);
+}
+define pcodeop vsrt4_q;
+:vsrt4.q vd_q, vs_q               is prime = 52 & vop3 = 0 & vt = 73 & vc1 = 1 & vc0 = 1 & vd_q & vd & vs_q & vs   {
+    local op1:16 = vfpuReadQ(vs);
+    local result:16 = vsrt4_q(op1);
+    vfpuWriteQ(vd, result[0,32], result[32,32], result[64,32], result[96,32]);
+}
+
+define pcodeop vsgn_s;
+:vsgn.s vd_s, vs_s                is prime = 52 & vop3 = 0 & vt = 74 & vc1 = 0 & vc0 = 0 & vd_s & vd & vs_s & vs   {
+    local op1:4 = vs;
+    local result:4 = vsgn_s(op1);
+    vd = result;
+}
+define pcodeop vsgn_p;
+:vsgn.p vd_p, vs_p                is prime = 52 & vop3 = 0 & vt = 74 & vc1 = 0 & vc0 = 1 & vd_p & vd & vs_p & vs   {
+    local op1:8 = vfpuReadP(vs);
+    local result:8 = vsgn_p(op1);
+    vfpuWriteP(vd, result[0,32], result[32,32]);
+}
+define pcodeop vsgn_t;
+:vsgn.t vd_t, vs_t                is prime = 52 & vop3 = 0 & vt = 74 & vc1 = 1 & vc0 = 0 & vd_t & vd & vs_t & vs   {
+    local op1:12 = vfpuReadT(vs);
+    local result:12 = vsgn_t(op1);
+    vfpuWriteT(vd, result[0,32], result[32,32], result[64,32]);
+}
+define pcodeop vsgn_q;
+:vsgn.q vd_q, vs_q                is prime = 52 & vop3 = 0 & vt = 74 & vc1 = 1 & vc0 = 1 & vd_q & vd & vs_q & vs   {
+    local op1:16 = vfpuReadQ(vs);
+    local result:16 = vsgn_q(op1);
+    vfpuWriteQ(vd, result[0,32], result[32,32], result[64,32], result[96,32]);
+}
+
+define pcodeop vt4444_p;
+:vt4444.p vd_s, vs_p              is prime = 52 & vop3 = 0 & vt = 89 & vc1 = 0 & vc0 = 1 & vd_s & vd & vs_p & vs   {
+    local op1:8 = vfpuReadP(vs);
+    local result:4 = vt4444_p(op1);
+    vd = result;
+}
+define pcodeop vt4444_q;
+:vt4444.q vd_q, vs_q              is prime = 52 & vop3 = 0 & vt = 89 & vc1 = 1 & vc0 = 1 & vd_q & vd & vs_q & vs   {
+    local op1:16 = vfpuReadQ(vs);
+    local result:16 = vt4444_q(op1);
+    vfpuWriteQ(vd, result[0,32], result[32,32], result[64,32], result[96,32]);
+}
+
+define pcodeop vt5551_p;
+:vt5551.p vd_s, vs_p              is prime = 52 & vop3 = 0 & vt = 90 & vc1 = 0 & vc0 = 1 & vd_s & vd & vs_p & vs   {
+    local op1:8 = vfpuReadP(vs);
+    local result:4 = vt5551_p(op1);
+    vd = result;
+}
+define pcodeop vt5551_q;
+:vt5551.q vd_q, vs_q              is prime = 52 & vop3 = 0 & vt = 90 & vc1 = 1 & vc0 = 1 & vd_q & vd & vs_q & vs   {
+    local op1:16 = vfpuReadQ(vs);
+    local result:16 = vt5551_q(op1);
+    vfpuWriteQ(vd, result[0,32], result[32,32], result[64,32], result[96,32]);
+}
+
+define pcodeop vt5650_p;
+:vt5650.p vd_s, vs_p              is prime = 52 & vop3 = 0 & vt = 91 & vc1 = 0 & vc0 = 1 & vd_s & vd & vs_p & vs   {
+    local op1:8 = vfpuReadP(vs);
+    local result:4 = vt5650_p(op1);
+    vd = result;
+}
+define pcodeop vt5650_q;
+:vt5650.q vd_q, vs_q              is prime = 52 & vop3 = 0 & vt = 91 & vc1 = 1 & vc0 = 1 & vd_q & vd & vs_q & vs   {
+    local op1:16 = vfpuReadQ(vs);
+    local result:16 = vt5650_q(op1);
+    vfpuWriteQ(vd, result[0,32], result[32,32], result[64,32], result[96,32]);
+}
+
+define pcodeop vf2in_s;
+:vf2in.s vd_s, vs_s, vtimm5       is prime = 52 & vop3 = 4 & vtop2 = 0 & vc1 = 0 & vc0 = 0 & vd_s & vd & vs_s & vs & vtimm5   {
+    local op1:4 = vs;
+    local result:4 = vf2in_s(op1, vtimm5:4);
+    vd = result;
+}
+define pcodeop vf2in_p;
+:vf2in.p vd_p, vs_p, vtimm5       is prime = 52 & vop3 = 4 & vtop2 = 0 & vc1 = 0 & vc0 = 1 & vd_p & vd & vs_p & vs & vtimm5   {
+    local op1:8 = vfpuReadP(vs);
+    local result:8 = vf2in_p(op1, vtimm5:4);
+    vfpuWriteP(vd, result[0,32], result[32,32]);
+}
+define pcodeop vf2in_t;
+:vf2in.t vd_t, vs_t, vtimm5       is prime = 52 & vop3 = 4 & vtop2 = 0 & vc1 = 1 & vc0 = 0 & vd_t & vd & vs_t & vs & vtimm5   {
+    local op1:12 = vfpuReadT(vs);
+    local result:12 = vf2in_t(op1, vtimm5:4);
+    vfpuWriteT(vd, result[0,32], result[32,32], result[64,32]);
+}
+define pcodeop vf2in_q;
+:vf2in.q vd_q, vs_q, vtimm5       is prime = 52 & vop3 = 4 & vtop2 = 0 & vc1 = 1 & vc0 = 1 & vd_q & vd & vs_q & vs & vtimm5   {
+    local op1:16 = vfpuReadQ(vs);
+    local result:16 = vf2in_q(op1, vtimm5:4);
+    vfpuWriteQ(vd, result[0,32], result[32,32], result[64,32], result[96,32]);
+}
+
+define pcodeop vf2iz_s;
+:vf2iz.s vd_s, vs_s, vtimm5       is prime = 52 & vop3 = 4 & vtop2 = 1 & vc1 = 0 & vc0 = 0 & vd_s & vd & vs_s & vs & vtimm5   {
+    local op1:4 = vs;
+    local result:4 = vf2iz_s(op1, vtimm5:4);
+    vd = result;
+}
+define pcodeop vf2iz_p;
+:vf2iz.p vd_p, vs_p, vtimm5       is prime = 52 & vop3 = 4 & vtop2 = 1 & vc1 = 0 & vc0 = 1 & vd_p & vd & vs_p & vs & vtimm5   {
+    local op1:8 = vfpuReadP(vs);
+    local result:8 = vf2iz_p(op1, vtimm5:4);
+    vfpuWriteP(vd, result[0,32], result[32,32]);
+}
+define pcodeop vf2iz_t;
+:vf2iz.t vd_t, vs_t, vtimm5       is prime = 52 & vop3 = 4 & vtop2 = 1 & vc1 = 1 & vc0 = 0 & vd_t & vd & vs_t & vs & vtimm5   {
+    local op1:12 = vfpuReadT(vs);
+    local result:12 = vf2iz_t(op1, vtimm5:4);
+    vfpuWriteT(vd, result[0,32], result[32,32], result[64,32]);
+}
+define pcodeop vf2iz_q;
+:vf2iz.q vd_q, vs_q, vtimm5       is prime = 52 & vop3 = 4 & vtop2 = 1 & vc1 = 1 & vc0 = 1 & vd_q & vd & vs_q & vs & vtimm5   {
+    local op1:16 = vfpuReadQ(vs);
+    local result:16 = vf2iz_q(op1, vtimm5:4);
+    vfpuWriteQ(vd, result[0,32], result[32,32], result[64,32], result[96,32]);
+}
+
+define pcodeop vf2iu_s;
+:vf2iu.s vd_s, vs_s, vtimm5       is prime = 52 & vop3 = 4 & vtop2 = 2 & vc1 = 0 & vc0 = 0 & vd_s & vd & vs_s & vs & vtimm5   {
+    local op1:4 = vs;
+    local result:4 = vf2iu_s(op1, vtimm5:4);
+    vd = result;
+}
+define pcodeop vf2iu_p;
+:vf2iu.p vd_p, vs_p, vtimm5       is prime = 52 & vop3 = 4 & vtop2 = 2 & vc1 = 0 & vc0 = 1 & vd_p & vd & vs_p & vs & vtimm5   {
+    local op1:8 = vfpuReadP(vs);
+    local result:8 = vf2iu_p(op1, vtimm5:4);
+    vfpuWriteP(vd, result[0,32], result[32,32]);
+}
+define pcodeop vf2iu_t;
+:vf2iu.t vd_t, vs_t, vtimm5       is prime = 52 & vop3 = 4 & vtop2 = 2 & vc1 = 1 & vc0 = 0 & vd_t & vd & vs_t & vs & vtimm5   {
+    local op1:12 = vfpuReadT(vs);
+    local result:12 = vf2iu_t(op1, vtimm5:4);
+    vfpuWriteT(vd, result[0,32], result[32,32], result[64,32]);
+}
+define pcodeop vf2iu_q;
+:vf2iu.q vd_q, vs_q, vtimm5       is prime = 52 & vop3 = 4 & vtop2 = 2 & vc1 = 1 & vc0 = 1 & vd_q & vd & vs_q & vs & vtimm5   {
+    local op1:16 = vfpuReadQ(vs);
+    local result:16 = vf2iu_q(op1, vtimm5:4);
+    vfpuWriteQ(vd, result[0,32], result[32,32], result[64,32], result[96,32]);
+}
+
+define pcodeop vf2id_s;
+:vf2id.s vd_s, vs_s, vtimm5       is prime = 52 & vop3 = 4 & vtop2 = 3 & vc1 = 0 & vc0 = 0 & vd_s & vd & vs_s & vs & vtimm5   {
+    local op1:4 = vs;
+    local result:4 = vf2id_s(op1, vtimm5:4);
+    vd = result;
+}
+define pcodeop vf2id_p;
+:vf2id.p vd_p, vs_p, vtimm5       is prime = 52 & vop3 = 4 & vtop2 = 3 & vc1 = 0 & vc0 = 1 & vd_p & vd & vs_p & vs & vtimm5   {
+    local op1:8 = vfpuReadP(vs);
+    local result:8 = vf2id_p(op1, vtimm5:4);
+    vfpuWriteP(vd, result[0,32], result[32,32]);
+}
+define pcodeop vf2id_t;
+:vf2id.t vd_t, vs_t, vtimm5       is prime = 52 & vop3 = 4 & vtop2 = 3 & vc1 = 1 & vc0 = 0 & vd_t & vd & vs_t & vs & vtimm5   {
+    local op1:12 = vfpuReadT(vs);
+    local result:12 = vf2id_t(op1, vtimm5:4);
+    vfpuWriteT(vd, result[0,32], result[32,32], result[64,32]);
+}
+define pcodeop vf2id_q;
+:vf2id.q vd_q, vs_q, vtimm5       is prime = 52 & vop3 = 4 & vtop2 = 3 & vc1 = 1 & vc0 = 1 & vd_q & vd & vs_q & vs & vtimm5   {
+    local op1:16 = vfpuReadQ(vs);
+    local result:16 = vf2id_q(op1, vtimm5:4);
+    vfpuWriteQ(vd, result[0,32], result[32,32], result[64,32], result[96,32]);
+}
+
+define pcodeop vi2f_s;
+:vi2f.s vd_s, vs_s, vtimm5        is prime = 52 & vop3 = 5 & vtop2 = 0 & vc1 = 0 & vc0 = 0 & vd_s & vd & vs_s & vs & vtimm5   {
+    local op1:4 = vs;
+    local result:4 = vi2f_s(op1, vtimm5:4);
+    vd = result;
+}
+define pcodeop vi2f_p;
+:vi2f.p vd_p, vs_p, vtimm5        is prime = 52 & vop3 = 5 & vtop2 = 0 & vc1 = 0 & vc0 = 1 & vd_p & vd & vs_p & vs & vtimm5   {
+    local op1:8 = vfpuReadP(vs);
+    local result:8 = vi2f_p(op1, vtimm5:4);
+    vfpuWriteP(vd, result[0,32], result[32,32]);
+}
+define pcodeop vi2f_t;
+:vi2f.t vd_t, vs_t, vtimm5        is prime = 52 & vop3 = 5 & vtop2 = 0 & vc1 = 1 & vc0 = 0 & vd_t & vd & vs_t & vs & vtimm5   {
+    local op1:12 = vfpuReadT(vs);
+    local result:12 = vi2f_t(op1, vtimm5:4);
+    vfpuWriteT(vd, result[0,32], result[32,32], result[64,32]);
+}
+define pcodeop vi2f_q;
+:vi2f.q vd_q, vs_q, vtimm5        is prime = 52 & vop3 = 5 & vtop2 = 0 & vc1 = 1 & vc0 = 1 & vd_q & vd & vs_q & vs & vtimm5   {
+    local op1:16 = vfpuReadQ(vs);
+    local result:16 = vi2f_q(op1, vtimm5:4);
+    vfpuWriteQ(vd, result[0,32], result[32,32], result[64,32], result[96,32]);
+}
+
+define pcodeop vcmovt_s;
+:vcmovt.s vd_s, vs_s, VfpuCmovCC  is prime = 52 & vop3 = 5 & vcmov_op = 4 & vc1 = 0 & vc0 = 0 & vd_s & vd & vs_s & vs & VfpuCmovCC   {
+    local op1:4 = vs;
+    local result:4 = vcmovt_s(op1, VfpuCmovCC:1);
+    vd = result;
+}
+define pcodeop vcmovt_p;
+:vcmovt.p vd_p, vs_p, VfpuCmovCC  is prime = 52 & vop3 = 5 & vcmov_op = 4 & vc1 = 0 & vc0 = 1 & vd_p & vd & vs_p & vs & VfpuCmovCC   {
+    local op1:8 = vfpuReadP(vs);
+    local result:8 = vcmovt_p(op1, VfpuCmovCC:1);
+    vfpuWriteP(vd, result[0,32], result[32,32]);
+}
+define pcodeop vcmovt_t;
+:vcmovt.t vd_t, vs_t, VfpuCmovCC  is prime = 52 & vop3 = 5 & vcmov_op = 4 & vc1 = 1 & vc0 = 0 & vd_t & vd & vs_t & vs & VfpuCmovCC   {
+    local op1:12 = vfpuReadT(vs);
+    local result:12 = vcmovt_t(op1, VfpuCmovCC:1);
+    vfpuWriteT(vd, result[0,32], result[32,32], result[64,32]);
+}
+define pcodeop vcmovt_q;
+:vcmovt.q vd_q, vs_q, VfpuCmovCC  is prime = 52 & vop3 = 5 & vcmov_op = 4 & vc1 = 1 & vc0 = 1 & vd_q & vd & vs_q & vs & VfpuCmovCC   {
+    local op1:16 = vfpuReadQ(vs);
+    local result:16 = vcmovt_q(op1, VfpuCmovCC:1);
+    vfpuWriteQ(vd, result[0,32], result[32,32], result[64,32], result[96,32]);
+}
+
+define pcodeop vcmovf_s;
+:vcmovf.s vd_s, vs_s, VfpuCmovCC  is prime = 52 & vop3 = 5 & vcmov_op = 5 & vc1 = 0 & vc0 = 0 & vd_s & vd & vs_s & vs & VfpuCmovCC   {
+    local op1:4 = vs;
+    local result:4 = vcmovf_s(op1, VfpuCmovCC:1);
+    vd = result;
+}
+define pcodeop vcmovf_p;
+:vcmovf.p vd_p, vs_p, VfpuCmovCC  is prime = 52 & vop3 = 5 & vcmov_op = 5 & vc1 = 0 & vc0 = 1 & vd_p & vd & vs_p & vs & VfpuCmovCC   {
+    local op1:8 = vfpuReadP(vs);
+    local result:8 = vcmovf_p(op1, VfpuCmovCC:1);
+    vfpuWriteP(vd, result[0,32], result[32,32]);
+}
+define pcodeop vcmovf_t;
+:vcmovf.t vd_t, vs_t, VfpuCmovCC  is prime = 52 & vop3 = 5 & vcmov_op = 5 & vc1 = 1 & vc0 = 0 & vd_t & vd & vs_t & vs & VfpuCmovCC   {
+    local op1:12 = vfpuReadT(vs);
+    local result:12 = vcmovf_t(op1, VfpuCmovCC:1);
+    vfpuWriteT(vd, result[0,32], result[32,32], result[64,32]);
+}
+define pcodeop vcmovf_q;
+:vcmovf.q vd_q, vs_q, VfpuCmovCC  is prime = 52 & vop3 = 5 & vcmov_op = 5 & vc1 = 1 & vc0 = 1 & vd_q & vd & vs_q & vs & VfpuCmovCC   {
+    local op1:16 = vfpuReadQ(vs);
+    local result:16 = vcmovf_q(op1, VfpuCmovCC:1);
+    vfpuWriteQ(vd, result[0,32], result[32,32], result[64,32], result[96,32]);
+}
+
+define pcodeop vwbn_s;
+:vwbn.s vd_s, vs_s, vwbnimm8      is prime = 52 & vop2 = 3 & vc1 = 0 & vc0 = 0 & vd_s & vd & vs_s & vs & vwbnimm8   {
+    local op1:4 = vs;
+    local result:4 = vwbn_s(op1, vwbnimm8:4);
+    vd = result;
+}
+define pcodeop vwbn_p;
+:vwbn.p vd_p, vs_p, vwbnimm8      is prime = 52 & vop2 = 3 & vc1 = 0 & vc0 = 1 & vd_p & vd & vs_p & vs & vwbnimm8   {
+    local op1:8 = vfpuReadP(vs);
+    local result:8 = vwbn_p(op1, vwbnimm8:4);
+    vfpuWriteP(vd, result[0,32], result[32,32]);
+}
+define pcodeop vwbn_t;
+:vwbn.t vd_t, vs_t, vwbnimm8      is prime = 52 & vop2 = 3 & vc1 = 1 & vc0 = 0 & vd_t & vd & vs_t & vs & vwbnimm8   {
+    local op1:12 = vfpuReadT(vs);
+    local result:12 = vwbn_t(op1, vwbnimm8:4);
+    vfpuWriteT(vd, result[0,32], result[32,32], result[64,32]);
+}
+define pcodeop vwbn_q;
+:vwbn.q vd_q, vs_q, vwbnimm8      is prime = 52 & vop2 = 3 & vc1 = 1 & vc0 = 1 & vd_q & vd & vs_q & vs & vwbnimm8   {
+    local op1:16 = vfpuReadQ(vs);
+    local result:16 = vwbn_q(op1, vwbnimm8:4);
+    vfpuWriteQ(vd, result[0,32], result[32,32], result[64,32], result[96,32]);
+}
+

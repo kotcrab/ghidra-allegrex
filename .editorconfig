@@ -9,6 +9,9 @@ trim_trailing_whitespace = true
 max_line_length = 150
 end_of_line = lf
 
+[{*.sinc, *.cspec, *.ldefs, *.opinion, *.pspec}]
+indent_size = 4
+
 [*.md]
 max_line_length = off
 trim_trailing_whitespace = false
