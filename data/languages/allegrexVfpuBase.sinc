@@ -206,6 +206,12 @@ define pcodeop vfpuReadT;
 define pcodeop vfpuWriteT;
 define pcodeop vfpuReadQ;
 define pcodeop vfpuWriteQ;
+define pcodeop vfpuReadMatrix2;
+define pcodeop vfpuWriteMatrix2;
+define pcodeop vfpuReadMatrix3;
+define pcodeop vfpuWriteMatrix3;
+define pcodeop vfpuReadMatrix4;
+define pcodeop vfpuWriteMatrix4;
 
 # VFPU Tables
 # Some additional tables are in allegrexVfpuGenerated.sinc

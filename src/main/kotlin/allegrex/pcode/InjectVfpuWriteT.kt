@@ -9,14 +9,15 @@ import ghidra.program.model.pcode.PcodeOp
 class InjectVfpuWriteT(
   sourceName: String,
   private val language: SleighLanguage,
-  private val uniqueBase: Long
+  private val uniqueBase: Long,
+  private val maxUniqueBase: Long,
 ) : InjectPayloadCallother(sourceName) {
   override fun getPcode(program: Program, con: InjectContext): Array<PcodeOp> {
     val baseReg = con.inputlist[0]
 
     val (baseRegId, stride) = VfpuPcode.mapBaseRegToModeTriple(baseReg)
 
-    val pCode = PcodeOpEmitter(language, con.baseAddr, uniqueBase)
+    val pCode = PcodeOpEmitter(language, con.baseAddr, uniqueBase, maxUniqueBase)
     pCode.emitAssignVarnodeToRegister(VfpuPcode.regIdToName(baseRegId), con.inputlist[1])
     pCode.emitAssignVarnodeToRegister(VfpuPcode.regIdToName(baseRegId + stride), con.inputlist[2])
     pCode.emitAssignVarnodeToRegister(VfpuPcode.regIdToName(baseRegId + stride * 2), con.inputlist[3])
