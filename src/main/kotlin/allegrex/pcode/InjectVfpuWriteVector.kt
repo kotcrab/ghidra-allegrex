@@ -5,24 +5,25 @@ import ghidra.program.model.lang.InjectContext
 import ghidra.program.model.lang.InjectPayloadCallother
 import ghidra.program.model.listing.Program
 import ghidra.program.model.pcode.PcodeOp
+import ghidra.program.model.pcode.Varnode
 
-class InjectVfpuWriteMatrix4(
+class InjectVfpuWriteVector(
   sourceName: String,
   private val language: SleighLanguage,
   private val uniqueBase: Long,
   private val maxUniqueBase: Long,
+  private val createMapper: (VfpuPcode, Varnode) -> VectorMapper,
+  private val vfpuPcode: VfpuPcode = DefaultVfpuPcode
 ) : InjectPayloadCallother(sourceName) {
   override fun getPcode(program: Program, con: InjectContext): Array<PcodeOp> {
-    val baseReg = con.inputlist[0]
-    val row = con.inputlist[1].offset.toInt()
+    var input = 0
+    val baseReg = con.inputlist[input++]
 
-    val mapper = VfpuPcode.mapBaseRegToModeMatrix4(baseReg, transpose = false)
-
+    val mapper = createMapper(vfpuPcode, baseReg)
     val pCode = PcodeOpEmitter(language, con.baseAddr, uniqueBase, maxUniqueBase)
-    pCode.emitAssignVarnodeToRegister(VfpuPcode.regIdToName(mapper.elementAt(row, 0)), con.inputlist[2])
-    pCode.emitAssignVarnodeToRegister(VfpuPcode.regIdToName(mapper.elementAt(row, 1)), con.inputlist[3])
-    pCode.emitAssignVarnodeToRegister(VfpuPcode.regIdToName(mapper.elementAt(row, 2)), con.inputlist[4])
-    pCode.emitAssignVarnodeToRegister(VfpuPcode.regIdToName(mapper.elementAt(row, 3)), con.inputlist[5])
+    repeat(mapper.size) { i ->
+      pCode.emitAssignVarnodeToRegister(mapper.regNameAt(i), con.inputlist[input++])
+    }
     return pCode.emittedOps()
   }
 }

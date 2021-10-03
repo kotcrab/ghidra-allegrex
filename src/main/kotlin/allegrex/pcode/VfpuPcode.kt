@@ -2,14 +2,32 @@ package allegrex.pcode
 
 import ghidra.program.model.pcode.Varnode
 
-object VfpuPcode {
+interface VfpuPcode {
+  fun mapBaseRegToModePair(varnode: Varnode): VectorMapper
+
+  fun mapBaseRegToModeTriple(varnode: Varnode): VectorMapper
+
+  fun mapBaseRegToModeQuad(varnode: Varnode): VectorMapper
+
+  fun mapBaseRegToModeMatrix2(varnode: Varnode, transpose: Boolean): MatrixMapper
+
+  fun mapBaseRegToModeMatrix3(varnode: Varnode, transpose: Boolean): MatrixMapper
+
+  fun mapBaseRegToModeMatrix4(varnode: Varnode, transpose: Boolean): MatrixMapper
+
+  fun regVarnodeToRegId(varnode: Varnode): Int
+
+  fun regIdToName(id: Int): String
+}
+
+object DefaultVfpuPcode : VfpuPcode {
   private const val VFPU_REGS_START = 0x5000
   private const val UNREACHABLE_MESSAGE = "This should be unreachable"
 
-  fun mapBaseRegToModePair(varnode: Varnode): Pair<Int, Int> {
+  override fun mapBaseRegToModePair(varnode: Varnode): VectorMapper {
     val regId = regVarnodeToRegId(varnode)
     val bankId = regId and 0xF0
-    val stride = if (regId and 0b100 == 0b100) 1 else 4
+    val transpose = regId and 0b100 == 0b100
     val baseRegId = when (regId and 0xF) {
       0x0 -> 0x0 // C000
       0x1 -> 0x1 // C010
@@ -29,13 +47,13 @@ object VfpuPcode {
       0xF -> 0xE // R023
       else -> error(UNREACHABLE_MESSAGE)
     }
-    return Pair(bankId or baseRegId, stride)
+    return VectorMapper(bankId or baseRegId, transpose, 2, this)
   }
 
-  fun mapBaseRegToModeTriple(varnode: Varnode): Pair<Int, Int> {
+  override fun mapBaseRegToModeTriple(varnode: Varnode): VectorMapper {
     val regId = regVarnodeToRegId(varnode)
     val bankId = regId and 0xF0
-    val stride = if (regId and 0b100 == 0b100) 1 else 4
+    val transpose = regId and 0b100 == 0b100
     val baseRegId = when (regId and 0xF) {
       0x0 -> 0x0 // C000
       0x1 -> 0x1 // C010
@@ -55,14 +73,13 @@ object VfpuPcode {
       0xF -> 0xD // R013
       else -> error(UNREACHABLE_MESSAGE)
     }
-    return Pair(bankId or baseRegId, stride)
+    return VectorMapper(bankId or baseRegId, transpose, 3, this)
   }
 
-
-  fun mapBaseRegToModeQuad(varnode: Varnode): Pair<Int, Int> {
+  override fun mapBaseRegToModeQuad(varnode: Varnode): VectorMapper {
     val regId = regVarnodeToRegId(varnode)
     val bankId = regId and 0xF0
-    val stride = if (regId and 0b100 == 0b100) 1 else 4
+    val transpose = regId and 0b100 == 0b100
     val baseRegId = when (regId and 0xF) {
       0x0 -> 0x0 // C000
       0x1 -> 0x1 // C010
@@ -82,13 +99,13 @@ object VfpuPcode {
       0xF -> 0xC // R023
       else -> error(UNREACHABLE_MESSAGE)
     }
-    return Pair(bankId or baseRegId, stride)
+    return VectorMapper(bankId or baseRegId, transpose, 4, this)
   }
 
-  fun mapBaseRegToModeMatrix2(varnode: Varnode): Pair<Int, Boolean> {
+  override fun mapBaseRegToModeMatrix2(varnode: Varnode, transpose: Boolean): MatrixMapper {
     val regId = regVarnodeToRegId(varnode)
     val bankId = regId and 0xF0
-    val transpose = regId and 0b100 == 0b100
+    val regTranspose = regId and 0b100 == 0b100
     // not sure how illegal options are handled, just assign to the closest possible matrix for now (same for 3x3 matrix)
     val baseRegId = when (regId and 0xF) {
       0x0 -> 0x0 // M000
@@ -109,13 +126,13 @@ object VfpuPcode {
       0xF -> 0xA // E023
       else -> error(UNREACHABLE_MESSAGE)
     }
-    return Pair(bankId or baseRegId, transpose)
+    return MatrixMapper(bankId or baseRegId, regTranspose xor transpose, 2, this)
   }
 
-  fun mapBaseRegToModeMatrix3(varnode: Varnode): Pair<Int, Boolean> {
+  override fun mapBaseRegToModeMatrix3(varnode: Varnode, transpose: Boolean): MatrixMapper {
     val regId = regVarnodeToRegId(varnode)
     val bankId = regId and 0xF0
-    val transpose = regId and 0b100 == 0b100
+    val regTranspose = regId and 0b100 == 0b100
     val baseRegId = when (regId and 0xF) {
       0x0 -> 0x0 // M000
       0x1 -> 0x1 // M010
@@ -135,22 +152,22 @@ object VfpuPcode {
       0xF -> 0x5 // E013
       else -> error(UNREACHABLE_MESSAGE)
     }
-    return Pair(bankId or baseRegId, transpose)
+    return MatrixMapper(bankId or baseRegId, regTranspose xor transpose, 3, this)
   }
 
-  fun mapBaseRegToModeMatrix4(varnode: Varnode, transpose: Boolean): Matrix4Mapper {
+  override fun mapBaseRegToModeMatrix4(varnode: Varnode, transpose: Boolean): MatrixMapper {
     val regId = regVarnodeToRegId(varnode)
     val bankId = regId and 0xF0
     val regTranspose = regId and 0b100 == 0b100
     val baseRegId = 0x0
-    return Matrix4Mapper(bankId or baseRegId, regTranspose xor transpose)
+    return MatrixMapper(bankId or baseRegId, regTranspose xor transpose, 4, this)
   }
 
-  fun regVarnodeToRegId(varnode: Varnode): Int {
+  override fun regVarnodeToRegId(varnode: Varnode): Int {
     return ((varnode.offset - VFPU_REGS_START) / 4).toInt()
   }
 
-  fun regIdToName(id: Int): String {
+  override fun regIdToName(id: Int): String {
     return "V%02X".format(id)
   }
 }

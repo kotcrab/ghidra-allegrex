@@ -179,6 +179,35 @@
             <input name="value4"/>
         </pcode>
     </callotherfixup>
+    <callotherfixup targetop="vfpuReadMatrix2">
+        <pcode dynamic="true">
+            <output name="output"/>
+            <input name="baseReg"/>
+        </pcode>
+    </callotherfixup>
+    <callotherfixup targetop="vfpuWriteMatrix2">
+        <pcode dynamic="true">
+            <input name="baseReg"/>
+            <input name="row"/>
+            <input name="value1"/>
+            <input name="value2"/>
+        </pcode>
+    </callotherfixup>
+    <callotherfixup targetop="vfpuReadMatrix3">
+        <pcode dynamic="true">
+            <output name="output"/>
+            <input name="baseReg"/>
+        </pcode>
+    </callotherfixup>
+    <callotherfixup targetop="vfpuWriteMatrix3">
+        <pcode dynamic="true">
+            <input name="baseReg"/>
+            <input name="row"/>
+            <input name="value1"/>
+            <input name="value2"/>
+            <input name="value3"/>
+        </pcode>
+    </callotherfixup>
     <callotherfixup targetop="vfpuReadMatrix4">
         <pcode dynamic="true">
             <output name="output"/>

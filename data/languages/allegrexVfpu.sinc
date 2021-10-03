@@ -91,7 +91,8 @@ define pcodeop vmmul_q;
     op1:16 = vfpuReadMatrix2(vs, 1:1);
     op2:16 = vfpuReadMatrix2(vt, 0:1);
     result:16 = vmmul_p(op1, op2);
-    vfpuWriteMatrix2(vd, result[0,32], result[32,32], result[64,32], result[96,32]);
+    vfpuWriteMatrix2(vd, 0:1, result[0,32], result[32,32]);
+    vfpuWriteMatrix2(vd, 1:1, result[64,32], result[96,32]);
 }
 :vmmul.t vd_tm, vs_te, vt_tm      is prime=60 & vop3 = 0 & vc1 = 1 & vc0 = 0 & vd_tm & vd & vs_te & vs & vt_tm & vt {
     op1:36 = vfpuReadMatrix3(vs, 1:1);

@@ -4,6 +4,7 @@ import ghidra.app.plugin.processors.sleigh.SleighLanguage
 import ghidra.program.model.lang.InjectPayload
 import ghidra.program.model.lang.InjectPayloadCallother
 import ghidra.program.model.lang.PcodeInjectLibrary
+import ghidra.program.model.pcode.Varnode
 
 class AllegrexPcodeInjectLibrary : PcodeInjectLibrary {
   companion object {
@@ -30,18 +31,29 @@ class AllegrexPcodeInjectLibrary : PcodeInjectLibrary {
 
   @Suppress("unused")
   constructor(lang: SleighLanguage) : super(lang) {
+    val pairMapper = { vfpuPcode: VfpuPcode, baseReg: Varnode -> vfpuPcode.mapBaseRegToModePair(baseReg) }
+    val tripleMapper = { vfpuPcode: VfpuPcode, baseReg: Varnode -> vfpuPcode.mapBaseRegToModeTriple(baseReg) }
+    val quadMapper = { vfpuPcode: VfpuPcode, baseReg: Varnode -> vfpuPcode.mapBaseRegToModeQuad(baseReg) }
+    val matrix2Mapper = { vfpuPcode: VfpuPcode, baseReg: Varnode, transpose: Boolean -> vfpuPcode.mapBaseRegToModeMatrix2(baseReg, transpose) }
+    val matrix3Mapper = { vfpuPcode: VfpuPcode, baseReg: Varnode, transpose: Boolean -> vfpuPcode.mapBaseRegToModeMatrix3(baseReg, transpose) }
+    val matrix4Mapper = { vfpuPcode: VfpuPcode, baseReg: Varnode, transpose: Boolean -> vfpuPcode.mapBaseRegToModeMatrix4(baseReg, transpose) }
+
     val ops = mutableMapOf<String, InjectPayloadCallother>()
     ops[VFPU_LOAD_Q] = InjectVfpuLoadQ(SOURCE_NAME, language, uniqueBase, uniqueAllocate())
     ops[VFPU_LOAD_Q_PART] = InjectVfpuLoadQPart(SOURCE_NAME, language, uniqueBase, uniqueAllocate())
     ops[VFPU_SAVE_Q_PART] = InjectVfpuSaveQPart(SOURCE_NAME, language, uniqueBase, uniqueAllocate())
-    ops[VFPU_READ_P] = InjectVfpuReadP(SOURCE_NAME, language, uniqueBase, uniqueAllocate())
-    ops[VFPU_WRITE_P] = InjectVfpuWriteP(SOURCE_NAME, language, uniqueBase, uniqueAllocate())
-    ops[VFPU_READ_T] = InjectVfpuReadT(SOURCE_NAME, language, uniqueBase, uniqueAllocate())
-    ops[VFPU_WRITE_T] = InjectVfpuWriteT(SOURCE_NAME, language, uniqueBase, uniqueAllocate())
-    ops[VFPU_READ_Q] = InjectVfpuReadQ(SOURCE_NAME, language, uniqueBase, uniqueAllocate())
-    ops[VFPU_WRITE_Q] = InjectVfpuWriteQ(SOURCE_NAME, language, uniqueBase, uniqueAllocate())
-    ops[VFPU_READ_MATRIX_4] = InjectVfpuReadMatrix4(SOURCE_NAME, language, uniqueBase, uniqueAllocate(0x300))
-    ops[VFPU_WRITE_MATRIX_4] = InjectVfpuWriteMatrix4(SOURCE_NAME, language, uniqueBase, uniqueAllocate())
+    ops[VFPU_READ_P] = InjectVfpuReadVector(SOURCE_NAME, language, uniqueBase, uniqueAllocate(), pairMapper)
+    ops[VFPU_WRITE_P] = InjectVfpuWriteVector(SOURCE_NAME, language, uniqueBase, uniqueAllocate(), pairMapper)
+    ops[VFPU_READ_T] = InjectVfpuReadVector(SOURCE_NAME, language, uniqueBase, uniqueAllocate(), tripleMapper)
+    ops[VFPU_WRITE_T] = InjectVfpuWriteVector(SOURCE_NAME, language, uniqueBase, uniqueAllocate(), tripleMapper)
+    ops[VFPU_READ_Q] = InjectVfpuReadVector(SOURCE_NAME, language, uniqueBase, uniqueAllocate(), quadMapper)
+    ops[VFPU_WRITE_Q] = InjectVfpuWriteVector(SOURCE_NAME, language, uniqueBase, uniqueAllocate(), quadMapper)
+    ops[VFPU_READ_MATRIX_2] = InjectVfpuReadMatrix(SOURCE_NAME, language, uniqueBase, uniqueAllocate(0x300), matrix2Mapper)
+    ops[VFPU_READ_MATRIX_3] = InjectVfpuReadMatrix(SOURCE_NAME, language, uniqueBase, uniqueAllocate(0x300), matrix3Mapper)
+    ops[VFPU_READ_MATRIX_4] = InjectVfpuReadMatrix(SOURCE_NAME, language, uniqueBase, uniqueAllocate(0x300), matrix4Mapper)
+    ops[VFPU_WRITE_MATRIX_2] = InjectVfpuWriteMatrixRow(SOURCE_NAME, language, uniqueBase, uniqueAllocate(), matrix2Mapper)
+    ops[VFPU_WRITE_MATRIX_3] = InjectVfpuWriteMatrixRow(SOURCE_NAME, language, uniqueBase, uniqueAllocate(), matrix3Mapper)
+    ops[VFPU_WRITE_MATRIX_4] = InjectVfpuWriteMatrixRow(SOURCE_NAME, language, uniqueBase, uniqueAllocate(), matrix4Mapper)
     implementedOps = ops
   }
 

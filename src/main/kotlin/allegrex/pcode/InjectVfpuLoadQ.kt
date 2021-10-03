@@ -11,23 +11,20 @@ class InjectVfpuLoadQ(
   private val language: SleighLanguage,
   private val uniqueBase: Long,
   private val maxUniqueBase: Long,
+  private val vfpuPcode: VfpuPcode = DefaultVfpuPcode
 ) : InjectPayloadCallother(sourceName) {
   override fun getPcode(program: Program, con: InjectContext): Array<PcodeOp> {
-    val baseReg = con.inputlist[0]
-    val columnMode = con.inputlist[1].offset == 0L
-    val value1 = con.inputlist[2]
-    val value2 = con.inputlist[3]
-    val value3 = con.inputlist[4]
-    val value4 = con.inputlist[5]
+    var input = 0
+    val baseReg = con.inputlist[input++]
+    val columnMode = con.inputlist[input++].offset == 0L
 
-    val baseRegId = VfpuPcode.regVarnodeToRegId(baseReg)
-    val stride = if (columnMode) 4 else 1
+    val baseRegId = vfpuPcode.regVarnodeToRegId(baseReg)
+    val mapper = VectorMapper(baseRegId, !columnMode, 4, vfpuPcode)
 
     val pCode = PcodeOpEmitter(language, con.baseAddr, uniqueBase, maxUniqueBase)
-    pCode.emitAssignVarnodeToRegister(VfpuPcode.regIdToName(baseRegId), value1)
-    pCode.emitAssignVarnodeToRegister(VfpuPcode.regIdToName(baseRegId + stride), value2)
-    pCode.emitAssignVarnodeToRegister(VfpuPcode.regIdToName(baseRegId + stride * 2), value3)
-    pCode.emitAssignVarnodeToRegister(VfpuPcode.regIdToName(baseRegId + stride * 3), value4)
+    repeat(4) { i ->
+      pCode.emitAssignVarnodeToRegister(mapper.regNameAt(i), con.inputlist[input++])
+    }
     return pCode.emittedOps()
   }
 }

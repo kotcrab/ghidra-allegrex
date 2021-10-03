@@ -11,6 +11,7 @@ class InjectVfpuLoadQPart(
   private val language: SleighLanguage,
   private val uniqueBase: Long,
   private val maxUniqueBase: Long,
+  private val vfpuPcode: VfpuPcode = DefaultVfpuPcode
 ) : InjectPayloadCallother(sourceName) {
   override fun getPcode(program: Program, con: InjectContext): Array<PcodeOp> {
     val baseReg = con.inputlist[0]
@@ -18,11 +19,11 @@ class InjectVfpuLoadQPart(
     val part = con.inputlist[2].offset.toInt()
     val value = con.inputlist[3]
 
-    val baseRegId = VfpuPcode.regVarnodeToRegId(baseReg)
-    val stride = if (columnMode) 4 else 1
+    val baseRegId = vfpuPcode.regVarnodeToRegId(baseReg)
+    val mapper = VectorMapper(baseRegId, !columnMode, 4, vfpuPcode)
 
     val pCode = PcodeOpEmitter(language, con.baseAddr, uniqueBase, maxUniqueBase)
-    pCode.emitAssignVarnodeToRegister(VfpuPcode.regIdToName(baseRegId + stride * part), value)
+    pCode.emitAssignVarnodeToRegister(mapper.regNameAt(part), value)
     return pCode.emittedOps()
   }
 }
