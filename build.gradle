@@ -47,7 +47,7 @@ jar {
     manifest {
         attributes(
                 'Specification-Title': "Allegrex",
-                'Specification-Version': "9.0",
+                'Specification-Version': "10.0.4",
         )
     }
 }
