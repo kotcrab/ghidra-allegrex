@@ -140,6 +140,8 @@ VfpuRot$idx: "0"  is epsilon                                                   {
     add3("vscmp", prime = 27, vop3 = 5) { variantsAllToAll() }
     add3("vsge", prime = 27, vop3 = 6) { variantsAllToAll() }
     add3("vslt", prime = 27, vop3 = 7) { variantsAllToAll() }
+    add3("vcrsp", prime = 60, vop3 = 5) { variantT(Vd.T, Vs.T, Vt.T) }
+    add3("vqmul", prime = 60, vop3 = 5) { variantQ(Vd.Q, Vs.Q, Vt.Q) }
     add2("vmov", vt = 0) { variantsAllToAll() }
     add2("vabs", vt = 1) { variantsAllToAll() }
     add2("vneg", vt = 2) { variantsAllToAll() }
@@ -204,18 +206,65 @@ VfpuRot$idx: "0"  is epsilon                                                   {
     add3Imm("vcmovt", vop3 = 5, extraCondition = "vcmov_op = 4", immName = "VfpuCmovCC", immSize = 1) { variantsAllToAll() }
     add3Imm("vcmovf", vop3 = 5, extraCondition = "vcmov_op = 5", immName = "VfpuCmovCC", immSize = 1) { variantsAllToAll() }
     add3Imm("vwbn", vop3 = null, extraCondition = "vop2 = 3", immName = "vwbnimm8") { variantsAllToAll() }
+
+    add3("vmmul", prime = 60, vop3 = 0) {
+      variantS(Vd.Matrix1, Vs.Matrix1Transposed, Vt.Matrix1)
+      variantP(Vd.Matrix2, Vs.Matrix2Transposed, Vt.Matrix2)
+      variantT(Vd.Matrix3, Vs.Matrix3Transposed, Vt.Matrix3)
+      variantQ(Vd.Matrix4, Vs.Matrix4Transposed, Vt.Matrix4)
+    }
+    add3("vhtfm1", prime = 60, vop3 = 1) { variantS(Vd.S, Vs.Matrix1, Vt.S) }
+    add3("vtfm2", prime = 60, vop3 = 1) { variantP(Vd.P, Vs.Matrix2, Vt.P) }
+    add3("vhtfm2", prime = 60, vop3 = 2) { variantP(Vd.P, Vs.Matrix2, Vt.P) }
+    add3("vtfm3", prime = 60, vop3 = 2) { variantT(Vd.T, Vs.Matrix3, Vt.T) }
+    add3("vhtfm3", prime = 60, vop3 = 3) { variantT(Vd.T, Vs.Matrix3, Vt.T) }
+    add3("vtfm4", prime = 60, vop3 = 3) { variantQ(Vd.Q, Vs.Matrix2, Vt.Q) }
+    add3("vmscl", prime = 60, vop3 = 4) {
+      variantS(Vd.Matrix1, Vs.Matrix1, Vt.S)
+      variantP(Vd.Matrix2, Vs.Matrix2, Vt.S)
+      variantT(Vd.Matrix3, Vs.Matrix3, Vt.S)
+      variantQ(Vd.Matrix4, Vs.Matrix4, Vt.S)
+    }
+    add2("vmmov", prime = 60, vop3 = 7, vt = null, extraCondition = "vtop2 = 0 & vtop4 = 0") {
+      variantS(Vd.Matrix1, Vs.Matrix1)
+      variantP(Vd.Matrix2, Vs.Matrix2)
+      variantT(Vd.Matrix3, Vs.Matrix3)
+      variantQ(Vd.Matrix4, Vs.Matrix4)
+    }
+    add1("vmidt", prime = 60, vop3 = 7, vt = null, extraCondition = "vtop2 = 0 & vtop4 = 3") { variantsMatrixAllToAll() }
+    add1("vmzero", prime = 60, vop3 = 7, vt = null, extraCondition = "vtop2 = 0 & vtop4 = 6") { variantsMatrixAllToAll() }
+    add1("vmone", prime = 60, vop3 = 7, vt = null, extraCondition = "vtop2 = 0 & vtop4 = 7") { variantsMatrixAllToAll() }
   }
 
-  private fun add1(name: String, prime: Int = 52, vt: Int, block: InstructionGeneratorOp1.() -> Unit) {
-    add(InstructionGeneratorOp1(name, prime, vt).apply { block() })
+  private fun add1(
+    name: String,
+    prime: Int = 52,
+    vop3: Int = 0,
+    vt: Int?,
+    extraCondition: String? = null,
+    block: InstructionGeneratorOp1.() -> Unit
+  ) {
+    add(InstructionGeneratorOp1(name = name, prime = prime, vop3 = vop3, vt = vt, extraCondition = extraCondition).apply { block() })
   }
 
-  private fun add2(name: String, prime: Int = 52, vt: Int, block: InstructionGeneratorOp2.() -> Unit) {
-    add(InstructionGeneratorOp2(name, prime, vt).apply { block() })
+  private fun add2(
+    name: String,
+    prime: Int = 52,
+    vop3: Int = 0,
+    vt: Int?,
+    extraCondition: String? = null,
+    block: InstructionGeneratorOp2.() -> Unit
+  ) {
+    add(InstructionGeneratorOp2(name = name, prime = prime, vop3 = vop3, vt = vt, extraCondition = extraCondition).apply { block() })
   }
 
-  private fun add3(name: String, prime: Int, vop3: Int, block: InstructionGeneratorOp3.() -> Unit) {
-    add(InstructionGeneratorOp3(name, prime, vop3).apply { block() })
+  private fun add3(
+    name: String,
+    prime: Int,
+    vop3: Int,
+    block: InstructionGeneratorOp3.() -> Unit
+  ) {
+    add(InstructionGeneratorOp3(name = name, prime = prime, vop3 = vop3).apply { block() })
   }
 
   private fun add3Imm(
@@ -239,7 +288,9 @@ VfpuRot$idx: "0"  is epsilon                                                   {
 private class InstructionGeneratorOp1(
   private val name: String,
   private val prime: Int,
-  private val vt: Int
+  private val vop3: Int,
+  private val vt: Int?,
+  private val extraCondition: String?
 ) : InstructionGenerator {
   private val builder = StringBuilder()
 
@@ -257,6 +308,13 @@ private class InstructionGeneratorOp1(
     variantQ(Vd.S)
   }
 
+  fun variantsMatrixAllToAll() {
+    variantS(Vd.Matrix1)
+    variantP(Vd.Matrix2)
+    variantT(Vd.Matrix3)
+    variantQ(Vd.Matrix4)
+  }
+
   fun variantS(vd: Vd) = variant(Variant.S, vd)
   fun variantP(vd: Vd) = variant(Variant.P, vd)
   fun variantT(vd: Vd) = variant(Variant.T, vd)
@@ -268,7 +326,13 @@ private class InstructionGeneratorOp1(
       builder.append("define pcodeop $pcodeName;\n")
     }
     builder.append(":$name${variant.suffix} ${vd.asmName}".padEnd(INSTRUCTION_PADDING))
-    builder.append("is prime = $prime & vop3 = 0 & vt = $vt & ")
+    builder.append("is prime = $prime & vop3 = $vop3 & ")
+    if (vt != null) {
+      builder.append("vt = $vt & ")
+    }
+    if (extraCondition != null) {
+      builder.append("$extraCondition & ")
+    }
     if (variant.matcher.isNotEmpty()) {
       builder.append("${variant.matcher} & ")
     }
@@ -295,7 +359,9 @@ private class InstructionGeneratorOp1(
 private class InstructionGeneratorOp2(
   private val name: String,
   private val prime: Int,
-  private val vt: Int
+  private val vop3: Int,
+  private val vt: Int?,
+  private val extraCondition: String?
 ) : InstructionGenerator {
   private val builder = StringBuilder()
 
@@ -329,7 +395,13 @@ private class InstructionGeneratorOp2(
       builder.append("define pcodeop $pcodeName;\n")
     }
     builder.append(":$name${variant.suffix} ${vd.asmName}, ${vs.asmName}".padEnd(INSTRUCTION_PADDING))
-    builder.append("is prime = $prime & vop3 = 0 & vt = $vt & ")
+    builder.append("is prime = $prime & vop3 = $vop3 & ")
+    if (vt != null) {
+      builder.append("vt = $vt & ")
+    }
+    if (extraCondition != null) {
+      builder.append("$extraCondition & ")
+    }
     if (variant.matcher.isNotEmpty()) {
       builder.append("${variant.matcher} & ")
     }
@@ -485,34 +557,71 @@ private enum class Vd(
   val asmName: String,
   val matcher: String,
   val sleighSize: String,
-  val sleighReader: String,
   val sleighWriter: (String) -> String
 ) {
   S(
     asmName = "vd_s",
     matcher = "vd_s & vd",
     sleighSize = "4",
-    sleighReader = "vd",
     sleighWriter = { "vd = $it;" }
   ),
   P(
     asmName = "vd_p",
     matcher = "vd_p & vd",
     sleighSize = "8",
-    sleighReader = "vfpuReadP(vd)",
     sleighWriter = { "vfpuWriteP(vd, $it[0,32], $it[32,32]);" }),
   T(
     asmName = "vd_t",
     matcher = "vd_t & vd",
     sleighSize = "12",
-    sleighReader = "vfpuReadT(vd)",
     sleighWriter = { "vfpuWriteT(vd, $it[0,32], $it[32,32], $it[64,32]);" }),
   Q(
     asmName = "vd_q",
     matcher = "vd_q & vd",
     sleighSize = "16",
-    sleighReader = "vfpuReadQ(vd)",
     sleighWriter = { "vfpuWriteQ(vd, $it[0,32], $it[32,32], $it[64,32], $it[96,32]);" }),
+  Matrix1(
+    asmName = "vd_m",
+    matcher = "vd_m & vd",
+    sleighSize = "4",
+    sleighWriter = { "vd = $it;" }
+  ),
+  Matrix2(
+    asmName = "vd_m",
+    matcher = "vd_m & vd",
+    sleighSize = "16",
+    sleighWriter = {
+      """
+    |vfpuWriteMatrix2(vd, 0:1, $it[0,32], $it[32,32]);
+    |    vfpuWriteMatrix2(vd, 1:1, $it[64,32], $it[96,32]);
+    """.trimMargin()
+    }
+  ),
+  Matrix3(
+    asmName = "vd_tm",
+    matcher = "vd_tm & vd",
+    sleighSize = "36",
+    sleighWriter = {
+      """
+    |vfpuWriteMatrix3(vd, 0:1, $it[0,32], $it[32,32], $it[64,32]);
+    |    vfpuWriteMatrix3(vd, 1:1, $it[96,32], $it[128,32], $it[160,32]);
+    |    vfpuWriteMatrix3(vd, 2:1, $it[192,32], $it[224,32], $it[256,32]);
+    """.trimMargin()
+    }
+  ),
+  Matrix4(
+    asmName = "vd_m",
+    matcher = "vd_m & vd",
+    sleighSize = "64",
+    sleighWriter = {
+      """
+    |vfpuWriteMatrix4(vd, 0:1, $it[0,32], $it[32,32], $it[64,32], $it[96,32]);
+    |    vfpuWriteMatrix4(vd, 1:1, $it[128,32], $it[160,32], $it[192,32], $it[224,32]);
+    |    vfpuWriteMatrix4(vd, 2:1, $it[256,32], $it[288,32], $it[320,32], $it[352,32]);
+    |    vfpuWriteMatrix4(vd, 3:1, $it[384,32], $it[416,32], $it[448,32], $it[480,32]);
+    """.trimMargin()
+    }
+  ),
 }
 
 private enum class Vs(val asmName: String, val matcher: String, val sleighSize: String, val sleighReader: String) {
@@ -540,6 +649,54 @@ private enum class Vs(val asmName: String, val matcher: String, val sleighSize: 
     sleighSize = "16",
     sleighReader = "vfpuReadQ(vs)"
   ),
+  Matrix1(
+    asmName = "vs_m",
+    matcher = "vs_m & vs",
+    sleighSize = "4",
+    sleighReader = "vs"
+  ),
+  Matrix1Transposed(
+    asmName = "vs_e",
+    matcher = "vs_e & vs",
+    sleighSize = "4",
+    sleighReader = "vs"
+  ),
+  Matrix2(
+    asmName = "vs_m",
+    matcher = "vs_m & vs",
+    sleighSize = "16",
+    sleighReader = "vfpuReadMatrix2(vs, 0:1)"
+  ),
+  Matrix2Transposed(
+    asmName = "vs_e",
+    matcher = "vs_e & vs",
+    sleighSize = "16",
+    sleighReader = "vfpuReadMatrix2(vs, 1:1)"
+  ),
+  Matrix3(
+    asmName = "vs_tm",
+    matcher = "vs_tm & vs",
+    sleighSize = "36",
+    sleighReader = "vfpuReadMatrix3(vs, 0:1)"
+  ),
+  Matrix3Transposed(
+    asmName = "vs_te",
+    matcher = "vs_te & vs",
+    sleighSize = "36",
+    sleighReader = "vfpuReadMatrix3(vs, 1:1)"
+  ),
+  Matrix4(
+    asmName = "vs_m",
+    matcher = "vs_m & vs",
+    sleighSize = "64",
+    sleighReader = "vfpuReadMatrix4(vs, 0:1)"
+  ),
+  Matrix4Transposed(
+    asmName = "vs_e",
+    matcher = "vs_e & vs",
+    sleighSize = "64",
+    sleighReader = "vfpuReadMatrix4(vs, 1:1)"
+  ),
 }
 
 private enum class Vt(val asmName: String, val matcher: String, val sleighSize: String, val sleighReader: String) {
@@ -566,5 +723,47 @@ private enum class Vt(val asmName: String, val matcher: String, val sleighSize: 
     matcher = "vt_q & vt",
     sleighSize = "16",
     sleighReader = "vfpuReadQ(vt)"
+  ),
+  Matrix1(
+    asmName = "vt_m",
+    matcher = "vt_m & vt",
+    sleighSize = "4",
+    sleighReader = "vt"
+  ),
+  Matrix2(
+    asmName = "vt_m",
+    matcher = "vt_m & vt",
+    sleighSize = "16",
+    sleighReader = "vfpuReadMatrix2(vt, 0:1)"
+  ),
+  Matrix2Transposed(
+    asmName = "vt_m",
+    matcher = "vt_m & vt",
+    sleighSize = "16",
+    sleighReader = "vfpuReadMatrix2(vt, 1:1)"
+  ),
+  Matrix3(
+    asmName = "vt_tm",
+    matcher = "vt_tm & vt",
+    sleighSize = "36",
+    sleighReader = "vfpuReadMatrix3(vt, 0:1)"
+  ),
+  Matrix3Transposed(
+    asmName = "vt_tm",
+    matcher = "vt_tm & vt",
+    sleighSize = "36",
+    sleighReader = "vfpuReadMatrix3(vt, 1:1)"
+  ),
+  Matrix4(
+    asmName = "vt_m",
+    matcher = "vt_m & vt",
+    sleighSize = "64",
+    sleighReader = "vfpuReadMatrix4(vt, 0:1)"
+  ),
+  Matrix4Transposed(
+    asmName = "vt_m",
+    matcher = "vt_m & vt",
+    sleighSize = "64",
+    sleighReader = "vfpuReadMatrix4(vt, 1:1)"
   ),
 }

@@ -592,6 +592,22 @@ define pcodeop vslt_q;
     vfpuWriteQ(vd, result[0,32], result[32,32], result[64,32], result[96,32]);
 }
 
+define pcodeop vcrsp_t;
+:vcrsp.t vd_t, vs_t, vt_t         is prime = 60 & vop3 = 5 & vc1 = 1 & vc0 = 0 & vd_t & vd & vs_t & vs & vt_t & vt   {
+    local op1:12 = vfpuReadT(vs);
+    local op2:12 = vfpuReadT(vt);
+    local result:12 = vcrsp_t(op1, op2);
+    vfpuWriteT(vd, result[0,32], result[32,32], result[64,32]);
+}
+
+define pcodeop vqmul_q;
+:vqmul.q vd_q, vs_q, vt_q         is prime = 60 & vop3 = 5 & vc1 = 1 & vc0 = 1 & vd_q & vd & vs_q & vs & vt_q & vt   {
+    local op1:16 = vfpuReadQ(vs);
+    local op2:16 = vfpuReadQ(vt);
+    local result:16 = vqmul_q(op1, op2);
+    vfpuWriteQ(vd, result[0,32], result[32,32], result[64,32], result[96,32]);
+}
+
 define pcodeop vmov_s;
 :vmov.s vd_s, vs_s                is prime = 52 & vop3 = 0 & vt = 0 & vc1 = 0 & vc0 = 0 & vd_s & vd & vs_s & vs   {
     local op1:4 = vs;
@@ -1884,4 +1900,246 @@ define pcodeop vwbn_q;
     local result:16 = vwbn_q(op1, vwbnimm8:4);
     vfpuWriteQ(vd, result[0,32], result[32,32], result[64,32], result[96,32]);
 }
+
+define pcodeop vmmul_s;
+:vmmul.s vd_m, vs_e, vt_m         is prime = 60 & vop3 = 0 & vc1 = 0 & vc0 = 0 & vd_m & vd & vs_e & vs & vt_m & vt   {
+    local op1:4 = vs;
+    local op2:4 = vt;
+    local result:4 = vmmul_s(op1, op2);
+    vd = result;
+}
+define pcodeop vmmul_p;
+:vmmul.p vd_m, vs_e, vt_m         is prime = 60 & vop3 = 0 & vc1 = 0 & vc0 = 1 & vd_m & vd & vs_e & vs & vt_m & vt   {
+    local op1:16 = vfpuReadMatrix2(vs, 1:1);
+    local op2:16 = vfpuReadMatrix2(vt, 0:1);
+    local result:16 = vmmul_p(op1, op2);
+    vfpuWriteMatrix2(vd, 0:1, result[0,32], result[32,32]);
+    vfpuWriteMatrix2(vd, 1:1, result[64,32], result[96,32]);
+}
+define pcodeop vmmul_t;
+:vmmul.t vd_tm, vs_te, vt_tm      is prime = 60 & vop3 = 0 & vc1 = 1 & vc0 = 0 & vd_tm & vd & vs_te & vs & vt_tm & vt   {
+    local op1:36 = vfpuReadMatrix3(vs, 1:1);
+    local op2:36 = vfpuReadMatrix3(vt, 0:1);
+    local result:36 = vmmul_t(op1, op2);
+    vfpuWriteMatrix3(vd, 0:1, result[0,32], result[32,32], result[64,32]);
+    vfpuWriteMatrix3(vd, 1:1, result[96,32], result[128,32], result[160,32]);
+    vfpuWriteMatrix3(vd, 2:1, result[192,32], result[224,32], result[256,32]);
+}
+define pcodeop vmmul_q;
+:vmmul.q vd_m, vs_e, vt_m         is prime = 60 & vop3 = 0 & vc1 = 1 & vc0 = 1 & vd_m & vd & vs_e & vs & vt_m & vt   {
+    local op1:64 = vfpuReadMatrix4(vs, 1:1);
+    local op2:64 = vfpuReadMatrix4(vt, 0:1);
+    local result:64 = vmmul_q(op1, op2);
+    vfpuWriteMatrix4(vd, 0:1, result[0,32], result[32,32], result[64,32], result[96,32]);
+    vfpuWriteMatrix4(vd, 1:1, result[128,32], result[160,32], result[192,32], result[224,32]);
+    vfpuWriteMatrix4(vd, 2:1, result[256,32], result[288,32], result[320,32], result[352,32]);
+    vfpuWriteMatrix4(vd, 3:1, result[384,32], result[416,32], result[448,32], result[480,32]);
+}
+
+define pcodeop vhtfm1_s;
+:vhtfm1.s vd_s, vs_m, vt_s        is prime = 60 & vop3 = 1 & vc1 = 0 & vc0 = 0 & vd_s & vd & vs_m & vs & vt_s & vt   {
+    local op1:4 = vs;
+    local op2:4 = vt;
+    local result:4 = vhtfm1_s(op1, op2);
+    vd = result;
+}
+
+define pcodeop vtfm2_p;
+:vtfm2.p vd_p, vs_m, vt_p         is prime = 60 & vop3 = 1 & vc1 = 0 & vc0 = 1 & vd_p & vd & vs_m & vs & vt_p & vt   {
+    local op1:16 = vfpuReadMatrix2(vs, 0:1);
+    local op2:8 = vfpuReadP(vt);
+    local result:8 = vtfm2_p(op1, op2);
+    vfpuWriteP(vd, result[0,32], result[32,32]);
+}
+
+define pcodeop vhtfm2_p;
+:vhtfm2.p vd_p, vs_m, vt_p        is prime = 60 & vop3 = 2 & vc1 = 0 & vc0 = 1 & vd_p & vd & vs_m & vs & vt_p & vt   {
+    local op1:16 = vfpuReadMatrix2(vs, 0:1);
+    local op2:8 = vfpuReadP(vt);
+    local result:8 = vhtfm2_p(op1, op2);
+    vfpuWriteP(vd, result[0,32], result[32,32]);
+}
+
+define pcodeop vtfm3_t;
+:vtfm3.t vd_t, vs_tm, vt_t        is prime = 60 & vop3 = 2 & vc1 = 1 & vc0 = 0 & vd_t & vd & vs_tm & vs & vt_t & vt   {
+    local op1:36 = vfpuReadMatrix3(vs, 0:1);
+    local op2:12 = vfpuReadT(vt);
+    local result:12 = vtfm3_t(op1, op2);
+    vfpuWriteT(vd, result[0,32], result[32,32], result[64,32]);
+}
+
+define pcodeop vhtfm3_t;
+:vhtfm3.t vd_t, vs_tm, vt_t       is prime = 60 & vop3 = 3 & vc1 = 1 & vc0 = 0 & vd_t & vd & vs_tm & vs & vt_t & vt   {
+    local op1:36 = vfpuReadMatrix3(vs, 0:1);
+    local op2:12 = vfpuReadT(vt);
+    local result:12 = vhtfm3_t(op1, op2);
+    vfpuWriteT(vd, result[0,32], result[32,32], result[64,32]);
+}
+
+define pcodeop vtfm4_q;
+:vtfm4.q vd_q, vs_m, vt_q         is prime = 60 & vop3 = 3 & vc1 = 1 & vc0 = 1 & vd_q & vd & vs_m & vs & vt_q & vt   {
+    local op1:16 = vfpuReadMatrix2(vs, 0:1);
+    local op2:16 = vfpuReadQ(vt);
+    local result:16 = vtfm4_q(op1, op2);
+    vfpuWriteQ(vd, result[0,32], result[32,32], result[64,32], result[96,32]);
+}
+
+define pcodeop vmscl_s;
+:vmscl.s vd_m, vs_m, vt_s         is prime = 60 & vop3 = 4 & vc1 = 0 & vc0 = 0 & vd_m & vd & vs_m & vs & vt_s & vt   {
+    local op1:4 = vs;
+    local op2:4 = vt;
+    local result:4 = vmscl_s(op1, op2);
+    vd = result;
+}
+define pcodeop vmscl_p;
+:vmscl.p vd_m, vs_m, vt_s         is prime = 60 & vop3 = 4 & vc1 = 0 & vc0 = 1 & vd_m & vd & vs_m & vs & vt_s & vt   {
+    local op1:16 = vfpuReadMatrix2(vs, 0:1);
+    local op2:4 = vt;
+    local result:16 = vmscl_p(op1, op2);
+    vfpuWriteMatrix2(vd, 0:1, result[0,32], result[32,32]);
+    vfpuWriteMatrix2(vd, 1:1, result[64,32], result[96,32]);
+}
+define pcodeop vmscl_t;
+:vmscl.t vd_tm, vs_tm, vt_s       is prime = 60 & vop3 = 4 & vc1 = 1 & vc0 = 0 & vd_tm & vd & vs_tm & vs & vt_s & vt   {
+    local op1:36 = vfpuReadMatrix3(vs, 0:1);
+    local op2:4 = vt;
+    local result:36 = vmscl_t(op1, op2);
+    vfpuWriteMatrix3(vd, 0:1, result[0,32], result[32,32], result[64,32]);
+    vfpuWriteMatrix3(vd, 1:1, result[96,32], result[128,32], result[160,32]);
+    vfpuWriteMatrix3(vd, 2:1, result[192,32], result[224,32], result[256,32]);
+}
+define pcodeop vmscl_q;
+:vmscl.q vd_m, vs_m, vt_s         is prime = 60 & vop3 = 4 & vc1 = 1 & vc0 = 1 & vd_m & vd & vs_m & vs & vt_s & vt   {
+    local op1:64 = vfpuReadMatrix4(vs, 0:1);
+    local op2:4 = vt;
+    local result:64 = vmscl_q(op1, op2);
+    vfpuWriteMatrix4(vd, 0:1, result[0,32], result[32,32], result[64,32], result[96,32]);
+    vfpuWriteMatrix4(vd, 1:1, result[128,32], result[160,32], result[192,32], result[224,32]);
+    vfpuWriteMatrix4(vd, 2:1, result[256,32], result[288,32], result[320,32], result[352,32]);
+    vfpuWriteMatrix4(vd, 3:1, result[384,32], result[416,32], result[448,32], result[480,32]);
+}
+
+define pcodeop vmmov_s;
+:vmmov.s vd_m, vs_m               is prime = 60 & vop3 = 7 & vtop2 = 0 & vtop4 = 0 & vc1 = 0 & vc0 = 0 & vd_m & vd & vs_m & vs   {
+    local op1:4 = vs;
+    local result:4 = vmmov_s(op1);
+    vd = result;
+}
+define pcodeop vmmov_p;
+:vmmov.p vd_m, vs_m               is prime = 60 & vop3 = 7 & vtop2 = 0 & vtop4 = 0 & vc1 = 0 & vc0 = 1 & vd_m & vd & vs_m & vs   {
+    local op1:16 = vfpuReadMatrix2(vs, 0:1);
+    local result:16 = vmmov_p(op1);
+    vfpuWriteMatrix2(vd, 0:1, result[0,32], result[32,32]);
+    vfpuWriteMatrix2(vd, 1:1, result[64,32], result[96,32]);
+}
+define pcodeop vmmov_t;
+:vmmov.t vd_tm, vs_tm             is prime = 60 & vop3 = 7 & vtop2 = 0 & vtop4 = 0 & vc1 = 1 & vc0 = 0 & vd_tm & vd & vs_tm & vs   {
+    local op1:36 = vfpuReadMatrix3(vs, 0:1);
+    local result:36 = vmmov_t(op1);
+    vfpuWriteMatrix3(vd, 0:1, result[0,32], result[32,32], result[64,32]);
+    vfpuWriteMatrix3(vd, 1:1, result[96,32], result[128,32], result[160,32]);
+    vfpuWriteMatrix3(vd, 2:1, result[192,32], result[224,32], result[256,32]);
+}
+define pcodeop vmmov_q;
+:vmmov.q vd_m, vs_m               is prime = 60 & vop3 = 7 & vtop2 = 0 & vtop4 = 0 & vc1 = 1 & vc0 = 1 & vd_m & vd & vs_m & vs   {
+    local op1:64 = vfpuReadMatrix4(vs, 0:1);
+    local result:64 = vmmov_q(op1);
+    vfpuWriteMatrix4(vd, 0:1, result[0,32], result[32,32], result[64,32], result[96,32]);
+    vfpuWriteMatrix4(vd, 1:1, result[128,32], result[160,32], result[192,32], result[224,32]);
+    vfpuWriteMatrix4(vd, 2:1, result[256,32], result[288,32], result[320,32], result[352,32]);
+    vfpuWriteMatrix4(vd, 3:1, result[384,32], result[416,32], result[448,32], result[480,32]);
+}
+
+define pcodeop vmidt_s;
+:vmidt.s vd_m                     is prime = 60 & vop3 = 7 & vtop2 = 0 & vtop4 = 3 & vc1 = 0 & vc0 = 0 & vd_m & vd   {
+    local result:4 = vmidt_s();
+    vd = result;
+}
+
+define pcodeop vmidt_p;
+:vmidt.p vd_m                     is prime = 60 & vop3 = 7 & vtop2 = 0 & vtop4 = 3 & vc1 = 0 & vc0 = 1 & vd_m & vd   {
+    local result:16 = vmidt_p();
+    vfpuWriteMatrix2(vd, 0:1, result[0,32], result[32,32]);
+    vfpuWriteMatrix2(vd, 1:1, result[64,32], result[96,32]);
+}
+
+define pcodeop vmidt_t;
+:vmidt.t vd_tm                    is prime = 60 & vop3 = 7 & vtop2 = 0 & vtop4 = 3 & vc1 = 1 & vc0 = 0 & vd_tm & vd   {
+    local result:36 = vmidt_t();
+    vfpuWriteMatrix3(vd, 0:1, result[0,32], result[32,32], result[64,32]);
+    vfpuWriteMatrix3(vd, 1:1, result[96,32], result[128,32], result[160,32]);
+    vfpuWriteMatrix3(vd, 2:1, result[192,32], result[224,32], result[256,32]);
+}
+
+define pcodeop vmidt_q;
+:vmidt.q vd_m                     is prime = 60 & vop3 = 7 & vtop2 = 0 & vtop4 = 3 & vc1 = 1 & vc0 = 1 & vd_m & vd   {
+    local result:64 = vmidt_q();
+    vfpuWriteMatrix4(vd, 0:1, result[0,32], result[32,32], result[64,32], result[96,32]);
+    vfpuWriteMatrix4(vd, 1:1, result[128,32], result[160,32], result[192,32], result[224,32]);
+    vfpuWriteMatrix4(vd, 2:1, result[256,32], result[288,32], result[320,32], result[352,32]);
+    vfpuWriteMatrix4(vd, 3:1, result[384,32], result[416,32], result[448,32], result[480,32]);
+}
+
+
+define pcodeop vmzero_s;
+:vmzero.s vd_m                    is prime = 60 & vop3 = 7 & vtop2 = 0 & vtop4 = 6 & vc1 = 0 & vc0 = 0 & vd_m & vd   {
+    local result:4 = vmzero_s();
+    vd = result;
+}
+
+define pcodeop vmzero_p;
+:vmzero.p vd_m                    is prime = 60 & vop3 = 7 & vtop2 = 0 & vtop4 = 6 & vc1 = 0 & vc0 = 1 & vd_m & vd   {
+    local result:16 = vmzero_p();
+    vfpuWriteMatrix2(vd, 0:1, result[0,32], result[32,32]);
+    vfpuWriteMatrix2(vd, 1:1, result[64,32], result[96,32]);
+}
+
+define pcodeop vmzero_t;
+:vmzero.t vd_tm                   is prime = 60 & vop3 = 7 & vtop2 = 0 & vtop4 = 6 & vc1 = 1 & vc0 = 0 & vd_tm & vd   {
+    local result:36 = vmzero_t();
+    vfpuWriteMatrix3(vd, 0:1, result[0,32], result[32,32], result[64,32]);
+    vfpuWriteMatrix3(vd, 1:1, result[96,32], result[128,32], result[160,32]);
+    vfpuWriteMatrix3(vd, 2:1, result[192,32], result[224,32], result[256,32]);
+}
+
+define pcodeop vmzero_q;
+:vmzero.q vd_m                    is prime = 60 & vop3 = 7 & vtop2 = 0 & vtop4 = 6 & vc1 = 1 & vc0 = 1 & vd_m & vd   {
+    local result:64 = vmzero_q();
+    vfpuWriteMatrix4(vd, 0:1, result[0,32], result[32,32], result[64,32], result[96,32]);
+    vfpuWriteMatrix4(vd, 1:1, result[128,32], result[160,32], result[192,32], result[224,32]);
+    vfpuWriteMatrix4(vd, 2:1, result[256,32], result[288,32], result[320,32], result[352,32]);
+    vfpuWriteMatrix4(vd, 3:1, result[384,32], result[416,32], result[448,32], result[480,32]);
+}
+
+
+define pcodeop vmone_s;
+:vmone.s vd_m                     is prime = 60 & vop3 = 7 & vtop2 = 0 & vtop4 = 7 & vc1 = 0 & vc0 = 0 & vd_m & vd   {
+    local result:4 = vmone_s();
+    vd = result;
+}
+
+define pcodeop vmone_p;
+:vmone.p vd_m                     is prime = 60 & vop3 = 7 & vtop2 = 0 & vtop4 = 7 & vc1 = 0 & vc0 = 1 & vd_m & vd   {
+    local result:16 = vmone_p();
+    vfpuWriteMatrix2(vd, 0:1, result[0,32], result[32,32]);
+    vfpuWriteMatrix2(vd, 1:1, result[64,32], result[96,32]);
+}
+
+define pcodeop vmone_t;
+:vmone.t vd_tm                    is prime = 60 & vop3 = 7 & vtop2 = 0 & vtop4 = 7 & vc1 = 1 & vc0 = 0 & vd_tm & vd   {
+    local result:36 = vmone_t();
+    vfpuWriteMatrix3(vd, 0:1, result[0,32], result[32,32], result[64,32]);
+    vfpuWriteMatrix3(vd, 1:1, result[96,32], result[128,32], result[160,32]);
+    vfpuWriteMatrix3(vd, 2:1, result[192,32], result[224,32], result[256,32]);
+}
+
+define pcodeop vmone_q;
+:vmone.q vd_m                     is prime = 60 & vop3 = 7 & vtop2 = 0 & vtop4 = 7 & vc1 = 1 & vc0 = 1 & vd_m & vd   {
+    local result:64 = vmone_q();
+    vfpuWriteMatrix4(vd, 0:1, result[0,32], result[32,32], result[64,32], result[96,32]);
+    vfpuWriteMatrix4(vd, 1:1, result[128,32], result[160,32], result[192,32], result[224,32]);
+    vfpuWriteMatrix4(vd, 2:1, result[256,32], result[288,32], result[320,32], result[352,32]);
+    vfpuWriteMatrix4(vd, 3:1, result[384,32], result[416,32], result[448,32], result[480,32]);
+}
+
 
