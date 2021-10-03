@@ -1,4 +1,5 @@
-#### Version: 1.8 (built with Ghidra 10.0.2)
+#### Version: 1.8 (built with Ghidra 10.0.4)
+- Updated to Ghidra 10.0.4
 - Added initial support for decompiling VFPU instructions
   - **Warning**: For existing projects every VFPU branch instruction (`bvf`, `bvfl`, `bvt`, `bvtl`) must be cleared and disassembled again 
     to generate proper pcode
