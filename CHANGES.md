@@ -5,10 +5,12 @@
 - Improved disassembly of VFPU instructions
   - **Warning**: For existing projects you will need to clear the affected instructions and disassemble them again. Otherwise,
     you will see wrong disassembly and decompilation
-    - Hint: You can search bookmarks for "unimplemented: lv." etc.
+    - Hint: You can search bookmarks for "Instruction pcode is unimplemented" to find VFPU instructions.
     - Hint: If the project was disassembled before version 1.6 then you can easily spot wrongly disassembled load and store instruction as
       they will have invalid references to `DAT` (e.g. `lv.q C000=>DAT_00000004,0x0(a0)`).
-    - Hint: To clear entire function, press `Select -> Function` then press `C` key to clear and `D` to dissemble again
+    - Hint: To clear entire function: press `Select -> Function` then press `C` key to clear and `D` to dissemble again
+    - Note: It should be possible to write a script that automatically clears and dissembles every affected function, such script might be
+    provided in future versions
   - All VFPU load and store instructions: register name and offset is now shown correctly
   - Operands of `vpfxs`, `vpfxt` and `vpfxd` are now disassembled
   - Operands of all `vrot` instructions are now disassembled

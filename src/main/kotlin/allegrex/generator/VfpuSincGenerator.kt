@@ -23,7 +23,7 @@ class VfpuSincGenerator(outputFile: File?) {
     generateVrotTables()
     generateCcTables()
     generateCmovCcTables()
-    generateVfpuInstructions()
+    generateInstructions()
     when {
       outputFile != null -> outputFile.writeText(builder.toString())
       else -> println(builder.toString())
@@ -119,7 +119,7 @@ VfpuRot$idx: "0"  is epsilon                                                   {
     builder.append("\n")
   }
 
-  private fun generateVfpuInstructions() {
+  private fun generateInstructions() {
     add3("vadd", prime = 24, vop3 = 0) { variantsAllToAll() }
     add3("vsub", prime = 24, vop3 = 1) { variantsAllToAll() }
     add3("vsbn", prime = 24, vop3 = 2) { variantsAllToAll() }

@@ -22,7 +22,7 @@ class InjectVfpuLoadQ(
     val mapper = VectorMapper(baseRegId, !columnMode, 4, vfpuPcode)
 
     val pCode = PcodeOpEmitter(language, con.baseAddr, uniqueBase, maxUniqueBase)
-    repeat(4) { i ->
+    repeat(mapper.size) { i ->
       pCode.emitAssignVarnodeToRegister(mapper.regNameAt(i), con.inputlist[input++])
     }
     return pCode.emittedOps()

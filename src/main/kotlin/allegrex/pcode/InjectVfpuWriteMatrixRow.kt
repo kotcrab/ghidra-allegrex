@@ -22,7 +22,7 @@ class InjectVfpuWriteMatrixRow(
 
     val mapper = createMapper(vfpuPcode, baseReg, false) // write is always transpose = false
     val pCode = PcodeOpEmitter(language, con.baseAddr, uniqueBase, maxUniqueBase)
-    repeat(mapper.size) { i ->
+    repeat(mapper.dimSize) { i ->
       pCode.emitAssignVarnodeToRegister(mapper.regNameAt(row, i), con.inputlist[input++])
     }
     return pCode.emittedOps()

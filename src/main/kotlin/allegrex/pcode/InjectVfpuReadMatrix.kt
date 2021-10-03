@@ -27,14 +27,14 @@ class InjectVfpuReadMatrix(
     var currentVarnode = varnodeProvider.nextVarnode()
     pCode.emitPieceRegisters(
       currentVarnode,
-      mapper.regNameAt(mapper.lastIndex, mapper.lastIndex),
-      mapper.regNameAt(mapper.lastIndex, mapper.lastIndex - 1)
+      mapper.regNameAt(mapper.lastDimIndex, mapper.lastDimIndex),
+      mapper.regNameAt(mapper.lastDimIndex, mapper.lastDimIndex - 1)
     )
-    repeat(mapper.size) { i ->
-      repeat(mapper.size) next@{ ii ->
-        val row = (mapper.lastIndex - i)
-        val column = (mapper.lastIndex - ii)
-        if ((row == mapper.lastIndex && column == mapper.lastIndex) || (row == mapper.lastIndex && column == mapper.lastIndex - 1)) {
+    repeat(mapper.dimSize) { i ->
+      repeat(mapper.dimSize) next@{ ii ->
+        val row = (mapper.lastDimIndex - i)
+        val column = (mapper.lastDimIndex - ii)
+        if ((row == mapper.lastDimIndex && column == mapper.lastDimIndex) || (row == mapper.lastDimIndex && column == mapper.lastDimIndex - 1)) {
           return@next
         }
         val prevVarnode = currentVarnode
