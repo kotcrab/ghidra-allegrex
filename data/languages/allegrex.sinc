@@ -66,6 +66,7 @@ define context contextreg
 ;
 
 # VFPU registers
+# Each line represents single 4x4 VFPU register group
 define register offset=0x5000 size=4 [
     V00 V01 V02 V03 V04 V05 V06 V07 V08 V09 V0A V0B V0C V0D V0E V0F
     V10 V11 V12 V13 V14 V15 V16 V17 V18 V19 V1A V1B V1C V1D V1E V1F
@@ -184,6 +185,33 @@ define token instr(32)
     vm_l        = (16,20)
     vcmov_op    = (19,21)
     vcmov_cc    = (16,18)
+    vrot_imm0   = (16,17)
+    vrot_imm1   = (18,19)
+    vrot_neg    = (20,20)
+    vpfxd_op0   = (0,1)
+    vpfxd_mask0 = (8,8)
+    vpfxd_op1   = (2,3)
+    vpfxd_mask1 = (9,9)
+    vpfxd_op2   = (4,5)
+    vpfxd_mask2 = (10,10)
+    vpfxd_op3   = (6,7)
+    vpfxd_mask3 = (11,11)
+    vpfxst_op0  = (0,1)
+    vpfxst_abs0 = (8,8)
+    vpfxst_cst0 = (12,12)
+    vpfxst_neg0 = (16,16)
+    vpfxst_op1  = (2,3)
+    vpfxst_abs1 = (9,9)
+    vpfxst_cst1 = (13,13)
+    vpfxst_neg1 = (17,17)
+    vpfxst_op2  = (4,5)
+    vpfxst_abs2 = (10,10)
+    vpfxst_cst2 = (14,14)
+    vpfxst_neg2 = (18,18)
+    vpfxst_op3  = (6,7)
+    vpfxst_abs3 = (11,11)
+    vpfxst_cst3 = (15,15)
+    vpfxst_neg3 = (19,19)
 ;
 
 attach variables [ rs rt rd base ] [
@@ -281,9 +309,6 @@ define pcodeop trap;
 define pcodeop wait;
 define pcodeop syscall;
 define pcodeop cacheOp;
-define pcodeop wsbw;
-define pcodeop bitrev;
-define pcodeop getCopCondition;
 define pcodeop setCopControlWord;       # setCopControlWord(cop_num, reg_num, value)
 define pcodeop getCopControlWord;       # getCopControlWord(cop_num, reg_num)
 define pcodeop setCopReg;               # setCopReg(cop_num, reg_num, value)

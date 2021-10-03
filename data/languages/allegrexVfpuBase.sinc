@@ -1,14 +1,91 @@
+# The internal layout and its mapping to VFPU registers is assumed to be:
+# V00 V01 V02 V03  ->  S000 S010 S020 S030
+# V04 V05 V06 V07  ->  S001 S011 S021 S031
+# V08 V09 V0A V0B  ->  S002 S012 S022 S032
+# V0C V0D V0E V0F  ->  S003 S013 S023 S033
+
+# Given register:
+#   S000
+#   ^^^^--- Y position in the 4x4 matrix
+#   ||(---- X position in the 4x4 matrix
+#   |(----- index of the VFPU register group (in other words index of the 4x4 matrix)
+#   (------ mode: single (S), column (C), row (R), matrix (M), transposed matrix (E)
+
+# Different modes are represented as follows
+# The '*' means that element belongs to the group (usually to the register "above" in columns mode or to the "left" in rows mode)
+# The 'x' means that element is unused in this mode
+
+# Pair mode, columns:
+# C000 C010 C020 C030
+#   *    *    *    *
+# C002 C012 C022 C032
+#   *    *    *    *
+
+# Pair mode, rows:
+# R000   *  R020   *
+# R001   *  R021   *
+# R002   *  R022   *
+# R003   *  R023   *
+
+# Triple mode, columns 1:
+# C000 C010 C020 C030
+#   *    *    *    *
+#   *    *    *    *
+#   x    x    x    x
+
+# Triple mode, columns 2:
+#   x    x    x    x
+# C001 C011 C021 C031
+#   *    *    *    *
+#   *    *    *    *
+
+# Triple mode, rows 1:
+# R000   *    *    x
+# R001   *    *    x
+# R002   *    *    x
+# R003   *    *    x
+
+# Triple mode, rows 2:
+#   x  R000   *    *
+#   x  R001   *    *
+#   x  R002   *    *
+#   x  R003   *    *
+
+# Quad mode is very similar to "Triple mode, columns 1" and "Triple mode, rows 1" except that the final elements are also used
+# This mode also has seemingly illegal possibilities: C002, C012, C022, C032 and R020, R021, R022, R023 which can be encoded in the instruction and
+# are displayed like this in disassembly. However they seem to behave exactly the same as C000, C010, C020, C030 and R000, R001, R002, R003.
+
+# 4x4 matrix:
+# M000   *    *    *
+#   *    *    *    *
+#   *    *    *    *
+#   *    *    *    *
+
+# 3x3 matrix can be addressed in 4 different ways. Starting at elements M000, M001, M010, M011. Only one possible way is shown below for brevity:
+#   x    x    x    x
+#   x  M011   *    *
+#   x    *    *    *
+#   x    *    *    *
+
+# 2x2 matrix:
+# M000   *  M020   *
+#   *    *    *    *
+# M002   *  M022   *
+#   *    *    *    *
+
 attach variables [ vt vs vd ] [
-    V00 V01 V02 V03 V04 V05 V06 V07 V08 V09 V0A V0B V0C V0D V0E V0F
-    V10 V11 V12 V13 V14 V15 V16 V17 V18 V19 V1A V1B V1C V1D V1E V1F
-    V20 V21 V22 V23 V24 V25 V26 V27 V28 V29 V2A V2B V2C V2D V2E V2F
-    V30 V31 V32 V33 V34 V35 V36 V37 V38 V39 V3A V3B V3C V3D V3E V3F
-    V40 V41 V42 V43 V44 V45 V46 V47 V48 V49 V4A V4B V4C V4D V4E V4F
-    V50 V51 V52 V53 V54 V55 V56 V57 V58 V59 V5A V5B V5C V5D V5E V5F
-    V60 V61 V62 V63 V64 V65 V66 V67 V68 V69 V6A V6B V6C V6D V6E V6F
-    V70 V71 V72 V73 V74 V75 V76 V77 V78 V79 V7A V7B V7C V7D V7E V7F
+    V00 V01 V02 V03 V10 V11 V12 V13 V20 V21 V22 V23 V30 V31 V32 V33
+    V40 V41 V42 V43 V50 V51 V52 V53 V60 V61 V62 V63 V70 V71 V72 V73
+    V04 V05 V06 V07 V14 V15 V16 V17 V24 V25 V26 V27 V34 V35 V36 V37
+    V44 V45 V46 V47 V54 V55 V56 V57 V64 V65 V66 V67 V74 V75 V76 V77
+    V08 V09 V0A V0B V18 V19 V1A V1B V28 V29 V2A V2B V38 V39 V3A V3B
+    V48 V49 V4A V4B V58 V59 V5A V5B V68 V69 V6A V6B V78 V79 V7A V7B
+    V0C V0D V0E V0F V1C V1D V1E V1F V2C V2D V2E V2F V3C V3D V3E V3F
+    V4C V4D V4E V4F V5C V5D V5E V5F V6C V6D V6E V6F V7C V7D V7E V7F
 ];
 
+# Attached register names are for disassembly display only, the layout may not match internal representation
+# The actual mapping to register groups is done using injected pcode
 attach names [ vt_s vs_s vd_s ] [
     S000 S010 S020 S030 S100 S110 S120 S130 S200 S210 S220 S230 S300 S310 S320 S330
     S400 S410 S420 S430 S500 S510 S520 S530 S600 S610 S620 S630 S700 S710 S720 S730
@@ -108,17 +185,6 @@ attach names [ vd_cmp ] [
     FL EQ LT LE TR NE GE GT EZ EN EI ES NZ NN NI NS
 ];
 
-attach names [ vd_ctl ] [
-    SPFX   TPFX   DPFX   CC     INF4   RSV5   RSV6   REV    RCX0   RCX1   RCX2   RCX3   RCX4   RCX5   RCX6   RCX7
-    S400 S410 S420 S430 S500 S510 S520 S530 S600 S610 S620 S630 S700 S710 S720 S730
-    S001 S011 S021 S031 S101 S111 S121 S131 S201 S211 S221 S231 S301 S311 S321 S331
-    S401 S411 S421 S431 S501 S511 S521 S531 S601 S611 S621 S631 S701 S711 S721 S731
-    S002 S012 S022 S032 S102 S112 S122 S132 S202 S212 S222 S232 S302 S312 S322 S332
-    S402 S412 S422 S432 S502 S512 S522 S532 S602 S612 S622 S632 S702 S712 S722 S732
-    S003 S013 S023 S033 S103 S113 S123 S133 S203 S213 S223 S233 S303 S313 S323 S333
-    S403 S413 S423 S433 S503 S513 S523 S533 S603 S613 S623 S633 S703 S713 S723 S733
-];
-
 attach names [ vt_cst ] [
     "(undef)" "MaxFloat" "Sqrt(2)"  "Sqrt(1/2)"  "2/Sqrt(PI)" "2/PI"      "1/PI"    "PI/4"
     "PI/2"    "PI"       "e"        "Log2(e)"    "Log10(e)"   "ln(2)"     "ln(10)"  "2*PI"
@@ -126,262 +192,407 @@ attach names [ vt_cst ] [
     "(undef)" "(undef)"  "(undef)"  "(undef)"    "(undef)"    "(undef)"   "(undef)" "(undef)"
 ];
 
-attach names [ vcc vcmov_cc ] [
-    "CC[0]" "CC[1]" "CC[2]" "CC[3]" "CC[4]" "CC[5]" "CC[6]" "CC[7]"
-];
-
 OFF_VBASE:  voffset(base)    is vsimmed & base [ voffset = vsimmed << 2; ] {
     tmp:4 = base + (vsimmed << 2); tmpscaled:4 = 0; ValCast(tmpscaled,tmp); export tmpscaled;
 }
 
+# Implementation details VFPU operations with injected pcode
+define pcodeop vfpuLoadQ;
+define pcodeop vfpuLoadQPart;
+define pcodeop vfpuSaveQPart;
+define pcodeop vfpuReadP;
+define pcodeop vfpuWriteP;
+define pcodeop vfpuReadT;
+define pcodeop vfpuWriteT;
+define pcodeop vfpuReadQ;
+define pcodeop vfpuWriteQ;
+define pcodeop vfpuReadMatrix2;
+define pcodeop vfpuWriteMatrix2;
+define pcodeop vfpuReadMatrix3;
+define pcodeop vfpuWriteMatrix3;
+define pcodeop vfpuReadMatrix4;
+define pcodeop vfpuWriteMatrix4;
+
+# VFPU Tables
+# Some additional tables are in allegrexVfpuGenerated.sinc
+
+VfpuCtl: "SPFX" is vd_ctl = 0x0 { export SPFX; }
+VfpuCtl: "TPFX" is vd_ctl = 0x1 { export TPFX; }
+VfpuCtl: "DPFX" is vd_ctl = 0x2 { export DPFX; }
+VfpuCtl: "CC"   is vd_ctl = 0x3 { export CC;  }
+VfpuCtl: "INF4" is vd_ctl = 0x4 { export INF4; }
+VfpuCtl: "RSV5" is vd_ctl = 0x5 { export RSV5; }
+VfpuCtl: "RSV6" is vd_ctl = 0x6 { export RSV6; }
+VfpuCtl: "REV"  is vd_ctl = 0x7 { export REV;  }
+VfpuCtl: "RCX0" is vd_ctl = 0x8 { export RCX0; }
+VfpuCtl: "RCX1" is vd_ctl = 0x9 { export RCX1; }
+VfpuCtl: "RCX2" is vd_ctl = 0xA { export RCX2; }
+VfpuCtl: "RCX3" is vd_ctl = 0xB { export RCX3; }
+VfpuCtl: "RCX4" is vd_ctl = 0xC { export RCX4; }
+VfpuCtl: "RCX5" is vd_ctl = 0xD { export RCX5; }
+VfpuCtl: "RCX6" is vd_ctl = 0xE { export RCX6; }
+VfpuCtl: "RCX7" is vd_ctl = 0xF { export RCX7; }
+VfpuCtl: "S400" is vd_ctl = 0x10 { export 0:4; }
+VfpuCtl: "S410" is vd_ctl = 0x11 { export 0:4; }
+VfpuCtl: "S420" is vd_ctl = 0x12 { export 0:4; }
+VfpuCtl: "S430" is vd_ctl = 0x13 { export 0:4; }
+VfpuCtl: "S500" is vd_ctl = 0x14 { export 0:4; }
+VfpuCtl: "S510" is vd_ctl = 0x15 { export 0:4; }
+VfpuCtl: "S520" is vd_ctl = 0x16 { export 0:4; }
+VfpuCtl: "S530" is vd_ctl = 0x17 { export 0:4; }
+VfpuCtl: "S600" is vd_ctl = 0x18 { export 0:4; }
+VfpuCtl: "S610" is vd_ctl = 0x19 { export 0:4; }
+VfpuCtl: "S620" is vd_ctl = 0x1A { export 0:4; }
+VfpuCtl: "S630" is vd_ctl = 0x1B { export 0:4; }
+VfpuCtl: "S700" is vd_ctl = 0x1C { export 0:4; }
+VfpuCtl: "S710" is vd_ctl = 0x1D { export 0:4; }
+VfpuCtl: "S720" is vd_ctl = 0x1E { export 0:4; }
+VfpuCtl: "S730" is vd_ctl = 0x1F { export 0:4; }
+VfpuCtl: "S001" is vd_ctl = 0x20 { export 0:4; }
+VfpuCtl: "S011" is vd_ctl = 0x21 { export 0:4; }
+VfpuCtl: "S021" is vd_ctl = 0x22 { export 0:4; }
+VfpuCtl: "S031" is vd_ctl = 0x23 { export 0:4; }
+VfpuCtl: "S101" is vd_ctl = 0x24 { export 0:4; }
+VfpuCtl: "S111" is vd_ctl = 0x25 { export 0:4; }
+VfpuCtl: "S121" is vd_ctl = 0x26 { export 0:4; }
+VfpuCtl: "S131" is vd_ctl = 0x27 { export 0:4; }
+VfpuCtl: "S201" is vd_ctl = 0x28 { export 0:4; }
+VfpuCtl: "S211" is vd_ctl = 0x29 { export 0:4; }
+VfpuCtl: "S221" is vd_ctl = 0x2A { export 0:4; }
+VfpuCtl: "S231" is vd_ctl = 0x2B { export 0:4; }
+VfpuCtl: "S301" is vd_ctl = 0x2C { export 0:4; }
+VfpuCtl: "S311" is vd_ctl = 0x2D { export 0:4; }
+VfpuCtl: "S321" is vd_ctl = 0x2E { export 0:4; }
+VfpuCtl: "S331" is vd_ctl = 0x2F { export 0:4; }
+VfpuCtl: "S401" is vd_ctl = 0x30 { export 0:4; }
+VfpuCtl: "S411" is vd_ctl = 0x31 { export 0:4; }
+VfpuCtl: "S421" is vd_ctl = 0x32 { export 0:4; }
+VfpuCtl: "S431" is vd_ctl = 0x33 { export 0:4; }
+VfpuCtl: "S501" is vd_ctl = 0x34 { export 0:4; }
+VfpuCtl: "S511" is vd_ctl = 0x35 { export 0:4; }
+VfpuCtl: "S521" is vd_ctl = 0x36 { export 0:4; }
+VfpuCtl: "S531" is vd_ctl = 0x37 { export 0:4; }
+VfpuCtl: "S601" is vd_ctl = 0x38 { export 0:4; }
+VfpuCtl: "S611" is vd_ctl = 0x39 { export 0:4; }
+VfpuCtl: "S621" is vd_ctl = 0x3A { export 0:4; }
+VfpuCtl: "S631" is vd_ctl = 0x3B { export 0:4; }
+VfpuCtl: "S701" is vd_ctl = 0x3C { export 0:4; }
+VfpuCtl: "S711" is vd_ctl = 0x3D { export 0:4; }
+VfpuCtl: "S721" is vd_ctl = 0x3E { export 0:4; }
+VfpuCtl: "S731" is vd_ctl = 0x3F { export 0:4; }
+VfpuCtl: "S002" is vd_ctl = 0x40 { export 0:4; }
+VfpuCtl: "S012" is vd_ctl = 0x41 { export 0:4; }
+VfpuCtl: "S022" is vd_ctl = 0x42 { export 0:4; }
+VfpuCtl: "S032" is vd_ctl = 0x43 { export 0:4; }
+VfpuCtl: "S102" is vd_ctl = 0x44 { export 0:4; }
+VfpuCtl: "S112" is vd_ctl = 0x45 { export 0:4; }
+VfpuCtl: "S122" is vd_ctl = 0x46 { export 0:4; }
+VfpuCtl: "S132" is vd_ctl = 0x47 { export 0:4; }
+VfpuCtl: "S202" is vd_ctl = 0x48 { export 0:4; }
+VfpuCtl: "S212" is vd_ctl = 0x49 { export 0:4; }
+VfpuCtl: "S222" is vd_ctl = 0x4A { export 0:4; }
+VfpuCtl: "S232" is vd_ctl = 0x4B { export 0:4; }
+VfpuCtl: "S302" is vd_ctl = 0x4C { export 0:4; }
+VfpuCtl: "S312" is vd_ctl = 0x4D { export 0:4; }
+VfpuCtl: "S322" is vd_ctl = 0x4E { export 0:4; }
+VfpuCtl: "S332" is vd_ctl = 0x4F { export 0:4; }
+VfpuCtl: "S402" is vd_ctl = 0x50 { export 0:4; }
+VfpuCtl: "S412" is vd_ctl = 0x51 { export 0:4; }
+VfpuCtl: "S422" is vd_ctl = 0x52 { export 0:4; }
+VfpuCtl: "S432" is vd_ctl = 0x53 { export 0:4; }
+VfpuCtl: "S502" is vd_ctl = 0x54 { export 0:4; }
+VfpuCtl: "S512" is vd_ctl = 0x55 { export 0:4; }
+VfpuCtl: "S522" is vd_ctl = 0x56 { export 0:4; }
+VfpuCtl: "S532" is vd_ctl = 0x57 { export 0:4; }
+VfpuCtl: "S602" is vd_ctl = 0x58 { export 0:4; }
+VfpuCtl: "S612" is vd_ctl = 0x59 { export 0:4; }
+VfpuCtl: "S622" is vd_ctl = 0x5A { export 0:4; }
+VfpuCtl: "S632" is vd_ctl = 0x5B { export 0:4; }
+VfpuCtl: "S702" is vd_ctl = 0x5C { export 0:4; }
+VfpuCtl: "S712" is vd_ctl = 0x5D { export 0:4; }
+VfpuCtl: "S722" is vd_ctl = 0x5E { export 0:4; }
+VfpuCtl: "S732" is vd_ctl = 0x5F { export 0:4; }
+VfpuCtl: "S003" is vd_ctl = 0x60 { export 0:4; }
+VfpuCtl: "S013" is vd_ctl = 0x61 { export 0:4; }
+VfpuCtl: "S023" is vd_ctl = 0x62 { export 0:4; }
+VfpuCtl: "S033" is vd_ctl = 0x63 { export 0:4; }
+VfpuCtl: "S103" is vd_ctl = 0x64 { export 0:4; }
+VfpuCtl: "S113" is vd_ctl = 0x65 { export 0:4; }
+VfpuCtl: "S123" is vd_ctl = 0x66 { export 0:4; }
+VfpuCtl: "S133" is vd_ctl = 0x67 { export 0:4; }
+VfpuCtl: "S203" is vd_ctl = 0x68 { export 0:4; }
+VfpuCtl: "S213" is vd_ctl = 0x69 { export 0:4; }
+VfpuCtl: "S223" is vd_ctl = 0x6A { export 0:4; }
+VfpuCtl: "S233" is vd_ctl = 0x6B { export 0:4; }
+VfpuCtl: "S303" is vd_ctl = 0x6C { export 0:4; }
+VfpuCtl: "S313" is vd_ctl = 0x6D { export 0:4; }
+VfpuCtl: "S323" is vd_ctl = 0x6E { export 0:4; }
+VfpuCtl: "S333" is vd_ctl = 0x6F { export 0:4; }
+VfpuCtl: "S403" is vd_ctl = 0x70 { export 0:4; }
+VfpuCtl: "S413" is vd_ctl = 0x71 { export 0:4; }
+VfpuCtl: "S423" is vd_ctl = 0x72 { export 0:4; }
+VfpuCtl: "S433" is vd_ctl = 0x73 { export 0:4; }
+VfpuCtl: "S503" is vd_ctl = 0x74 { export 0:4; }
+VfpuCtl: "S513" is vd_ctl = 0x75 { export 0:4; }
+VfpuCtl: "S523" is vd_ctl = 0x76 { export 0:4; }
+VfpuCtl: "S533" is vd_ctl = 0x77 { export 0:4; }
+VfpuCtl: "S603" is vd_ctl = 0x78 { export 0:4; }
+VfpuCtl: "S613" is vd_ctl = 0x79 { export 0:4; }
+VfpuCtl: "S623" is vd_ctl = 0x7A { export 0:4; }
+VfpuCtl: "S633" is vd_ctl = 0x7B { export 0:4; }
+VfpuCtl: "S703" is vd_ctl = 0x7C { export 0:4; }
+VfpuCtl: "S713" is vd_ctl = 0x7D { export 0:4; }
+VfpuCtl: "S723" is vd_ctl = 0x7E { export 0:4; }
+VfpuCtl: "(interlock)" is vd_ctl = 0x7F { export 0:4; }
+
 with : vms_h = 0 {
-    VfpuMemS: "S000" is vm_l = 0x0 { }
-    VfpuMemS: "S010" is vm_l = 0x1 { }
-    VfpuMemS: "S020" is vm_l = 0x2 { }
-    VfpuMemS: "S030" is vm_l = 0x3 { }
+    VfpuMemS: "S000" is vm_l = 0x0 { export V00; }
+    VfpuMemS: "S010" is vm_l = 0x1 { export V01; }
+    VfpuMemS: "S020" is vm_l = 0x2 { export V02; }
+    VfpuMemS: "S030" is vm_l = 0x3 { export V03; }
 
-    VfpuMemS: "S100" is vm_l = 0x4 { }
-    VfpuMemS: "S110" is vm_l = 0x5 { }
-    VfpuMemS: "S120" is vm_l = 0x6 { }
-    VfpuMemS: "S130" is vm_l = 0x7 { }
+    VfpuMemS: "S100" is vm_l = 0x4 { export V10; }
+    VfpuMemS: "S110" is vm_l = 0x5 { export V11; }
+    VfpuMemS: "S120" is vm_l = 0x6 { export V12; }
+    VfpuMemS: "S130" is vm_l = 0x7 { export V13; }
 
-    VfpuMemS: "S200" is vm_l = 0x8 { }
-    VfpuMemS: "S210" is vm_l = 0x9 { }
-    VfpuMemS: "S220" is vm_l = 0xA { }
-    VfpuMemS: "S230" is vm_l = 0xB { }
+    VfpuMemS: "S200" is vm_l = 0x8 { export V20; }
+    VfpuMemS: "S210" is vm_l = 0x9 { export V21; }
+    VfpuMemS: "S220" is vm_l = 0xA { export V22; }
+    VfpuMemS: "S230" is vm_l = 0xB { export V23; }
 
-    VfpuMemS: "S300" is vm_l = 0xC { }
-    VfpuMemS: "S310" is vm_l = 0xD { }
-    VfpuMemS: "S320" is vm_l = 0xE { }
-    VfpuMemS: "S330" is vm_l = 0xF { }
+    VfpuMemS: "S300" is vm_l = 0xC { export V30; }
+    VfpuMemS: "S310" is vm_l = 0xD { export V31; }
+    VfpuMemS: "S320" is vm_l = 0xE { export V32; }
+    VfpuMemS: "S330" is vm_l = 0xF { export V33; }
 
-    VfpuMemS: "S400" is vm_l = 0x10 { }
-    VfpuMemS: "S410" is vm_l = 0x11 { }
-    VfpuMemS: "S420" is vm_l = 0x12 { }
-    VfpuMemS: "S430" is vm_l = 0x13 { }
+    VfpuMemS: "S400" is vm_l = 0x10 { export V40; }
+    VfpuMemS: "S410" is vm_l = 0x11 { export V41; }
+    VfpuMemS: "S420" is vm_l = 0x12 { export V42; }
+    VfpuMemS: "S430" is vm_l = 0x13 { export V43; }
 
-    VfpuMemS: "S500" is vm_l = 0x14 { }
-    VfpuMemS: "S510" is vm_l = 0x15 { }
-    VfpuMemS: "S520" is vm_l = 0x16 { }
-    VfpuMemS: "S530" is vm_l = 0x17 { }
+    VfpuMemS: "S500" is vm_l = 0x14 { export V50; }
+    VfpuMemS: "S510" is vm_l = 0x15 { export V51; }
+    VfpuMemS: "S520" is vm_l = 0x16 { export V52; }
+    VfpuMemS: "S530" is vm_l = 0x17 { export V53; }
 
-    VfpuMemS: "S600" is vm_l = 0x18 { }
-    VfpuMemS: "S610" is vm_l = 0x19 { }
-    VfpuMemS: "S620" is vm_l = 0x1A { }
-    VfpuMemS: "S630" is vm_l = 0x1B { }
+    VfpuMemS: "S600" is vm_l = 0x18 { export V60; }
+    VfpuMemS: "S610" is vm_l = 0x19 { export V61; }
+    VfpuMemS: "S620" is vm_l = 0x1A { export V62; }
+    VfpuMemS: "S630" is vm_l = 0x1B { export V63; }
 
-    VfpuMemS: "S700" is vm_l = 0x1C { }
-    VfpuMemS: "S710" is vm_l = 0x1D { }
-    VfpuMemS: "S720" is vm_l = 0x1E { }
-    VfpuMemS: "S730" is vm_l = 0x1F { }
+    VfpuMemS: "S700" is vm_l = 0x1C { export V70; }
+    VfpuMemS: "S710" is vm_l = 0x1D { export V71; }
+    VfpuMemS: "S720" is vm_l = 0x1E { export V72; }
+    VfpuMemS: "S730" is vm_l = 0x1F { export V73; }
 }
 
 with : vms_h = 1 {
-    VfpuMemS: "S001" is vm_l = 0x0 { }
-    VfpuMemS: "S011" is vm_l = 0x1 { }
-    VfpuMemS: "S021" is vm_l = 0x2 { }
-    VfpuMemS: "S031" is vm_l = 0x3 { }
+    VfpuMemS: "S001" is vm_l = 0x0 { export V04; }
+    VfpuMemS: "S011" is vm_l = 0x1 { export V05; }
+    VfpuMemS: "S021" is vm_l = 0x2 { export V06; }
+    VfpuMemS: "S031" is vm_l = 0x3 { export V07; }
 
-    VfpuMemS: "S101" is vm_l = 0x4 { }
-    VfpuMemS: "S111" is vm_l = 0x5 { }
-    VfpuMemS: "S121" is vm_l = 0x6 { }
-    VfpuMemS: "S131" is vm_l = 0x7 { }
+    VfpuMemS: "S101" is vm_l = 0x4 { export V14; }
+    VfpuMemS: "S111" is vm_l = 0x5 { export V15; }
+    VfpuMemS: "S121" is vm_l = 0x6 { export V16; }
+    VfpuMemS: "S131" is vm_l = 0x7 { export V17; }
 
-    VfpuMemS: "S201" is vm_l = 0x8 { }
-    VfpuMemS: "S211" is vm_l = 0x9 { }
-    VfpuMemS: "S221" is vm_l = 0xA { }
-    VfpuMemS: "S231" is vm_l = 0xB { }
+    VfpuMemS: "S201" is vm_l = 0x8 { export V24; }
+    VfpuMemS: "S211" is vm_l = 0x9 { export V25; }
+    VfpuMemS: "S221" is vm_l = 0xA { export V26; }
+    VfpuMemS: "S231" is vm_l = 0xB { export V27; }
 
-    VfpuMemS: "S301" is vm_l = 0xC { }
-    VfpuMemS: "S311" is vm_l = 0xD { }
-    VfpuMemS: "S321" is vm_l = 0xE { }
-    VfpuMemS: "S331" is vm_l = 0xF { }
+    VfpuMemS: "S301" is vm_l = 0xC { export V34; }
+    VfpuMemS: "S311" is vm_l = 0xD { export V35; }
+    VfpuMemS: "S321" is vm_l = 0xE { export V36; }
+    VfpuMemS: "S331" is vm_l = 0xF { export V37; }
 
-    VfpuMemS: "S401" is vm_l = 0x10 { }
-    VfpuMemS: "S411" is vm_l = 0x11 { }
-    VfpuMemS: "S421" is vm_l = 0x12 { }
-    VfpuMemS: "S431" is vm_l = 0x13 { }
+    VfpuMemS: "S401" is vm_l = 0x10 { export V44; }
+    VfpuMemS: "S411" is vm_l = 0x11 { export V45; }
+    VfpuMemS: "S421" is vm_l = 0x12 { export V46; }
+    VfpuMemS: "S431" is vm_l = 0x13 { export V47; }
 
-    VfpuMemS: "S501" is vm_l = 0x14 { }
-    VfpuMemS: "S511" is vm_l = 0x15 { }
-    VfpuMemS: "S521" is vm_l = 0x16 { }
-    VfpuMemS: "S531" is vm_l = 0x17 { }
+    VfpuMemS: "S501" is vm_l = 0x14 { export V54; }
+    VfpuMemS: "S511" is vm_l = 0x15 { export V55; }
+    VfpuMemS: "S521" is vm_l = 0x16 { export V56; }
+    VfpuMemS: "S531" is vm_l = 0x17 { export V57; }
 
-    VfpuMemS: "S601" is vm_l = 0x18 { }
-    VfpuMemS: "S611" is vm_l = 0x19 { }
-    VfpuMemS: "S621" is vm_l = 0x1A { }
-    VfpuMemS: "S631" is vm_l = 0x1B { }
+    VfpuMemS: "S601" is vm_l = 0x18 { export V64; }
+    VfpuMemS: "S611" is vm_l = 0x19 { export V65; }
+    VfpuMemS: "S621" is vm_l = 0x1A { export V66; }
+    VfpuMemS: "S631" is vm_l = 0x1B { export V67; }
 
-    VfpuMemS: "S701" is vm_l = 0x1C { }
-    VfpuMemS: "S711" is vm_l = 0x1D { }
-    VfpuMemS: "S721" is vm_l = 0x1E { }
-    VfpuMemS: "S731" is vm_l = 0x1F { }
+    VfpuMemS: "S701" is vm_l = 0x1C { export V74; }
+    VfpuMemS: "S711" is vm_l = 0x1D { export V75; }
+    VfpuMemS: "S721" is vm_l = 0x1E { export V76; }
+    VfpuMemS: "S731" is vm_l = 0x1F { export V77; }
 }
 
 with : vms_h = 2 {
-    VfpuMemS: "S002" is vm_l = 0x0 { }
-    VfpuMemS: "S012" is vm_l = 0x1 { }
-    VfpuMemS: "S022" is vm_l = 0x2 { }
-    VfpuMemS: "S032" is vm_l = 0x3 { }
+    VfpuMemS: "S002" is vm_l = 0x0 { export V08; }
+    VfpuMemS: "S012" is vm_l = 0x1 { export V09; }
+    VfpuMemS: "S022" is vm_l = 0x2 { export V0A; }
+    VfpuMemS: "S032" is vm_l = 0x3 { export V0B; }
 
-    VfpuMemS: "S102" is vm_l = 0x4 { }
-    VfpuMemS: "S112" is vm_l = 0x5 { }
-    VfpuMemS: "S122" is vm_l = 0x6 { }
-    VfpuMemS: "S132" is vm_l = 0x7 { }
+    VfpuMemS: "S102" is vm_l = 0x4 { export V18; }
+    VfpuMemS: "S112" is vm_l = 0x5 { export V19; }
+    VfpuMemS: "S122" is vm_l = 0x6 { export V1A; }
+    VfpuMemS: "S132" is vm_l = 0x7 { export V1B; }
 
-    VfpuMemS: "S202" is vm_l = 0x8 { }
-    VfpuMemS: "S212" is vm_l = 0x9 { }
-    VfpuMemS: "S222" is vm_l = 0xA { }
-    VfpuMemS: "S232" is vm_l = 0xB { }
+    VfpuMemS: "S202" is vm_l = 0x8 { export V28; }
+    VfpuMemS: "S212" is vm_l = 0x9 { export V29; }
+    VfpuMemS: "S222" is vm_l = 0xA { export V2A; }
+    VfpuMemS: "S232" is vm_l = 0xB { export V2B; }
 
-    VfpuMemS: "S302" is vm_l = 0xC { }
-    VfpuMemS: "S312" is vm_l = 0xD { }
-    VfpuMemS: "S322" is vm_l = 0xE { }
-    VfpuMemS: "S332" is vm_l = 0xF { }
+    VfpuMemS: "S302" is vm_l = 0xC { export V38; }
+    VfpuMemS: "S312" is vm_l = 0xD { export V39; }
+    VfpuMemS: "S322" is vm_l = 0xE { export V3A; }
+    VfpuMemS: "S332" is vm_l = 0xF { export V3B; }
 
-    VfpuMemS: "S402" is vm_l = 0x10 { }
-    VfpuMemS: "S412" is vm_l = 0x11 { }
-    VfpuMemS: "S422" is vm_l = 0x12 { }
-    VfpuMemS: "S432" is vm_l = 0x13 { }
+    VfpuMemS: "S402" is vm_l = 0x10 { export V48; }
+    VfpuMemS: "S412" is vm_l = 0x11 { export V49; }
+    VfpuMemS: "S422" is vm_l = 0x12 { export V4A; }
+    VfpuMemS: "S432" is vm_l = 0x13 { export V4B; }
 
-    VfpuMemS: "S502" is vm_l = 0x14 { }
-    VfpuMemS: "S512" is vm_l = 0x15 { }
-    VfpuMemS: "S522" is vm_l = 0x16 { }
-    VfpuMemS: "S532" is vm_l = 0x17 { }
+    VfpuMemS: "S502" is vm_l = 0x14 { export V58; }
+    VfpuMemS: "S512" is vm_l = 0x15 { export V59; }
+    VfpuMemS: "S522" is vm_l = 0x16 { export V5A; }
+    VfpuMemS: "S532" is vm_l = 0x17 { export V5B; }
 
-    VfpuMemS: "S602" is vm_l = 0x18 { }
-    VfpuMemS: "S612" is vm_l = 0x19 { }
-    VfpuMemS: "S622" is vm_l = 0x1A { }
-    VfpuMemS: "S632" is vm_l = 0x1B { }
+    VfpuMemS: "S602" is vm_l = 0x18 { export V68; }
+    VfpuMemS: "S612" is vm_l = 0x19 { export V69; }
+    VfpuMemS: "S622" is vm_l = 0x1A { export V6A; }
+    VfpuMemS: "S632" is vm_l = 0x1B { export V6B; }
 
-    VfpuMemS: "S702" is vm_l = 0x1C { }
-    VfpuMemS: "S712" is vm_l = 0x1D { }
-    VfpuMemS: "S722" is vm_l = 0x1E { }
-    VfpuMemS: "S732" is vm_l = 0x1F { }
+    VfpuMemS: "S702" is vm_l = 0x1C { export V78; }
+    VfpuMemS: "S712" is vm_l = 0x1D { export V79; }
+    VfpuMemS: "S722" is vm_l = 0x1E { export V7A; }
+    VfpuMemS: "S732" is vm_l = 0x1F { export V7B; }
 }
 
 with : vms_h = 3 {
-    VfpuMemS: "S003" is vm_l = 0x0 { }
-    VfpuMemS: "S013" is vm_l = 0x1 { }
-    VfpuMemS: "S023" is vm_l = 0x2 { }
-    VfpuMemS: "S033" is vm_l = 0x3 { }
+    VfpuMemS: "S003" is vm_l = 0x0 { export V0C; }
+    VfpuMemS: "S013" is vm_l = 0x1 { export V0D; }
+    VfpuMemS: "S023" is vm_l = 0x2 { export V0E; }
+    VfpuMemS: "S033" is vm_l = 0x3 { export V0F; }
 
-    VfpuMemS: "S103" is vm_l = 0x4 { }
-    VfpuMemS: "S113" is vm_l = 0x5 { }
-    VfpuMemS: "S123" is vm_l = 0x6 { }
-    VfpuMemS: "S133" is vm_l = 0x7 { }
+    VfpuMemS: "S103" is vm_l = 0x4 { export V1C; }
+    VfpuMemS: "S113" is vm_l = 0x5 { export V1D; }
+    VfpuMemS: "S123" is vm_l = 0x6 { export V1E; }
+    VfpuMemS: "S133" is vm_l = 0x7 { export V1F; }
 
-    VfpuMemS: "S203" is vm_l = 0x8 { }
-    VfpuMemS: "S213" is vm_l = 0x9 { }
-    VfpuMemS: "S223" is vm_l = 0xA { }
-    VfpuMemS: "S233" is vm_l = 0xB { }
+    VfpuMemS: "S203" is vm_l = 0x8 { export V2C; }
+    VfpuMemS: "S213" is vm_l = 0x9 { export V2D; }
+    VfpuMemS: "S223" is vm_l = 0xA { export V2E; }
+    VfpuMemS: "S233" is vm_l = 0xB { export V2F; }
 
-    VfpuMemS: "S303" is vm_l = 0xC { }
-    VfpuMemS: "S313" is vm_l = 0xD { }
-    VfpuMemS: "S323" is vm_l = 0xE { }
-    VfpuMemS: "S333" is vm_l = 0xF { }
+    VfpuMemS: "S303" is vm_l = 0xC { export V3C; }
+    VfpuMemS: "S313" is vm_l = 0xD { export V3D; }
+    VfpuMemS: "S323" is vm_l = 0xE { export V3E; }
+    VfpuMemS: "S333" is vm_l = 0xF { export V3F; }
 
-    VfpuMemS: "S403" is vm_l = 0x10 { }
-    VfpuMemS: "S413" is vm_l = 0x11 { }
-    VfpuMemS: "S423" is vm_l = 0x12 { }
-    VfpuMemS: "S433" is vm_l = 0x13 { }
+    VfpuMemS: "S403" is vm_l = 0x10 { export V4C; }
+    VfpuMemS: "S413" is vm_l = 0x11 { export V4D; }
+    VfpuMemS: "S423" is vm_l = 0x12 { export V4E; }
+    VfpuMemS: "S433" is vm_l = 0x13 { export V4F; }
 
-    VfpuMemS: "S503" is vm_l = 0x14 { }
-    VfpuMemS: "S513" is vm_l = 0x15 { }
-    VfpuMemS: "S523" is vm_l = 0x16 { }
-    VfpuMemS: "S533" is vm_l = 0x17 { }
+    VfpuMemS: "S503" is vm_l = 0x14 { export V5C; }
+    VfpuMemS: "S513" is vm_l = 0x15 { export V5D; }
+    VfpuMemS: "S523" is vm_l = 0x16 { export V5E; }
+    VfpuMemS: "S533" is vm_l = 0x17 { export V5F; }
 
-    VfpuMemS: "S603" is vm_l = 0x18 { }
-    VfpuMemS: "S613" is vm_l = 0x19 { }
-    VfpuMemS: "S623" is vm_l = 0x1A { }
-    VfpuMemS: "S633" is vm_l = 0x1B { }
+    VfpuMemS: "S603" is vm_l = 0x18 { export V6C; }
+    VfpuMemS: "S613" is vm_l = 0x19 { export V6D; }
+    VfpuMemS: "S623" is vm_l = 0x1A { export V6E; }
+    VfpuMemS: "S633" is vm_l = 0x1B { export V6F; }
 
-    VfpuMemS: "S703" is vm_l = 0x1C { }
-    VfpuMemS: "S713" is vm_l = 0x1D { }
-    VfpuMemS: "S723" is vm_l = 0x1E { }
-    VfpuMemS: "S733" is vm_l = 0x1F { }
+    VfpuMemS: "S703" is vm_l = 0x1C { export V7C; }
+    VfpuMemS: "S713" is vm_l = 0x1D { export V7D; }
+    VfpuMemS: "S723" is vm_l = 0x1E { export V7E; }
+    VfpuMemS: "S733" is vm_l = 0x1F { export V7F; }
 }
 
 with : vmq_h = 0 {
-    VfpuMemQ: "C000" is vm_l = 0x0 { }
-    VfpuMemQ: "C010" is vm_l = 0x1 { }
-    VfpuMemQ: "C020" is vm_l = 0x2 { }
-    VfpuMemQ: "C030" is vm_l = 0x3 { }
+    VfpuMemQ: "C000" is vm_l = 0x0 { export V00; }
+    VfpuMemQ: "C010" is vm_l = 0x1 { export V01; }
+    VfpuMemQ: "C020" is vm_l = 0x2 { export V02; }
+    VfpuMemQ: "C030" is vm_l = 0x3 { export V03; }
 
-    VfpuMemQ: "C100" is vm_l = 0x4 { }
-    VfpuMemQ: "C110" is vm_l = 0x5 { }
-    VfpuMemQ: "C120" is vm_l = 0x6 { }
-    VfpuMemQ: "C130" is vm_l = 0x7 { }
+    VfpuMemQ: "C100" is vm_l = 0x4 { export V10; }
+    VfpuMemQ: "C110" is vm_l = 0x5 { export V11; }
+    VfpuMemQ: "C120" is vm_l = 0x6 { export V12; }
+    VfpuMemQ: "C130" is vm_l = 0x7 { export V13; }
 
-    VfpuMemQ: "C200" is vm_l = 0x8 { }
-    VfpuMemQ: "C210" is vm_l = 0x9 { }
-    VfpuMemQ: "C220" is vm_l = 0xA { }
-    VfpuMemQ: "C230" is vm_l = 0xB { }
+    VfpuMemQ: "C200" is vm_l = 0x8 { export V20; }
+    VfpuMemQ: "C210" is vm_l = 0x9 { export V21; }
+    VfpuMemQ: "C220" is vm_l = 0xA { export V22; }
+    VfpuMemQ: "C230" is vm_l = 0xB { export V23; }
 
-    VfpuMemQ: "C300" is vm_l = 0xC { }
-    VfpuMemQ: "C310" is vm_l = 0xD { }
-    VfpuMemQ: "C320" is vm_l = 0xE { }
-    VfpuMemQ: "C330" is vm_l = 0xF { }
+    VfpuMemQ: "C300" is vm_l = 0xC { export V30; }
+    VfpuMemQ: "C310" is vm_l = 0xD { export V31; }
+    VfpuMemQ: "C320" is vm_l = 0xE { export V32; }
+    VfpuMemQ: "C330" is vm_l = 0xF { export V33; }
 
-    VfpuMemQ: "C400" is vm_l = 0x10 { }
-    VfpuMemQ: "C410" is vm_l = 0x11 { }
-    VfpuMemQ: "C420" is vm_l = 0x12 { }
-    VfpuMemQ: "C430" is vm_l = 0x13 { }
+    VfpuMemQ: "C400" is vm_l = 0x10 { export V40; }
+    VfpuMemQ: "C410" is vm_l = 0x11 { export V41; }
+    VfpuMemQ: "C420" is vm_l = 0x12 { export V42; }
+    VfpuMemQ: "C430" is vm_l = 0x13 { export V43; }
 
-    VfpuMemQ: "C500" is vm_l = 0x14 { }
-    VfpuMemQ: "C510" is vm_l = 0x15 { }
-    VfpuMemQ: "C520" is vm_l = 0x16 { }
-    VfpuMemQ: "C530" is vm_l = 0x17 { }
+    VfpuMemQ: "C500" is vm_l = 0x14 { export V50; }
+    VfpuMemQ: "C510" is vm_l = 0x15 { export V51; }
+    VfpuMemQ: "C520" is vm_l = 0x16 { export V52; }
+    VfpuMemQ: "C530" is vm_l = 0x17 { export V53; }
 
-    VfpuMemQ: "C600" is vm_l = 0x18 { }
-    VfpuMemQ: "C610" is vm_l = 0x19 { }
-    VfpuMemQ: "C620" is vm_l = 0x1A { }
-    VfpuMemQ: "C630" is vm_l = 0x1B { }
+    VfpuMemQ: "C600" is vm_l = 0x18 { export V60; }
+    VfpuMemQ: "C610" is vm_l = 0x19 { export V61; }
+    VfpuMemQ: "C620" is vm_l = 0x1A { export V62; }
+    VfpuMemQ: "C630" is vm_l = 0x1B { export V63; }
 
-    VfpuMemQ: "C700" is vm_l = 0x1C { }
-    VfpuMemQ: "C710" is vm_l = 0x1D { }
-    VfpuMemQ: "C720" is vm_l = 0x1E { }
-    VfpuMemQ: "C730" is vm_l = 0x1F { }
+    VfpuMemQ: "C700" is vm_l = 0x1C { export V70; }
+    VfpuMemQ: "C710" is vm_l = 0x1D { export V71; }
+    VfpuMemQ: "C720" is vm_l = 0x1E { export V72; }
+    VfpuMemQ: "C730" is vm_l = 0x1F { export V73; }
 }
 
 with : vmq_h = 1 {
-    VfpuMemQ: "R000" is vm_l = 0x0 { }
-    VfpuMemQ: "R001" is vm_l = 0x1 { }
-    VfpuMemQ: "R002" is vm_l = 0x2 { }
-    VfpuMemQ: "R003" is vm_l = 0x3 { }
+    VfpuMemQ: "R000" is vm_l = 0x0 { export V00; }
+    VfpuMemQ: "R001" is vm_l = 0x1 { export V04; }
+    VfpuMemQ: "R002" is vm_l = 0x2 { export V08; }
+    VfpuMemQ: "R003" is vm_l = 0x3 { export V0C; }
 
-    VfpuMemQ: "R100" is vm_l = 0x4 { }
-    VfpuMemQ: "R101" is vm_l = 0x5 { }
-    VfpuMemQ: "R102" is vm_l = 0x6 { }
-    VfpuMemQ: "R103" is vm_l = 0x7 { }
+    VfpuMemQ: "R100" is vm_l = 0x4 { export V10; }
+    VfpuMemQ: "R101" is vm_l = 0x5 { export V14; }
+    VfpuMemQ: "R102" is vm_l = 0x6 { export V18; }
+    VfpuMemQ: "R103" is vm_l = 0x7 { export V1C; }
 
-    VfpuMemQ: "R200" is vm_l = 0x8 { }
-    VfpuMemQ: "R201" is vm_l = 0x9 { }
-    VfpuMemQ: "R202" is vm_l = 0xA { }
-    VfpuMemQ: "R203" is vm_l = 0xB { }
+    VfpuMemQ: "R200" is vm_l = 0x8 { export V20; }
+    VfpuMemQ: "R201" is vm_l = 0x9 { export V24; }
+    VfpuMemQ: "R202" is vm_l = 0xA { export V28; }
+    VfpuMemQ: "R203" is vm_l = 0xB { export V2C; }
 
-    VfpuMemQ: "R300" is vm_l = 0xC { }
-    VfpuMemQ: "R301" is vm_l = 0xD { }
-    VfpuMemQ: "R302" is vm_l = 0xE { }
-    VfpuMemQ: "R303" is vm_l = 0xF { }
+    VfpuMemQ: "R300" is vm_l = 0xC { export V30; }
+    VfpuMemQ: "R301" is vm_l = 0xD { export V34; }
+    VfpuMemQ: "R302" is vm_l = 0xE { export V38; }
+    VfpuMemQ: "R303" is vm_l = 0xF { export V3C; }
 
-    VfpuMemQ: "R400" is vm_l = 0x10 { }
-    VfpuMemQ: "R401" is vm_l = 0x11 { }
-    VfpuMemQ: "R402" is vm_l = 0x12 { }
-    VfpuMemQ: "R403" is vm_l = 0x13 { }
+    VfpuMemQ: "R400" is vm_l = 0x10 { export V40; }
+    VfpuMemQ: "R401" is vm_l = 0x11 { export V44; }
+    VfpuMemQ: "R402" is vm_l = 0x12 { export V48; }
+    VfpuMemQ: "R403" is vm_l = 0x13 { export V4C; }
 
-    VfpuMemQ: "R500" is vm_l = 0x14 { }
-    VfpuMemQ: "R501" is vm_l = 0x15 { }
-    VfpuMemQ: "R502" is vm_l = 0x16 { }
-    VfpuMemQ: "R503" is vm_l = 0x17 { }
+    VfpuMemQ: "R500" is vm_l = 0x14 { export V50; }
+    VfpuMemQ: "R501" is vm_l = 0x15 { export V54; }
+    VfpuMemQ: "R502" is vm_l = 0x16 { export V58; }
+    VfpuMemQ: "R503" is vm_l = 0x17 { export V5C; }
 
-    VfpuMemQ: "R600" is vm_l = 0x18 { }
-    VfpuMemQ: "R601" is vm_l = 0x19 { }
-    VfpuMemQ: "R602" is vm_l = 0x1A { }
-    VfpuMemQ: "R603" is vm_l = 0x1B { }
+    VfpuMemQ: "R600" is vm_l = 0x18 { export V60; }
+    VfpuMemQ: "R601" is vm_l = 0x19 { export V64; }
+    VfpuMemQ: "R602" is vm_l = 0x1A { export V68; }
+    VfpuMemQ: "R603" is vm_l = 0x1B { export V6C; }
 
-    VfpuMemQ: "R700" is vm_l = 0x1C { }
-    VfpuMemQ: "R701" is vm_l = 0x1D { }
-    VfpuMemQ: "R702" is vm_l = 0x1E { }
-    VfpuMemQ: "R703" is vm_l = 0x1F { }
+    VfpuMemQ: "R700" is vm_l = 0x1C { export V70; }
+    VfpuMemQ: "R701" is vm_l = 0x1D { export V74; }
+    VfpuMemQ: "R702" is vm_l = 0x1E { export V78; }
+    VfpuMemQ: "R703" is vm_l = 0x1F { export V7C; }
 }

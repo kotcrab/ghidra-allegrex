@@ -111,4 +111,117 @@
             </localrange>
         </prototype>
     </default_proto>
+    <callotherfixup targetop="vfpuLoadQ">
+        <pcode dynamic="true">
+            <input name="baseReg"/>
+            <input name="columnMode"/>
+            <input name="value1"/>
+            <input name="value2"/>
+            <input name="value3"/>
+            <input name="value4"/>
+        </pcode>
+    </callotherfixup>
+    <callotherfixup targetop="vfpuLoadQPart">
+        <pcode dynamic="true">
+            <input name="baseReg"/>
+            <input name="columnMode"/>
+            <input name="part"/>
+            <input name="value"/>
+        </pcode>
+    </callotherfixup>
+    <callotherfixup targetop="vfpuSaveQPart">
+        <pcode dynamic="true">
+            <output name="output"/>
+            <input name="baseReg"/>
+            <input name="columnMode"/>
+            <input name="part"/>
+        </pcode>
+    </callotherfixup>
+    <callotherfixup targetop="vfpuReadP">
+        <pcode dynamic="true">
+            <output name="output"/>
+            <input name="baseReg"/>
+        </pcode>
+    </callotherfixup>
+    <callotherfixup targetop="vfpuWriteP">
+        <pcode dynamic="true">
+            <input name="baseReg"/>
+            <input name="value1"/>
+            <input name="value2"/>
+        </pcode>
+    </callotherfixup>
+    <callotherfixup targetop="vfpuReadT">
+        <pcode dynamic="true">
+            <output name="output"/>
+            <input name="baseReg"/>
+        </pcode>
+    </callotherfixup>
+    <callotherfixup targetop="vfpuWriteT">
+        <pcode dynamic="true">
+            <input name="baseReg"/>
+            <input name="value1"/>
+            <input name="value2"/>
+            <input name="value3"/>
+        </pcode>
+    </callotherfixup>
+    <callotherfixup targetop="vfpuReadQ">
+        <pcode dynamic="true">
+            <output name="output"/>
+            <input name="baseReg"/>
+        </pcode>
+    </callotherfixup>
+    <callotherfixup targetop="vfpuWriteQ">
+        <pcode dynamic="true">
+            <input name="baseReg"/>
+            <input name="value1"/>
+            <input name="value2"/>
+            <input name="value3"/>
+            <input name="value4"/>
+        </pcode>
+    </callotherfixup>
+    <callotherfixup targetop="vfpuReadMatrix2">
+        <pcode dynamic="true">
+            <output name="output"/>
+            <input name="baseReg"/>
+        </pcode>
+    </callotherfixup>
+    <callotherfixup targetop="vfpuWriteMatrix2">
+        <pcode dynamic="true">
+            <input name="baseReg"/>
+            <input name="row"/>
+            <input name="value1"/>
+            <input name="value2"/>
+        </pcode>
+    </callotherfixup>
+    <callotherfixup targetop="vfpuReadMatrix3">
+        <pcode dynamic="true">
+            <output name="output"/>
+            <input name="baseReg"/>
+        </pcode>
+    </callotherfixup>
+    <callotherfixup targetop="vfpuWriteMatrix3">
+        <pcode dynamic="true">
+            <input name="baseReg"/>
+            <input name="row"/>
+            <input name="value1"/>
+            <input name="value2"/>
+            <input name="value3"/>
+        </pcode>
+    </callotherfixup>
+    <callotherfixup targetop="vfpuReadMatrix4">
+        <pcode dynamic="true">
+            <output name="output"/>
+            <input name="baseReg"/>
+        </pcode>
+    </callotherfixup>
+    <callotherfixup targetop="vfpuWriteMatrix4">
+        <pcode dynamic="true">
+            <input name="baseReg"/>
+            <input name="row"/>
+            <input name="value1"/>
+            <input name="value2"/>
+            <input name="value3"/>
+            <input name="value4"/>
+        </pcode>
+    </callotherfixup>
 </compiler_spec>

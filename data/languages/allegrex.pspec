@@ -3,8 +3,8 @@
 <processor_spec>
     <properties>
         <property key="addressesDoNotAppearDirectlyInCode" value="true"/>
-        <property key="emulateInstructionStateModifierClass"
-                  value="ghidra.program.emulation.AllegrexEmulateInstructionStateModifier"/>
+        <property key="emulateInstructionStateModifierClass" value="ghidra.program.emulation.AllegrexEmulateInstructionStateModifier"/>
+        <property key="pcodeInjectLibraryClass" value="allegrex.pcode.AllegrexPcodeInjectLibrary"/>
     </properties>
     <programcounter register="pc"/>
     <context_data>

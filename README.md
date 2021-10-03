@@ -8,7 +8,7 @@ Features:
 - Processor type auto-detection for ELF files
 - Support for PSP specific ELF relocation sections (type A and B)
   - Image rebase after loading is also supported
-- Disassembly of VFPU instructions (see limitations bellow)
+- Disassembly and decompilation of VFPU instructions (see limitations bellow)
 - Scripts for importing and exporting PPSSPP `.sym` files (function labels)
 
 In progress:
@@ -59,12 +59,9 @@ and set image base.
 
 ### VFPU Limitations
 
-Modelling the VFPU in Sleigh was pretty tricky due to how the same registers get different names depending
-on the instruction. There are few instructions I couldn't get quite right:
-- Only disassembly is possible with current implementation, decompiler won't be implemented.
-- First operand of `vpfxs`, `vpfxt` and `vpfxd` won't be decoded, requires too complex logic.
-- Last operand of `vrot.s`, `vrot.p`, `vrot.t` and `vrot.q` won't be decoded, requires too complex logic.
-- Second operand of `vfim.s` will be shown as integer, should be shown as float. Sleigh does not support float tokens.
+- Decompilation support is rather basic, almost every operation is converted to a function call such as `vadd_q(...)`  
+  - Semantics of `vpfxs`, `vpfxt` and `vpfxd` are not currently modeled
+- Second operand of `vfim.s` will be shown as an integer, should be shown as a half float. Sleigh does not support float tokens.
 
 ### Building
 
