@@ -68,6 +68,7 @@ and set image base.
 `GHIDRA_INSTALL_DIR` environment variable must be set to Ghidra root installation directory.
 
 - `./gradlew ghidraInstall` - build and install into Ghidra (warning: contents of `GHIDRA_INSTALL_DIR/Ghidra/Processors/Allegrex` will be deleted before installing)
+- `./gradlew ghidraInstallThenRun` - run `ghidraInstall` task then start Ghidra, useful for development
 - `./gradlew shadowJar` - create single library jar file with all external dependencies included
 
 After running `./gradlew shadowJar` you can manually install extension by copying:
