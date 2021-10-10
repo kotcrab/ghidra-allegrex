@@ -1,7 +1,7 @@
 package allegrex.agent.ppsspp.bridge
 
-import allegrex.agent.ppsspp.bridge.model.request.PpssppRequest
 import allegrex.agent.ppsspp.bridge.model.event.PpssppEvent
+import allegrex.agent.ppsspp.bridge.model.request.PpssppRequest
 
 interface PpssppBridge {
   suspend fun start()

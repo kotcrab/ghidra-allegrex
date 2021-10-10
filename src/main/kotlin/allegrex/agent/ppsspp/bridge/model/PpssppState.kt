@@ -1,5 +1,5 @@
 package allegrex.agent.ppsspp.bridge.model
 
 enum class PpssppState {
-  RUNNING, STEPPING, EXITED
+  RUNNING, STEPPING, NO_GAME, EXITED
 }

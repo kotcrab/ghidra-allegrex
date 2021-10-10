@@ -4,8 +4,13 @@ import allegrex.agent.ppsspp.bridge.PpssppBridge
 import allegrex.agent.ppsspp.bridge.PpssppStateListener
 import allegrex.agent.ppsspp.bridge.model.PpssppException
 import allegrex.agent.ppsspp.bridge.model.PpssppInstance
-import allegrex.agent.ppsspp.bridge.model.request.PpssppRequest
+import allegrex.agent.ppsspp.bridge.model.PpssppState
+import allegrex.agent.ppsspp.bridge.model.event.PpssppCpuStatusEvent
 import allegrex.agent.ppsspp.bridge.model.event.PpssppEvent
+import allegrex.agent.ppsspp.bridge.model.event.PpssppGameStatusEvent
+import allegrex.agent.ppsspp.bridge.model.request.PpssppCpuStatusRequest
+import allegrex.agent.ppsspp.bridge.model.request.PpssppGameStatusRequest
+import allegrex.agent.ppsspp.bridge.model.request.PpssppRequest
 import com.google.gson.Gson
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
@@ -64,11 +69,22 @@ class PpssppWsBridge(
       if (session != null) {
         launchReceiver(session)
         launchSender(session)
+        syncState()
         return
       }
     }
 
     throw PpssppException("Can't connect to any PPSSPP instance")
+  }
+
+  private suspend fun syncState() {
+    val gameStatus = sendRequestAndWait<PpssppGameStatusEvent>(PpssppGameStatusRequest())
+    val cpuStatus = sendRequestAndWait<PpssppCpuStatusEvent>(PpssppCpuStatusRequest())
+    when {
+      gameStatus.game == null -> eventDispatcher.initState(PpssppState.NO_GAME, gameStatus.paused)
+      cpuStatus.stepping -> eventDispatcher.initState(PpssppState.STEPPING, gameStatus.paused)
+      else -> eventDispatcher.initState(PpssppState.RUNNING, gameStatus.paused)
+    }
   }
 
   private suspend fun getPpssppInstances(): List<PpssppInstance> {
@@ -116,7 +132,7 @@ class PpssppWsBridge(
   override suspend fun <T : PpssppEvent> sendRequestAndWait(request: PpssppRequest): T {
     val ticket = request.ticket
     if (ticket.isNullOrBlank()) {
-      error("Ticket must be provided in the request if you want to wait for a response")
+      throw PpssppException("Ticket must be provided in the request if you want to wait for a response")
     }
     val channel = eventDispatcher.addWaiter(ticket)
     outgoingChannel.send(request)

@@ -9,7 +9,5 @@ data class PpssppCpuRegister(
   val floatValue: String,
   val bitLength: Int = 32,
 ) {
-  val meta by lazy {
-    PpssppCpuRegisterMeta(threadId, categoryId, id, name, bitLength)
-  }
+  fun meta() = PpssppCpuRegisterMeta(threadId, categoryId, id, name, bitLength)
 }

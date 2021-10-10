@@ -13,7 +13,5 @@ data class PpssppHleThread(
   val waitType: Int,
   val isCurrent: Boolean
 ) {
-  val meta by lazy {
-    PpssppHleThreadMeta(id)
-  }
+  fun meta() = PpssppHleThreadMeta(id)
 }

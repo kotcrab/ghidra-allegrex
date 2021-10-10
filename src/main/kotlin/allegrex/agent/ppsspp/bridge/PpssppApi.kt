@@ -1,30 +1,61 @@
 package allegrex.agent.ppsspp.bridge
 
 import allegrex.agent.ppsspp.bridge.model.PpssppCpuRegister
+import allegrex.agent.ppsspp.bridge.model.PpssppCpuStatus
+import allegrex.agent.ppsspp.bridge.model.PpssppGameStatus
 import allegrex.agent.ppsspp.bridge.model.PpssppHleThread
 import allegrex.agent.ppsspp.bridge.model.PpssppMemoryRange
 import allegrex.agent.ppsspp.bridge.model.event.PpssppCpuRegistersEvent
-import allegrex.agent.ppsspp.bridge.model.event.PpssppCpuResumeEvent
-import allegrex.agent.ppsspp.bridge.model.event.PpssppCpuSteppingEvent
+import allegrex.agent.ppsspp.bridge.model.event.PpssppCpuStatusEvent
 import allegrex.agent.ppsspp.bridge.model.event.PpssppEvent
+import allegrex.agent.ppsspp.bridge.model.event.PpssppGameStatusEvent
 import allegrex.agent.ppsspp.bridge.model.event.PpssppHleThreadsEvent
 import allegrex.agent.ppsspp.bridge.model.event.PpssppMemoryMapEvent
 import allegrex.agent.ppsspp.bridge.model.event.PpssppMemoryReadEvent
 import allegrex.agent.ppsspp.bridge.model.event.PpssppSetRegisterEvent
 import allegrex.agent.ppsspp.bridge.model.request.PpssppBasicRequest
 import allegrex.agent.ppsspp.bridge.model.request.PpssppCpuGetRegistersRequest
+import allegrex.agent.ppsspp.bridge.model.request.PpssppCpuResumeRequest
+import allegrex.agent.ppsspp.bridge.model.request.PpssppCpuStatusRequest
+import allegrex.agent.ppsspp.bridge.model.request.PpssppCpuStepIntoRequest
+import allegrex.agent.ppsspp.bridge.model.request.PpssppCpuStepOutRequest
+import allegrex.agent.ppsspp.bridge.model.request.PpssppCpuStepOverRequest
+import allegrex.agent.ppsspp.bridge.model.request.PpssppCpuSteppingRequest
+import allegrex.agent.ppsspp.bridge.model.request.PpssppGameStatusRequest
 import allegrex.agent.ppsspp.bridge.model.request.PpssppMemoryReadRequest
 import allegrex.agent.ppsspp.bridge.model.request.PpssppMemoryWriteRequest
 import allegrex.agent.ppsspp.bridge.model.request.PpssppSetRegisterRequest
 import java.util.Base64
 
 class PpssppApi(val bridge: PpssppBridge) {
+  suspend fun gameStatus(): PpssppGameStatus {
+    return bridge.sendRequestAndWait<PpssppGameStatusEvent>(PpssppGameStatusRequest())
+      .toGameStatus()
+  }
+
+  suspend fun cpuStatus(): PpssppCpuStatus {
+    return bridge.sendRequestAndWait<PpssppCpuStatusEvent>(PpssppCpuStatusRequest())
+      .toCpuStatus()
+  }
+
   suspend fun resume() {
-    bridge.sendRequest(PpssppBasicRequest(PpssppCpuResumeEvent.EVENT_NAME))
+    bridge.sendRequest(PpssppCpuResumeRequest())
   }
 
   suspend fun stepping() {
-    bridge.sendRequest(PpssppBasicRequest(PpssppCpuSteppingEvent.EVENT_NAME))
+    bridge.sendRequest(PpssppCpuSteppingRequest())
+  }
+
+  suspend fun stepInto(threadId: Int) {
+    bridge.sendRequest(PpssppCpuStepIntoRequest(threadId))
+  }
+
+  suspend fun stepOver(threadId: Int) {
+    bridge.sendRequest(PpssppCpuStepOverRequest(threadId))
+  }
+
+  suspend fun stepOut(threadId: Int) {
+    bridge.sendRequest(PpssppCpuStepOutRequest(threadId))
   }
 
   suspend fun listRegisters(threadId: Int): List<PpssppCpuRegister> {
