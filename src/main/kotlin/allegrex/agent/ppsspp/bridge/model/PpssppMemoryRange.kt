@@ -4,6 +4,6 @@ data class PpssppMemoryRange(
   val type: String,
   val subtype: String,
   val name: String,
-  val address: Int,
-  val size: Int
+  val address: Long,
+  val size: Long
 ) : PpssppModelKey

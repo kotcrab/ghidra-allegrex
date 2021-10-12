@@ -2,7 +2,7 @@ package allegrex.agent.ppsspp.bridge.model.event
 
 import allegrex.agent.ppsspp.bridge.model.PpssppHleThread
 
-data class PpssppHleThreadsEvent(
+data class PpssppHleThreadsListEvent(
   val threads: List<PpssppHleThread>,
   override val ticket: String?
 ) : PpssppEvent {

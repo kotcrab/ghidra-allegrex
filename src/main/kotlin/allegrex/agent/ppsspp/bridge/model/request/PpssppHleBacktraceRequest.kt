@@ -1,14 +1,11 @@
 package allegrex.agent.ppsspp.bridge.model.request
 
+import allegrex.agent.ppsspp.bridge.model.event.PpssppHleBacktraceEvent
 import java.util.UUID
 
-data class PpssppCpuStepIntoRequest(
+data class PpssppHleBacktraceRequest(
   val thread: Int,
   override val ticket: String = UUID.randomUUID().toString(),
 ) : PpssppRequest {
-  companion object {
-    private const val EVENT_NAME = "cpu.stepInto"
-  }
-
-  override val event: String = EVENT_NAME
+  override val event: String = PpssppHleBacktraceEvent.EVENT_NAME
 }

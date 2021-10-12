@@ -2,7 +2,7 @@ package allegrex.agent.ppsspp.bridge.model.event
 
 import allegrex.agent.ppsspp.bridge.model.PpssppMemoryRange
 
-data class PpssppMemoryMapEvent(
+data class PpssppMemoryMappingEvent(
   val ranges: List<PpssppMemoryRange>,
   override val ticket: String?
 ) : PpssppEvent {

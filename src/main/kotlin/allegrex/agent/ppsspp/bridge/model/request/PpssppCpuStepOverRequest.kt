@@ -3,7 +3,7 @@ package allegrex.agent.ppsspp.bridge.model.request
 import java.util.UUID
 
 data class PpssppCpuStepOverRequest(
-  val threadInt: Int,
+  val thread: Int,
   override val ticket: String = UUID.randomUUID().toString(),
 ) : PpssppRequest {
   companion object {
