@@ -10,9 +10,7 @@ Features:
   - Image rebase after loading is also supported
 - Disassembly and decompilation of VFPU instructions (see limitations bellow)
 - Scripts for importing and exporting PPSSPP `.sym` files (function labels)
-
-In progress:
-- Integration with PPSSPP debugger (experimental early stage, not yet released)
+- Ghidra Debugger integration with PPSSPP (experimental)
 
 ### Installation
 
