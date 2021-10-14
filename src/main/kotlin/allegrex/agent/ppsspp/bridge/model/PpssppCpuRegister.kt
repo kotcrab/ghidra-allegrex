@@ -1,7 +1,7 @@
 package allegrex.agent.ppsspp.bridge.model
 
 data class PpssppCpuRegister(
-  val threadId: Int,
+  val threadId: Long,
   val categoryId: Int,
   val id: Int,
   val name: String,

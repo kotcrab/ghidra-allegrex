@@ -3,7 +3,7 @@ package allegrex.agent.ppsspp.bridge.model.event
 data class PpssppSetRegisterEvent(
   val category: Int,
   val register: Int,
-  val uintValue: Int,
+  val uintValue: Long,
   val floatValue: String,
   override val ticket: String?,
 ) : PpssppEvent {

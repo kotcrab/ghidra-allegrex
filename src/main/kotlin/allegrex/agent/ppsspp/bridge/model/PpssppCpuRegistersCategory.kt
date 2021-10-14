@@ -7,7 +7,7 @@ data class PpssppCpuRegistersCategory(
   val uintValues: List<Long>,
   val floatValues: List<String>
 ) {
-  fun getRegisters(associateWithThreadId: Int): List<PpssppCpuRegister> {
+  fun getRegisters(associateWithThreadId: Long): List<PpssppCpuRegister> {
     return registerNames.mapIndexed { index, name ->
       PpssppCpuRegister(associateWithThreadId, id, index, name, uintValues[index], floatValues[index])
     }

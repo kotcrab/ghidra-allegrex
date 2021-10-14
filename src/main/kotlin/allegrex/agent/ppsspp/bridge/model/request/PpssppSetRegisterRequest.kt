@@ -4,7 +4,7 @@ import allegrex.agent.ppsspp.bridge.model.event.PpssppSetRegisterEvent
 import java.util.UUID
 
 data class PpssppSetRegisterRequest(
-  val thread: Int,
+  val thread: Long,
   val category: Int,
   val register: Int,
   val value: String,

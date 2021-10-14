@@ -64,24 +64,24 @@ class PpssppApi(val bridge: PpssppBridge) {
     bridge.sendRequest(PpssppCpuSteppingRequest())
   }
 
-  suspend fun stepInto(threadId: Int) {
+  suspend fun stepInto(threadId: Long) {
     bridge.sendRequest(PpssppCpuStepIntoRequest(threadId))
   }
 
-  suspend fun stepOver(threadId: Int) {
+  suspend fun stepOver(threadId: Long) {
     bridge.sendRequest(PpssppCpuStepOverRequest(threadId))
   }
 
-  suspend fun stepOut(threadId: Int) {
+  suspend fun stepOut(threadId: Long) {
     bridge.sendRequest(PpssppCpuStepOutRequest(threadId))
   }
 
-  suspend fun listRegisters(threadId: Int): List<PpssppCpuRegister> {
+  suspend fun listRegisters(threadId: Long): List<PpssppCpuRegister> {
     return bridge.sendRequestAndWait<PpssppCpuRegistersEvent>(PpssppCpuGetRegistersRequest(threadId))
       .getRegisters(threadId)
   }
 
-  suspend fun setRegister(threadId: Int, category: Int, registerId: Int, value: String) {
+  suspend fun setRegister(threadId: Long, category: Int, registerId: Int, value: String) {
     bridge.sendRequestAndWait<PpssppSetRegisterEvent>(PpssppSetRegisterRequest(threadId, category, registerId, value))
   }
 
@@ -90,7 +90,7 @@ class PpssppApi(val bridge: PpssppBridge) {
       .threads
   }
 
-  suspend fun backtraceThread(threadId: Int): List<PpssppStackFrame> {
+  suspend fun backtraceThread(threadId: Long): List<PpssppStackFrame> {
     return bridge.sendRequestAndWait<PpssppHleBacktraceEvent>(PpssppHleBacktraceRequest(threadId))
       .frames
   }
@@ -149,7 +149,7 @@ class PpssppApi(val bridge: PpssppBridge) {
       .ranges
   }
 
-  suspend fun readMemory(offset: Long, length: Int): ByteArray {
+  suspend fun readMemory(offset: Long, length: Long): ByteArray {
     val response = bridge.sendRequestAndWait<PpssppMemoryReadEvent>(PpssppMemoryReadRequest(offset, length))
     return Base64.getDecoder().decode(response.base64)
   }

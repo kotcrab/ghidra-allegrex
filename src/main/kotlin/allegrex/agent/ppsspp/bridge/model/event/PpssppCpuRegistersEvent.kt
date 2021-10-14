@@ -20,21 +20,21 @@ data class PpssppCpuRegistersEvent(
 
   override val event: String = EVENT_NAME
 
-  fun getRegisters(associateWithThreadId: Int): List<PpssppCpuRegister> {
+  fun getRegisters(associateWithThreadId: Long): List<PpssppCpuRegister> {
     return getGprRegisters(associateWithThreadId) +
       getFpuRegisters(associateWithThreadId) +
       getVfpuRegisters(associateWithThreadId)
   }
 
-  fun getGprRegisters(associateWithThreadId: Int): List<PpssppCpuRegister> {
+  fun getGprRegisters(associateWithThreadId: Long): List<PpssppCpuRegister> {
     return getCategoryByName(Category.GPR).getRegisters(associateWithThreadId)
   }
 
-  fun getFpuRegisters(associateWithThreadId: Int): List<PpssppCpuRegister> {
+  fun getFpuRegisters(associateWithThreadId: Long): List<PpssppCpuRegister> {
     return getCategoryByName(Category.FPU).getRegisters(associateWithThreadId)
   }
 
-  fun getVfpuRegisters(associateWithThreadId: Int): List<PpssppCpuRegister> {
+  fun getVfpuRegisters(associateWithThreadId: Long): List<PpssppCpuRegister> {
     return getCategoryByName(Category.VFPU).getRegisters(associateWithThreadId)
   }
 
