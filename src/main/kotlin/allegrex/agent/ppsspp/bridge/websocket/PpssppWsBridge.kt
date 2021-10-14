@@ -149,7 +149,7 @@ class PpssppWsBridge(
   }
 
   override fun getBrief(): String {
-    return "WebSocket: " + connectionUrl?.ifBlank { "auto" }
+    return "WebSocket: ${if (connectionUrl.isNullOrBlank()) "auto" else connectionUrl}"
   }
 
   override fun close() {
@@ -163,6 +163,6 @@ class PpssppWsBridge(
   }
 
   override suspend fun ping() {
-    // TODO for now we just assume that ping succeeded by doing nothing
+    sendRequestAndWait<PpssppGameStatusEvent>(PpssppGameStatusRequest())
   }
 }
