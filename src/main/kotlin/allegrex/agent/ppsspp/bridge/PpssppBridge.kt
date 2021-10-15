@@ -6,7 +6,7 @@ import allegrex.agent.ppsspp.bridge.model.request.PpssppRequest
 interface PpssppBridge {
   suspend fun start()
 
-  fun addStateListener(listener: PpssppStateListener)
+  fun addEventListener(listener: PpssppEventListener)
 
   fun getBrief(): String
 

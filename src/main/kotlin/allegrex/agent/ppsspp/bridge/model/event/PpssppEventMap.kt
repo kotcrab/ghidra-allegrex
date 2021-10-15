@@ -19,6 +19,8 @@ val ppssppEventMap = mapOf(
   PpssppHleBacktraceEvent.EVENT_NAME to PpssppHleBacktraceEvent::class.java,
   PpssppHleThreadsListEvent.EVENT_NAME to PpssppHleThreadsListEvent::class.java,
 
+  PpssppLogEvent.EVENT_NAME to PpssppLogEvent::class.java,
+
   PpssppMemoryBreakpointAddEvent.EVENT_NAME to PpssppMemoryBreakpointAddEvent::class.java,
   PpssppMemoryBreakpointListEvent.EVENT_NAME to PpssppMemoryBreakpointListEvent::class.java,
   PpssppMemoryBreakpointRemoveEvent.EVENT_NAME to PpssppMemoryBreakpointRemoveEvent::class.java,

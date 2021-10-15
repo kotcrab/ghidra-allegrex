@@ -1,7 +1,8 @@
 package allegrex.agent.ppsspp.bridge.websocket
 
 import allegrex.agent.ppsspp.bridge.PpssppApi
-import allegrex.agent.ppsspp.bridge.PpssppStateListener
+import allegrex.agent.ppsspp.bridge.PpssppEventListener
+import allegrex.agent.ppsspp.bridge.model.PpssppLogMessage
 import allegrex.agent.ppsspp.bridge.model.PpssppState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -16,14 +17,18 @@ fun main() {
   val bridge = PpssppWsBridge()
   val api = PpssppApi(bridge)
 
-  bridge.addStateListener(
-    object : PpssppStateListener {
+  bridge.addEventListener(
+    object : PpssppEventListener {
       override fun onStateChange(state: PpssppState, paused: Boolean) {
         logger.info("PPSSPP state change: $state, paused: $paused")
       }
 
-      override fun stepCompleted() {
+      override fun onStepCompleted() {
         logger.info("PPSSPP step completed")
+      }
+
+      override fun onLog(message: PpssppLogMessage) {
+        logger.debug("PPSSPP: ${message.asFormattedMessage().trim()}")
       }
     }
   )
@@ -36,7 +41,7 @@ fun main() {
   }
 
   Thread.sleep(120L * 1000)
-  logger.info("Closing bridge...")
+  logger.info("Closing bridge")
   bridge.close()
   scope.cancel()
 }

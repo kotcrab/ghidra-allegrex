@@ -1,7 +1,7 @@
 package allegrex.agent.ppsspp.bridge.websocket
 
 import allegrex.agent.ppsspp.bridge.PpssppBridge
-import allegrex.agent.ppsspp.bridge.PpssppStateListener
+import allegrex.agent.ppsspp.bridge.PpssppEventListener
 import allegrex.agent.ppsspp.bridge.model.PpssppException
 import allegrex.agent.ppsspp.bridge.model.PpssppInstance
 import allegrex.agent.ppsspp.bridge.model.PpssppState
@@ -144,8 +144,8 @@ class PpssppWsBridge(
     return receive() as T
   }
 
-  override fun addStateListener(listener: PpssppStateListener) {
-    eventDispatcher.addStateListener(listener)
+  override fun addEventListener(listener: PpssppEventListener) {
+    eventDispatcher.addEventListener(listener)
   }
 
   override fun getBrief(): String {

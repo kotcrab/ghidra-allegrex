@@ -2,7 +2,8 @@ package allegrex.agent.ppsspp.model
 
 import allegrex.agent.ppsspp.bridge.PpssppApi
 import allegrex.agent.ppsspp.bridge.PpssppBridge
-import allegrex.agent.ppsspp.bridge.PpssppStateListener
+import allegrex.agent.ppsspp.bridge.PpssppEventListener
+import allegrex.agent.ppsspp.bridge.model.PpssppLogMessage
 import allegrex.agent.ppsspp.bridge.model.PpssppModelKey
 import allegrex.agent.ppsspp.bridge.model.PpssppState
 import allegrex.agent.ppsspp.util.futureVoid
@@ -56,7 +57,7 @@ class PpssppDebuggerObjectModel(private val bridge: PpssppBridge) : AbstractDebu
   val api = PpssppApi(bridge)
 
   init {
-    bridge.addStateListener(DebuggerPpssppStateListener())
+    bridge.addEventListener(DebuggerPpssppEventListener())
   }
 
   fun start() = modelScope.future {
@@ -119,11 +120,7 @@ class PpssppDebuggerObjectModel(private val bridge: PpssppBridge) : AbstractDebu
     objectMap.remove(key)
   }
 
-  fun clearModelObjects() {
-    objectMap.clear()
-  }
-
-  inner class DebuggerPpssppStateListener : PpssppStateListener {
+  inner class DebuggerPpssppEventListener : PpssppEventListener {
     override fun onStateChange(state: PpssppState, paused: Boolean) {
       logger.info("State transition: $state, paused: $paused")
       when {
@@ -150,8 +147,12 @@ class PpssppDebuggerObjectModel(private val bridge: PpssppBridge) : AbstractDebu
       }
     }
 
-    override fun stepCompleted() {
+    override fun onStepCompleted() {
       session.stepCompleted()
+    }
+
+    override fun onLog(message: PpssppLogMessage) {
+      session.log(message)
     }
   }
 }

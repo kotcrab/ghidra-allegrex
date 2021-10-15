@@ -1,6 +1,7 @@
 package allegrex.agent.ppsspp.bridge.websocket
 
-import allegrex.agent.ppsspp.bridge.PpssppStateListener
+import allegrex.agent.ppsspp.bridge.PpssppEventListener
+import allegrex.agent.ppsspp.bridge.model.PpssppLogMessage
 import allegrex.agent.ppsspp.bridge.model.PpssppState
 import allegrex.agent.ppsspp.bridge.model.event.PpssppCpuResumeEvent
 import allegrex.agent.ppsspp.bridge.model.event.PpssppCpuSteppingEvent
@@ -9,6 +10,7 @@ import allegrex.agent.ppsspp.bridge.model.event.PpssppGamePauseEvent
 import allegrex.agent.ppsspp.bridge.model.event.PpssppGameQuitEvent
 import allegrex.agent.ppsspp.bridge.model.event.PpssppGameResumeEvent
 import allegrex.agent.ppsspp.bridge.model.event.PpssppGameStartEvent
+import allegrex.agent.ppsspp.bridge.model.event.PpssppLogEvent
 import allegrex.agent.ppsspp.bridge.model.event.ppssppEventMap
 import com.google.gson.Gson
 import com.google.gson.JsonObject
@@ -23,10 +25,10 @@ class PpssppWsEventDispatcher(
 ) {
   companion object {
     private val logger = LogManager.getLogger(PpssppWsEventDispatcher::class.java)
-    private val ignoredEvents = setOf("input.analog", "input.buttons", "log") // TODO might be nice to handle "log" event somehow
+    private val ignoredEvents = setOf("input.analog", "input.buttons")
   }
 
-  private val listeners = mutableListOf<PpssppStateListener>() // TODO maybe one persistent listener is enough and we can skip synchronized?
+  private val listeners = mutableListOf<PpssppEventListener>() // TODO maybe one persistent listener is enough and we can skip synchronized?
   private val waiters = ConcurrentHashMap<String, SendChannel<PpssppEvent>>()
 
   private var ppssppState = PpssppState.NO_GAME
@@ -58,6 +60,12 @@ class PpssppWsEventDispatcher(
   }
 
   private suspend fun handleEvent(event: PpssppEvent) {
+    handleStateEvent(event)
+    handleLogEvent(event)
+    notifyWaiters(event)
+  }
+
+  private fun handleStateEvent(event: PpssppEvent) {
     val previousPpssppState = ppssppState
     val previousPpssppPaused = ppssppPaused
     when (event) {
@@ -79,12 +87,19 @@ class PpssppWsEventDispatcher(
     } else if (event is PpssppCpuSteppingEvent) {
       fireStepCompleted()
     }
-    if (event.ticket != null) {
-      notifyWaiters(event)
+  }
+
+  private fun handleLogEvent(event: PpssppEvent) {
+    if (event !is PpssppLogEvent) {
+      return
     }
+    fireLog(event.toLogMessage())
   }
 
   private suspend fun notifyWaiters(event: PpssppEvent) {
+    if (event.ticket == null) {
+      return
+    }
     waiters.remove(event.ticket)
       ?.send(event)
   }
@@ -95,24 +110,28 @@ class PpssppWsEventDispatcher(
     return channel
   }
 
-  fun addStateListener(listener: PpssppStateListener) {
+  fun addEventListener(listener: PpssppEventListener) {
     synchronized(listeners) {
       listeners.add(listener)
     }
   }
 
-  private fun fireStateChange() {
-    synchronized(listeners) {
-      listeners.forEach {
-        it.onStateChange(ppssppState, ppssppPaused)
-      }
-    }
+  private fun fireStateChange() = fireEvent {
+    it.onStateChange(ppssppState, ppssppPaused)
   }
 
-  private fun fireStepCompleted() {
+  private fun fireStepCompleted() = fireEvent {
+    it.onStepCompleted()
+  }
+
+  private fun fireLog(message: PpssppLogMessage) = fireEvent {
+    it.onLog(message)
+  }
+
+  private fun fireEvent(handler: (PpssppEventListener) -> Unit) {
     synchronized(listeners) {
       listeners.forEach {
-        it.stepCompleted()
+        handler(it)
       }
     }
   }
