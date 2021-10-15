@@ -59,6 +59,7 @@ class PpssppWsBridge(
   private val eventDispatcher = PpssppWsEventDispatcher(gson)
 
   override suspend fun start() {
+    logger.debug("PPSSPP WebSocket bridge is starting")
     val instances = getPpssppInstances()
     if (instances.isEmpty()) {
       throw PpssppException("Can't find any available PPSSPP instance")

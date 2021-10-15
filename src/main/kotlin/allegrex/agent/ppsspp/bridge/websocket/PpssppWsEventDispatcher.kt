@@ -97,6 +97,7 @@ class PpssppWsEventDispatcher(
   }
 
   private suspend fun notifyWaiters(event: PpssppEvent) {
+    // TODO handle error messages (close waiter channel if exists)
     if (event.ticket == null) {
       return
     }

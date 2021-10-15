@@ -30,6 +30,7 @@ class PpssppModelTargetProcessMemory(
     const val NAME = "Memory"
   }
 
+  // TODO investigate, normal map may be enough
   private val ranges = ConcurrentHashMap<PpssppMemoryRange, PpssppModelTargetMemoryRegion>()
 
   init {

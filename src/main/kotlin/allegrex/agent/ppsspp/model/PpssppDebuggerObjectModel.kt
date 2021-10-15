@@ -4,7 +4,6 @@ import allegrex.agent.ppsspp.bridge.PpssppApi
 import allegrex.agent.ppsspp.bridge.PpssppBridge
 import allegrex.agent.ppsspp.bridge.PpssppEventListener
 import allegrex.agent.ppsspp.bridge.model.PpssppLogMessage
-import allegrex.agent.ppsspp.bridge.model.PpssppModelKey
 import allegrex.agent.ppsspp.bridge.model.PpssppState
 import allegrex.agent.ppsspp.util.futureVoid
 import ghidra.dbg.DebuggerModelClosedReason
@@ -19,13 +18,12 @@ import ghidra.program.model.address.GenericAddressSpace
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.future.future
+import kotlinx.coroutines.newSingleThreadContext
 import org.apache.logging.log4j.LogManager
 import java.util.concurrent.CompletableFuture
-import java.util.concurrent.ConcurrentHashMap
 
 class PpssppDebuggerObjectModel(private val bridge: PpssppBridge) : AbstractDebuggerObjectModel() {
   companion object {
@@ -40,7 +38,7 @@ class PpssppDebuggerObjectModel(private val bridge: PpssppBridge) : AbstractDebu
   private val space: AddressSpace = GenericAddressSpace(SPACE_NAME_RAM, 32, AddressSpace.TYPE_RAM, 0)
   private val addressFactory: AddressFactory = DefaultAddressFactory(arrayOf(space))
 
-  private val session by lazy {
+  val session by lazy {
     PpssppModelTargetSession(this, ROOT_SCHEMA)
   }
   private val completedSession by lazy {
@@ -51,8 +49,9 @@ class PpssppDebuggerObjectModel(private val bridge: PpssppBridge) : AbstractDebu
     logger.error("Unhandled error in PpssppDebuggerObjectModel: ${cause.message ?: "unknown"} (see log)", cause)
   }
 
-  val modelScope = CoroutineScope(CoroutineName("PpssppDebugger") + SupervisorJob() + Dispatchers.IO + exceptionHandler)
-  private val objectMap = ConcurrentHashMap<Any, TargetObject>()
+  @Suppress("EXPERIMENTAL_API_USAGE")
+  private val modelThread = newSingleThreadContext("PpssppDebuggerThread")
+  val modelScope = CoroutineScope(CoroutineName("PpssppDebugger") + SupervisorJob() + modelThread + exceptionHandler)
 
   val api = PpssppApi(bridge)
 
@@ -79,9 +78,10 @@ class PpssppDebuggerObjectModel(private val bridge: PpssppBridge) : AbstractDebu
 
   private fun terminate() {
     listeners.fire.modelClosed(DebuggerModelClosedReason.NORMAL)
-    session.invalidateSubtree(session, "PPSSPP is terminating")
+    session.invalidateSubtree(session, "Debugger is terminating")
     bridge.close()
     modelScope.cancel()
+    modelThread.close()
   }
 
   override fun fetchModelRoot(): CompletableFuture<out TargetObject> {
@@ -105,21 +105,6 @@ class PpssppDebuggerObjectModel(private val bridge: PpssppBridge) : AbstractDebu
     }
   }
 
-  // TODO maybe we can get away without using this object map
-
-  fun addModelObject(key: PpssppModelKey, targetObject: TargetObject) {
-    objectMap[key] = targetObject
-  }
-
-  @Suppress("UNCHECKED_CAST")
-  fun <T : TargetObject?> getModelObject(key: PpssppModelKey): T? {
-    return objectMap[key] as? T
-  }
-
-  fun deleteModelObject(key: PpssppModelKey) {
-    objectMap.remove(key)
-  }
-
   inner class DebuggerPpssppEventListener : PpssppEventListener {
     override fun onStateChange(state: PpssppState, paused: Boolean) {
       logger.info("State transition: $state, paused: $paused")
@@ -129,26 +114,26 @@ class PpssppDebuggerObjectModel(private val bridge: PpssppBridge) : AbstractDebu
         }
         state == PpssppState.NO_GAME -> {
           session.changeAccessible(false)
-          session.noGame()
+          session.ppssppNoGame()
         }
         paused -> {
           session.changeAccessible(false)
-          session.paused()
+          session.ppssppPaused()
         }
         state == PpssppState.STEPPING -> {
           session.changeAccessible(true)
-          session.stepping()
+          session.ppssppStepping()
         }
         state == PpssppState.RUNNING -> {
           session.invalidateMemoryAndRegisterCaches()
           session.changeAccessible(false)
-          session.running()
+          session.ppssppRunning()
         }
       }
     }
 
     override fun onStepCompleted() {
-      session.stepCompleted()
+      session.ppssppStepCompleted()
     }
 
     override fun onLog(message: PpssppLogMessage) {

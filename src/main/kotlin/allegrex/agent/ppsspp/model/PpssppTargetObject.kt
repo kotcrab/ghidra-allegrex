@@ -14,6 +14,9 @@ abstract class PpssppTargetObject<E : TargetObject, P : TargetObject>(
   val api: PpssppApi
     get() = ppssppModel.api
 
+  val session: PpssppModelTargetSession
+    get() = ppssppModel.session
+
   override fun getModel(): PpssppDebuggerObjectModel {
     return ppssppModel
   }

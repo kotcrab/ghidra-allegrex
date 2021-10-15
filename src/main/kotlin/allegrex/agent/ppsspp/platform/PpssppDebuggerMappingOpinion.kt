@@ -17,7 +17,7 @@ class PpssppDebuggerMappingOpinion : DebuggerMappingOpinion {
   }
 
   private class PpssppAllegrexOffer(process: TargetProcess) : AbstractPpssppDebuggerMappingOffer(
-    process, 100, "$PPSSPP on $ALLEGREX", LANG_ID_ALLEGREX_DEFAULT, COMP_ID_DEFAULT, emptySet()
+    process, 100, PPSSPP, LANG_ID_ALLEGREX_DEFAULT, COMP_ID_DEFAULT, emptySet()
   )
 
   override fun offersForEnv(env: TargetEnvironment, process: TargetProcess): Set<DebuggerMappingOffer> {
