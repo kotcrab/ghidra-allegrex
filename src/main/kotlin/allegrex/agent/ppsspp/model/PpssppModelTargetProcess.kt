@@ -33,14 +33,17 @@ class PpssppModelTargetProcess(
     private val logger = LogManager.getLogger(PpssppModelTargetProcess::class.java)
   }
 
-  @get:TargetAttributeType(name = PpssppModelTargetThreadContainer.NAME, required = true, fixed = true)
-  val threads = PpssppModelTargetThreadContainer(this)
+  @get:TargetAttributeType(name = PpssppModelTargetEnvironment.NAME, required = true, fixed = true)
+  val environment = PpssppModelTargetEnvironment(this)
+
+  @get:TargetAttributeType(name = PpssppModelTargetModuleContainer.NAME, required = true, fixed = true)
+  val modules = PpssppModelTargetModuleContainer(this)
 
   @get:TargetAttributeType(name = PpssppModelTargetProcessMemory.NAME, required = true, fixed = true)
   val memory = PpssppModelTargetProcessMemory(this)
 
-  @get:TargetAttributeType(name = PpssppModelTargetEnvironment.NAME, required = true, fixed = true)
-  val environment = PpssppModelTargetEnvironment(this)
+  @get:TargetAttributeType(name = PpssppModelTargetThreadContainer.NAME, required = true, fixed = true)
+  val threads = PpssppModelTargetThreadContainer(this)
 
   @get:TargetAttributeType(name = PpssppModelTargetBreakpointContainer.NAME, required = true, fixed = true)
   val breakpoints = PpssppModelTargetBreakpointContainer(this)
@@ -48,7 +51,7 @@ class PpssppModelTargetProcess(
   init {
     changeAttributes(
       emptyList(),
-      listOf(threads, memory, environment, breakpoints),
+      listOf(environment, modules, memory, threads, breakpoints),
       mapOf(
         TargetObject.DISPLAY_ATTRIBUTE_NAME to "Process",
         TargetExecutionStateful.STATE_ATTRIBUTE_NAME to TargetExecutionState.STOPPED, // this will be set to the actual state by the first state event

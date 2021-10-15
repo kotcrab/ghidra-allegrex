@@ -55,6 +55,12 @@ select option to use `reboot.bin` type B relocation mapping.
 Raw binaries are also supported. In that case you will need to manually select Allegrex as the processor
 and set image base.
 
+#### Debugger
+
+TODO
+
+- Ghidra file should contain module name to enable automatic dynamic to static listing mapping 
+
 ### VFPU Limitations
 
 - Decompilation support is rather basic, almost every operation is converted to a function call such as `vadd_q(...)`  

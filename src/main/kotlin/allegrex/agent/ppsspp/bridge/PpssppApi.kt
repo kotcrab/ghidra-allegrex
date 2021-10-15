@@ -4,6 +4,7 @@ import allegrex.agent.ppsspp.bridge.model.PpssppCpuBreakpoint
 import allegrex.agent.ppsspp.bridge.model.PpssppCpuRegister
 import allegrex.agent.ppsspp.bridge.model.PpssppCpuStatus
 import allegrex.agent.ppsspp.bridge.model.PpssppGameStatus
+import allegrex.agent.ppsspp.bridge.model.PpssppHleModule
 import allegrex.agent.ppsspp.bridge.model.PpssppHleThread
 import allegrex.agent.ppsspp.bridge.model.PpssppMemoryBreakpoint
 import allegrex.agent.ppsspp.bridge.model.PpssppMemoryRange
@@ -16,6 +17,7 @@ import allegrex.agent.ppsspp.bridge.model.event.PpssppCpuStatusEvent
 import allegrex.agent.ppsspp.bridge.model.event.PpssppEvent
 import allegrex.agent.ppsspp.bridge.model.event.PpssppGameStatusEvent
 import allegrex.agent.ppsspp.bridge.model.event.PpssppHleBacktraceEvent
+import allegrex.agent.ppsspp.bridge.model.event.PpssppHleModuleListEvent
 import allegrex.agent.ppsspp.bridge.model.event.PpssppHleThreadsListEvent
 import allegrex.agent.ppsspp.bridge.model.event.PpssppMemoryBreakpointAddEvent
 import allegrex.agent.ppsspp.bridge.model.event.PpssppMemoryBreakpointListEvent
@@ -35,6 +37,7 @@ import allegrex.agent.ppsspp.bridge.model.request.PpssppCpuStepOverRequest
 import allegrex.agent.ppsspp.bridge.model.request.PpssppCpuSteppingRequest
 import allegrex.agent.ppsspp.bridge.model.request.PpssppGameStatusRequest
 import allegrex.agent.ppsspp.bridge.model.request.PpssppHleBacktraceRequest
+import allegrex.agent.ppsspp.bridge.model.request.PpssppHleModuleListRequest
 import allegrex.agent.ppsspp.bridge.model.request.PpssppHleThreadsListRequest
 import allegrex.agent.ppsspp.bridge.model.request.PpssppMemoryBreakpointAddRequest
 import allegrex.agent.ppsspp.bridge.model.request.PpssppMemoryBreakpointListRequest
@@ -93,6 +96,11 @@ class PpssppApi(val bridge: PpssppBridge) {
   suspend fun backtraceThread(threadId: Long): List<PpssppStackFrame> {
     return bridge.sendRequestAndWait<PpssppHleBacktraceEvent>(PpssppHleBacktraceRequest(threadId))
       .frames
+  }
+
+  suspend fun listModules(): List<PpssppHleModule> {
+    return bridge.sendRequestAndWait<PpssppHleModuleListEvent>(PpssppHleModuleListRequest())
+      .modules
   }
 
   suspend fun addCpuBreakpoint(
