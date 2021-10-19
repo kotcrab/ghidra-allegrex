@@ -765,11 +765,11 @@
 }
 
 :max RD, RSsrc, RTsrc           is prime=0 & sa=0 & fct=44 & RD & RSsrc & RTsrc {
-    RD = zext(RSsrc:4 > RTsrc:4);
+    ternary(RD, RSsrc s> RTsrc, RSsrc, RTsrc);
 }
 
 :min RD, RSsrc, RTsrc           is prime=0 & sa=0 & fct=45 & RD & RSsrc & RTsrc {
-    RD = zext(RSsrc:4 < RTsrc:4);
+    ternary(RD, RSsrc s< RTsrc, RSsrc, RTsrc);
 }
 
 # 0111 0000 000t tttt 0000 0000 0010 0100
