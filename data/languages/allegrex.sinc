@@ -284,7 +284,12 @@ macro ValCast(dest,src) {
 }
 
 macro ternary(res, cond, avar, bvar) {
-    res = (avar * zext(cond != 0)) + (bvar * zext(cond == 0));
+    if (cond != 0) goto <true>;
+    res = bvar;
+    goto <done>;
+<true>
+    res = avar;
+<done>
 }
 
 OFF_BASE:   simmed(base)    is simmed & base { tmp:4 = base + simmed; tmpscaled:4 = 0; ValCast(tmpscaled,tmp); export tmpscaled; }
