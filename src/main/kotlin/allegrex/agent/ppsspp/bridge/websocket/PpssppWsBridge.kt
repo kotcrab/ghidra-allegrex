@@ -25,12 +25,15 @@ import io.ktor.http.cio.websocket.Frame
 import io.ktor.http.cio.websocket.send
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.newSingleThreadContext
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import org.apache.logging.log4j.LogManager
 
 class PpssppWsBridge(
@@ -53,29 +56,30 @@ class PpssppWsBridge(
 
   @Suppress("EXPERIMENTAL_API_USAGE")
   private val bridgeThread = newSingleThreadContext("PpssppWsBridgeThread")
-  private val bridgeScope = CoroutineScope(CoroutineName("PpssppWsBridge") + bridgeThread)
+  private val bridgeScope = CoroutineScope(CoroutineName("PpssppWsBridge") + SupervisorJob() + bridgeThread)
   private val outgoingChannel = Channel<PpssppRequest>()
 
   private val eventDispatcher = PpssppWsEventDispatcher(gson)
 
   override suspend fun start() {
-    logger.debug("PPSSPP WebSocket bridge is starting")
-    val instances = getPpssppInstances()
-    if (instances.isEmpty()) {
-      throw PpssppException("Can't find any available PPSSPP instance")
-    }
-
-    for (instance in instances) {
-      val session = tryConnect(instance)
-      if (session != null) {
-        launchReceiver(session)
-        launchSender(session)
-        syncState()
-        return
+    withContext(bridgeScope.coroutineContext) {
+      logger.debug("PPSSPP WebSocket bridge is starting")
+      val instances = getPpssppInstances()
+      if (instances.isEmpty()) {
+        throw PpssppException("Can't find any available PPSSPP instance")
       }
-    }
 
-    throw PpssppException("Can't connect to any PPSSPP instance")
+      for (instance in instances) {
+        val session = tryConnect(instance)
+        if (session != null) {
+          launchReceiver(session)
+          launchSender(session)
+          syncState()
+          return@withContext
+        }
+      }
+      throw PpssppException("Can't connect to any PPSSPP instance")
+    }
   }
 
   private suspend fun syncState() {
@@ -135,7 +139,9 @@ class PpssppWsBridge(
     if (ticket.isNullOrBlank()) {
       throw PpssppException("Ticket must be provided in the request if you want to wait for a response")
     }
-    val channel = eventDispatcher.addWaiter(ticket)
+    val channel = withContext(bridgeScope.coroutineContext) {
+      eventDispatcher.addWaiter(ticket)
+    }
     outgoingChannel.send(request)
     return channel.receiveUnchecked()
   }
@@ -146,7 +152,9 @@ class PpssppWsBridge(
   }
 
   override fun addEventListener(listener: PpssppEventListener) {
-    eventDispatcher.addEventListener(listener)
+    runBlocking(bridgeScope.coroutineContext) {
+      eventDispatcher.addEventListener(listener)
+    }
   }
 
   override fun getBrief(): String {

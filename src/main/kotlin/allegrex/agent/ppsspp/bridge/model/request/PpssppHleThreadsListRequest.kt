@@ -1,6 +1,5 @@
 package allegrex.agent.ppsspp.bridge.model.request
 
-import allegrex.agent.ppsspp.bridge.model.event.PpssppHleBacktraceEvent
 import allegrex.agent.ppsspp.bridge.model.event.PpssppHleThreadsListEvent
 import java.util.UUID
 

@@ -1,10 +1,12 @@
 package allegrex.agent.ppsspp.bridge.websocket
 
 import allegrex.agent.ppsspp.bridge.PpssppEventListener
+import allegrex.agent.ppsspp.bridge.model.PpssppException
 import allegrex.agent.ppsspp.bridge.model.PpssppLogMessage
 import allegrex.agent.ppsspp.bridge.model.PpssppState
 import allegrex.agent.ppsspp.bridge.model.event.PpssppCpuResumeEvent
 import allegrex.agent.ppsspp.bridge.model.event.PpssppCpuSteppingEvent
+import allegrex.agent.ppsspp.bridge.model.event.PpssppErrorEvent
 import allegrex.agent.ppsspp.bridge.model.event.PpssppEvent
 import allegrex.agent.ppsspp.bridge.model.event.PpssppGamePauseEvent
 import allegrex.agent.ppsspp.bridge.model.event.PpssppGameQuitEvent
@@ -18,7 +20,6 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.SendChannel
 import org.apache.logging.log4j.LogManager
-import java.util.concurrent.ConcurrentHashMap
 
 class PpssppWsEventDispatcher(
   private val gson: Gson
@@ -28,8 +29,8 @@ class PpssppWsEventDispatcher(
     private val ignoredEvents = setOf("input.analog", "input.buttons")
   }
 
-  private val listeners = mutableListOf<PpssppEventListener>() // TODO maybe one persistent listener is enough and we can skip synchronized?
-  private val waiters = ConcurrentHashMap<String, SendChannel<PpssppEvent>>()
+  private val listeners = mutableListOf<PpssppEventListener>()
+  private val waiters = mutableMapOf<String, SendChannel<PpssppEvent>>()
 
   private var ppssppState = PpssppState.NO_GAME
   private var ppssppPaused = false
@@ -82,10 +83,9 @@ class PpssppWsEventDispatcher(
         ppssppPaused = false
       }
     }
-    if (previousPpssppState != ppssppState || previousPpssppPaused != ppssppPaused) {
-      fireStateChange()
-    } else if (event is PpssppCpuSteppingEvent) {
-      fireStepCompleted()
+    when {
+      previousPpssppState != ppssppState || previousPpssppPaused != ppssppPaused -> fireStateChange()
+      event is PpssppCpuSteppingEvent -> fireStepCompleted()
     }
   }
 
@@ -97,12 +97,15 @@ class PpssppWsEventDispatcher(
   }
 
   private suspend fun notifyWaiters(event: PpssppEvent) {
-    // TODO handle error messages (close waiter channel if exists)
     if (event.ticket == null) {
       return
     }
-    waiters.remove(event.ticket)
-      ?.send(event)
+    val handler = waiters.remove(event.ticket)
+      ?: return
+    when (event) {
+      is PpssppErrorEvent -> handler.close(PpssppException(event.message))
+      else -> handler.send(event)
+    }
   }
 
   fun addWaiter(ticket: String): ReceiveChannel<PpssppEvent> {
@@ -112,9 +115,7 @@ class PpssppWsEventDispatcher(
   }
 
   fun addEventListener(listener: PpssppEventListener) {
-    synchronized(listeners) {
-      listeners.add(listener)
-    }
+    listeners.add(listener)
   }
 
   private fun fireStateChange() = fireEvent {
@@ -130,10 +131,12 @@ class PpssppWsEventDispatcher(
   }
 
   private fun fireEvent(handler: (PpssppEventListener) -> Unit) {
-    synchronized(listeners) {
+    runCatching {
       listeners.forEach {
         handler(it)
       }
+    }.onFailure { cause ->
+      logger.error("Unhandled error in event listener: ${cause.message ?: "unknown"}", cause)
     }
   }
 }

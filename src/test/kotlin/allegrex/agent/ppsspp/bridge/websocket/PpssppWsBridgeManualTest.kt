@@ -4,16 +4,21 @@ import allegrex.agent.ppsspp.bridge.PpssppApi
 import allegrex.agent.ppsspp.bridge.PpssppEventListener
 import allegrex.agent.ppsspp.bridge.model.PpssppLogMessage
 import allegrex.agent.ppsspp.bridge.model.PpssppState
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.newSingleThreadContext
+import kotlinx.coroutines.runBlocking
 import org.apache.logging.log4j.LogManager
 
 fun main() {
   val logger = LogManager.getLogger("main")
-  val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+  val exceptionHandler = CoroutineExceptionHandler { _, cause ->
+    logger.error("Unhandled error: ${cause.message ?: "unknown"}", cause)
+  }
+  @Suppress("EXPERIMENTAL_API_USAGE") val thread = newSingleThreadContext("TestThread")
+  val scope = CoroutineScope(SupervisorJob() + thread + exceptionHandler)
   val bridge = PpssppWsBridge()
   val api = PpssppApi(bridge)
 
@@ -33,15 +38,19 @@ fun main() {
     }
   )
 
-  scope.launch {
+  runBlocking(scope.coroutineContext) {
     logger.info("Starting bridge")
     bridge.start()
 
-    println(api.cpuStatus())
+    api.stepping()
+    val threads = api.listThreads().first { it.name == "user_main" }
+    api.backtraceThread(threads.id)
+
+    logger.info(api.cpuStatus())
   }
 
-  Thread.sleep(120L * 1000)
   logger.info("Closing bridge")
   bridge.close()
   scope.cancel()
+  thread.close()
 }

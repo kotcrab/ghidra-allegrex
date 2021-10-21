@@ -21,6 +21,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.future.future
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.newSingleThreadContext
 import org.apache.logging.log4j.LogManager
 import java.util.concurrent.CompletableFuture
@@ -107,37 +108,43 @@ class PpssppDebuggerObjectModel(private val bridge: PpssppBridge) : AbstractDebu
 
   inner class DebuggerPpssppEventListener : PpssppEventListener {
     override fun onStateChange(state: PpssppState, paused: Boolean) {
-      logger.info("State transition: $state, paused: $paused")
-      when {
-        state == PpssppState.EXITED -> {
-          terminate()
-        }
-        state == PpssppState.NO_GAME -> {
-          session.changeAccessible(false)
-          session.ppssppNoGame()
-        }
-        paused -> {
-          session.changeAccessible(false)
-          session.ppssppPaused()
-        }
-        state == PpssppState.STEPPING -> {
-          session.changeAccessible(true)
-          session.ppssppStepping()
-        }
-        state == PpssppState.RUNNING -> {
-          session.invalidateMemoryAndRegisterCaches()
-          session.changeAccessible(false)
-          session.ppssppRunning()
+      modelScope.launch {
+        logger.info("State transition: $state, paused: $paused")
+        when {
+          state == PpssppState.EXITED -> {
+            terminate()
+          }
+          state == PpssppState.NO_GAME -> {
+            session.changeAccessible(false)
+            session.ppssppNoGame()
+          }
+          paused -> {
+            session.changeAccessible(false)
+            session.ppssppPaused()
+          }
+          state == PpssppState.STEPPING -> {
+            session.changeAccessible(true)
+            session.ppssppStepping()
+          }
+          state == PpssppState.RUNNING -> {
+            session.invalidateMemoryAndRegisterCaches()
+            session.changeAccessible(false)
+            session.ppssppRunning()
+          }
         }
       }
     }
 
     override fun onStepCompleted() {
-      session.ppssppStepCompleted()
+      modelScope.launch {
+        session.ppssppStepCompleted()
+      }
     }
 
     override fun onLog(message: PpssppLogMessage) {
-      session.log(message)
+      modelScope.launch {
+        session.log(message)
+      }
     }
   }
 }

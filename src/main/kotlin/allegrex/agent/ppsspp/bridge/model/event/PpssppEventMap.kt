@@ -10,6 +10,8 @@ val ppssppEventMap = mapOf(
   PpssppCpuStatusEvent.EVENT_NAME to PpssppCpuStatusEvent::class.java,
   PpssppCpuSteppingEvent.EVENT_NAME to PpssppCpuSteppingEvent::class.java,
 
+  PpssppErrorEvent.EVENT_NAME to PpssppErrorEvent::class.java,
+
   PpssppGamePauseEvent.EVENT_NAME to PpssppGamePauseEvent::class.java,
   PpssppGameQuitEvent.EVENT_NAME to PpssppGameQuitEvent::class.java,
   PpssppGameResumeEvent.EVENT_NAME to PpssppGameResumeEvent::class.java,
