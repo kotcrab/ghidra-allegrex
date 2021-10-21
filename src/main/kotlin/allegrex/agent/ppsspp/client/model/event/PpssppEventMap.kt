@@ -19,6 +19,7 @@ val ppssppEventMap = mapOf(
   PpssppGameStatusEvent.EVENT_NAME to PpssppGameStatusEvent::class.java,
 
   PpssppHleBacktraceEvent.EVENT_NAME to PpssppHleBacktraceEvent::class.java,
+  PpssppHleFunctionListEvent.EVENT_NAME to PpssppHleFunctionListEvent::class.java,
   PpssppHleModuleListEvent.EVENT_NAME to PpssppHleModuleListEvent::class.java,
   PpssppHleThreadsListEvent.EVENT_NAME to PpssppHleThreadsListEvent::class.java,
 

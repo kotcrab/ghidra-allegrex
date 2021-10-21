@@ -4,6 +4,7 @@ import allegrex.agent.ppsspp.client.model.PpssppCpuBreakpoint
 import allegrex.agent.ppsspp.client.model.PpssppCpuRegister
 import allegrex.agent.ppsspp.client.model.PpssppCpuStatus
 import allegrex.agent.ppsspp.client.model.PpssppGameStatus
+import allegrex.agent.ppsspp.client.model.PpssppHleFunction
 import allegrex.agent.ppsspp.client.model.PpssppHleModule
 import allegrex.agent.ppsspp.client.model.PpssppHleThread
 import allegrex.agent.ppsspp.client.model.PpssppMemoryBreakpoint
@@ -17,6 +18,7 @@ import allegrex.agent.ppsspp.client.model.event.PpssppCpuStatusEvent
 import allegrex.agent.ppsspp.client.model.event.PpssppEvent
 import allegrex.agent.ppsspp.client.model.event.PpssppGameStatusEvent
 import allegrex.agent.ppsspp.client.model.event.PpssppHleBacktraceEvent
+import allegrex.agent.ppsspp.client.model.event.PpssppHleFunctionListEvent
 import allegrex.agent.ppsspp.client.model.event.PpssppHleModuleListEvent
 import allegrex.agent.ppsspp.client.model.event.PpssppHleThreadsListEvent
 import allegrex.agent.ppsspp.client.model.event.PpssppMemoryBreakpointAddEvent
@@ -37,6 +39,7 @@ import allegrex.agent.ppsspp.client.model.request.PpssppCpuStepOverRequest
 import allegrex.agent.ppsspp.client.model.request.PpssppCpuSteppingRequest
 import allegrex.agent.ppsspp.client.model.request.PpssppGameStatusRequest
 import allegrex.agent.ppsspp.client.model.request.PpssppHleBacktraceRequest
+import allegrex.agent.ppsspp.client.model.request.PpssppHleFunctionListRequest
 import allegrex.agent.ppsspp.client.model.request.PpssppHleModuleListRequest
 import allegrex.agent.ppsspp.client.model.request.PpssppHleThreadsListRequest
 import allegrex.agent.ppsspp.client.model.request.PpssppMemoryBreakpointAddRequest
@@ -88,6 +91,16 @@ class PpssppApi(private val client: PpssppClient) {
     client.sendRequestAndWait<PpssppSetRegisterEvent>(PpssppSetRegisterRequest(threadId, category, registerId, value))
   }
 
+  suspend fun listFunctions(): List<PpssppHleFunction> {
+    return client.sendRequestAndWait<PpssppHleFunctionListEvent>(PpssppHleFunctionListRequest())
+      .functions
+  }
+
+  suspend fun listModules(): List<PpssppHleModule> {
+    return client.sendRequestAndWait<PpssppHleModuleListEvent>(PpssppHleModuleListRequest())
+      .modules
+  }
+
   suspend fun listThreads(): List<PpssppHleThread> {
     return client.sendRequestAndWait<PpssppHleThreadsListEvent>(PpssppHleThreadsListRequest())
       .threads
@@ -96,11 +109,6 @@ class PpssppApi(private val client: PpssppClient) {
   suspend fun backtraceThread(threadId: Long): List<PpssppStackFrame> {
     return client.sendRequestAndWait<PpssppHleBacktraceEvent>(PpssppHleBacktraceRequest(threadId))
       .frames
-  }
-
-  suspend fun listModules(): List<PpssppHleModule> {
-    return client.sendRequestAndWait<PpssppHleModuleListEvent>(PpssppHleModuleListRequest())
-      .modules
   }
 
   suspend fun addCpuBreakpoint(
