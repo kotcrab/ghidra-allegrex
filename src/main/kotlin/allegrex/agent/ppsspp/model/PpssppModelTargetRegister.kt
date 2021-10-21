@@ -1,6 +1,6 @@
 package allegrex.agent.ppsspp.model
 
-import allegrex.agent.ppsspp.bridge.model.PpssppCpuRegisterMeta
+import allegrex.agent.ppsspp.client.model.PpssppCpuRegisterMeta
 import ghidra.dbg.target.TargetObject
 import ghidra.dbg.target.TargetRegister
 import ghidra.dbg.target.schema.TargetAttributeType

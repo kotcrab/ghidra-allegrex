@@ -1,10 +1,10 @@
 package allegrex.agent.ppsspp.model
 
-import allegrex.agent.ppsspp.bridge.PpssppApi
-import allegrex.agent.ppsspp.bridge.PpssppBridge
-import allegrex.agent.ppsspp.bridge.PpssppEventListener
-import allegrex.agent.ppsspp.bridge.model.PpssppLogMessage
-import allegrex.agent.ppsspp.bridge.model.PpssppState
+import allegrex.agent.ppsspp.client.PpssppApi
+import allegrex.agent.ppsspp.client.PpssppClient
+import allegrex.agent.ppsspp.client.PpssppEventListener
+import allegrex.agent.ppsspp.client.model.PpssppLogMessage
+import allegrex.agent.ppsspp.client.model.PpssppState
 import allegrex.agent.ppsspp.util.futureVoid
 import ghidra.dbg.DebuggerModelClosedReason
 import ghidra.dbg.agent.AbstractDebuggerObjectModel
@@ -26,7 +26,7 @@ import kotlinx.coroutines.newSingleThreadContext
 import org.apache.logging.log4j.LogManager
 import java.util.concurrent.CompletableFuture
 
-class PpssppDebuggerObjectModel(private val bridge: PpssppBridge) : AbstractDebuggerObjectModel() {
+class PpssppDebuggerObjectModel(private val client: PpssppClient) : AbstractDebuggerObjectModel() {
   companion object {
     private const val SPACE_NAME_RAM = "ram"
 
@@ -54,15 +54,15 @@ class PpssppDebuggerObjectModel(private val bridge: PpssppBridge) : AbstractDebu
   private val modelThread = newSingleThreadContext("PpssppDebuggerThread")
   val modelScope = CoroutineScope(CoroutineName("PpssppDebugger") + SupervisorJob() + modelThread + exceptionHandler)
 
-  val api = PpssppApi(bridge)
+  val api = PpssppApi(client)
 
   init {
-    bridge.addEventListener(DebuggerPpssppEventListener())
+    client.addEventListener(DebuggerPpssppEventListener())
   }
 
   fun start() = modelScope.future {
     addModelRoot(session)
-    bridge.start()
+    client.start()
   }
 
   override fun getRootSchema(): TargetObjectSchema {
@@ -70,7 +70,7 @@ class PpssppDebuggerObjectModel(private val bridge: PpssppBridge) : AbstractDebu
   }
 
   override fun getBrief(): String {
-    return "PPSSPP@${bridge.getBrief()}"
+    return "PPSSPP@${client.getBrief()}"
   }
 
   override fun getAddressFactory(): AddressFactory {
@@ -80,7 +80,7 @@ class PpssppDebuggerObjectModel(private val bridge: PpssppBridge) : AbstractDebu
   private fun terminate() {
     listeners.fire.modelClosed(DebuggerModelClosedReason.NORMAL)
     session.invalidateSubtree(session, "Debugger is terminating")
-    bridge.close()
+    client.close()
     modelScope.cancel()
     modelThread.close()
   }
@@ -90,11 +90,11 @@ class PpssppDebuggerObjectModel(private val bridge: PpssppBridge) : AbstractDebu
   }
 
   override fun isAlive(): Boolean {
-    return bridge.isAlive()
+    return client.isAlive()
   }
 
   override fun ping(content: String?) = modelScope.futureVoid {
-    bridge.ping()
+    client.ping()
   }
 
   override fun close(): CompletableFuture<Void> {

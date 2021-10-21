@@ -1,6 +1,6 @@
 package allegrex.agent.ppsspp.model
 
-import allegrex.agent.ppsspp.bridge.model.PpssppHleModule
+import allegrex.agent.ppsspp.client.model.PpssppHleModule
 import ghidra.dbg.target.TargetModule
 import ghidra.dbg.target.TargetObject
 import ghidra.dbg.target.schema.TargetAttributeType

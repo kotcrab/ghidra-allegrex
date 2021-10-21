@@ -1,6 +1,6 @@
 package allegrex.agent.ppsspp.model
 
-import allegrex.agent.ppsspp.bridge.model.PpssppMemoryRange
+import allegrex.agent.ppsspp.client.model.PpssppMemoryRange
 import ghidra.dbg.target.TargetMemoryRegion
 import ghidra.dbg.target.TargetObject
 import ghidra.dbg.target.schema.TargetAttributeType

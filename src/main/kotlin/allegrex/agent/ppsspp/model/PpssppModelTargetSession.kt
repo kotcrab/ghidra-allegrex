@@ -1,6 +1,6 @@
 package allegrex.agent.ppsspp.model
 
-import allegrex.agent.ppsspp.bridge.model.PpssppLogMessage
+import allegrex.agent.ppsspp.client.model.PpssppLogMessage
 import allegrex.agent.ppsspp.util.futureVoid
 import ghidra.dbg.agent.DefaultTargetModelRoot
 import ghidra.dbg.target.TargetAccessConditioned

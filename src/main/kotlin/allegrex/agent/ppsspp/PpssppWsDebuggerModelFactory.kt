@@ -1,6 +1,6 @@
 package allegrex.agent.ppsspp
 
-import allegrex.agent.ppsspp.bridge.websocket.PpssppWsBridge
+import allegrex.agent.ppsspp.client.websocket.PpssppWsClient
 import allegrex.agent.ppsspp.model.PpssppDebuggerObjectModel
 import ghidra.dbg.DebuggerModelFactory
 import ghidra.dbg.DebuggerObjectModel
@@ -21,7 +21,7 @@ class PpssppWsDebuggerModelFactory : DebuggerModelFactory {
   private var connectionUrl = ""
 
   override fun build(): CompletableFuture<out DebuggerObjectModel> {
-    val model = PpssppDebuggerObjectModel(PpssppWsBridge(connectionUrl))
+    val model = PpssppDebuggerObjectModel(PpssppWsClient(connectionUrl))
     return model.start().thenApply { model }
   }
 }

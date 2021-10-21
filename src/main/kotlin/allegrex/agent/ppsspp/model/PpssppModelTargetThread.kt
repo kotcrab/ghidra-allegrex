@@ -1,7 +1,7 @@
 package allegrex.agent.ppsspp.model
 
-import allegrex.agent.ppsspp.bridge.model.PpssppException
-import allegrex.agent.ppsspp.bridge.model.PpssppHleThread
+import allegrex.agent.ppsspp.client.model.PpssppException
+import allegrex.agent.ppsspp.client.model.PpssppHleThread
 import allegrex.agent.ppsspp.util.futureVoid
 import ghidra.dbg.target.TargetObject
 import ghidra.dbg.target.TargetSteppable

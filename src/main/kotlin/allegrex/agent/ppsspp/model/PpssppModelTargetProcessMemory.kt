@@ -1,6 +1,6 @@
 package allegrex.agent.ppsspp.model
 
-import allegrex.agent.ppsspp.bridge.model.PpssppMemoryRange
+import allegrex.agent.ppsspp.client.model.PpssppMemoryRange
 import allegrex.agent.ppsspp.util.futureVoid
 import ghidra.dbg.error.DebuggerMemoryAccessException
 import ghidra.dbg.target.TargetMemory

@@ -1,7 +1,7 @@
 package allegrex.agent.ppsspp.model
 
-import allegrex.agent.ppsspp.bridge.model.PpssppHleThread
-import allegrex.agent.ppsspp.bridge.model.PpssppHleThreadMeta
+import allegrex.agent.ppsspp.client.model.PpssppHleThread
+import allegrex.agent.ppsspp.client.model.PpssppHleThreadMeta
 import allegrex.agent.ppsspp.util.futureVoid
 import ghidra.dbg.target.schema.TargetAttributeType
 import ghidra.dbg.target.schema.TargetObjectSchema

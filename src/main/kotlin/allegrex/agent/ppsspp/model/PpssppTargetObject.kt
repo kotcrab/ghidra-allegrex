@@ -1,6 +1,6 @@
 package allegrex.agent.ppsspp.model
 
-import allegrex.agent.ppsspp.bridge.PpssppApi
+import allegrex.agent.ppsspp.client.PpssppApi
 import ghidra.dbg.agent.DefaultTargetObject
 import ghidra.dbg.target.TargetObject
 import kotlinx.coroutines.CoroutineScope
