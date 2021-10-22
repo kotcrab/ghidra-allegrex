@@ -19,7 +19,8 @@ class PpssppModelTargetModuleContainer(
 ) :
   PpssppTargetObject<PpssppModelTargetModule, PpssppModelTargetProcess>(
     process.model, process, NAME, "ModuleContainer"
-  ), TargetModuleContainer {
+  ),
+  TargetModuleContainer {
 
   companion object {
     const val NAME = "Modules"

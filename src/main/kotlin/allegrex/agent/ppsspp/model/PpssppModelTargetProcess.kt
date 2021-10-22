@@ -42,6 +42,9 @@ class PpssppModelTargetProcess(
   @get:TargetAttributeType(name = PpssppModelTargetProcessMemory.NAME, required = true, fixed = true)
   val memory = PpssppModelTargetProcessMemory(this)
 
+  @get:TargetAttributeType(name = PpssppModelTargetSymbolContainer.NAME, required = true, fixed = true)
+  val symbols = PpssppModelTargetSymbolContainer(this)
+
   @get:TargetAttributeType(name = PpssppModelTargetThreadContainer.NAME, required = true, fixed = true)
   val threads = PpssppModelTargetThreadContainer(this)
 
@@ -51,7 +54,7 @@ class PpssppModelTargetProcess(
   init {
     changeAttributes(
       emptyList(),
-      listOf(environment, modules, memory, threads, breakpoints),
+      listOf(environment, modules, memory, symbols, threads, breakpoints),
       mapOf(
         TargetObject.DISPLAY_ATTRIBUTE_NAME to "Process",
         TargetExecutionStateful.STATE_ATTRIBUTE_NAME to TargetExecutionState.STOPPED, // this will be set to the actual state by the first state event

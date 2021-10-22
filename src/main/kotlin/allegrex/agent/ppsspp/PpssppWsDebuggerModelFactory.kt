@@ -9,8 +9,11 @@ import java.util.concurrent.CompletableFuture
 
 @Suppress("unused")
 @ConfigurableFactory.FactoryDescription(
-  brief = "PPSSPP WebSocket debugger (experimental)",
-  htmlDetails = "Connect to a running PPSSPP instance over WebSocket.\nMake sure \"Allow remote debugger\" is enabled in Developer tools."
+  brief = "PPSSPP WebSocket debugger (beta)",
+  htmlDetails = """Connect to a running PPSSPP instance over WebSocket.
+Make sure "Allow remote debugger" is enabled in Developer tools.
+Note: This integration is in beta. Please report any issues
+to kotcrab/ghidra-allegrex GitHub repository"""
 )
 class PpssppWsDebuggerModelFactory : DebuggerModelFactory {
   @JvmField

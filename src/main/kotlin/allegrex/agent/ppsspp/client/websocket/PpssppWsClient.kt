@@ -43,6 +43,7 @@ class PpssppWsClient(
   companion object {
     private const val REPORT_PPSSPP_URL = "https://report.ppsspp.org/match/list"
     private const val DEBUGGER_PATH = "/debugger"
+    private const val MAX_WS_LOG_LENGTH = 300
 
     private val logger = LogManager.getLogger(PpssppWsClient::class.java)
   }
@@ -113,7 +114,7 @@ class PpssppWsClient(
       for (message in session.incoming) {
         if (message is Frame.Text) {
           val response = String(message.data)
-          logger.debug("<<< WS $response")
+          logger.debug("<<< WS ${response.take(MAX_WS_LOG_LENGTH)}")
           eventDispatcher.handleWsMessage(response)
         }
       }
@@ -125,7 +126,7 @@ class PpssppWsClient(
   private fun launchSender(session: DefaultClientWebSocketSession) = clientScope.launch {
     for (message in outgoingChannel) {
       val request = gson.toJson(message)
-      logger.debug(">>> WS $request")
+      logger.debug(">>> WS ${request.take(MAX_WS_LOG_LENGTH)}")
       session.send(request)
     }
   }
