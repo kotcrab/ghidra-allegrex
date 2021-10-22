@@ -137,6 +137,7 @@ class PpssppModelTargetSession(model: PpssppDebuggerObjectModel, schema: TargetO
       processLock.withLock {
         if (process == null) {
           process = PpssppModelTargetProcess(session)
+          process?.syncInitial()
           changeAttributes(emptyList(), listOf(process), emptyMap<String, Any>(), "Process created")
           listeners.fire.event(session, null, TargetEventScope.TargetEventType.PROCESS_CREATED, "Process created", listOf(process))
         }

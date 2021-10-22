@@ -26,20 +26,19 @@ class PpssppModelTargetModuleContainer(
     const val NAME = "Modules"
   }
 
-  private val modules = mutableMapOf<PpssppHleModuleMeta, PpssppModelTargetModule>()
-
-  init {
-    requestElements(false)
-  }
+  private val targetModules = mutableMapOf<PpssppHleModuleMeta, PpssppModelTargetModule>()
 
   override fun requestElements(refresh: Boolean) = modelScope.futureVoid {
-    // TODO can modules change?
     val modules = api.listModules()
       .map { getTargetModule(it) }
-    setElements(modules, "Refreshed")
+    val delta = setElements(modules, "Refreshed")
+    if (!delta.isEmpty) {
+      targetModules.entries
+        .removeIf { delta.removed.containsValue(it.value) }
+    }
   }
 
   private fun getTargetModule(module: PpssppHleModule): PpssppModelTargetModule {
-    return modules.getOrPut(module.meta()) { PpssppModelTargetModule(this, module) }
+    return targetModules.getOrPut(module.meta()) { PpssppModelTargetModule(this, module) }
   }
 }

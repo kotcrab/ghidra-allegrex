@@ -29,10 +29,6 @@ class PpssppModelTargetThreadContainer(
   // TODO switch to normal map
   private val threadModels = ConcurrentHashMap<PpssppHleThreadMeta, PpssppModelTargetThread>()
 
-  init {
-    requestElements(false)
-  }
-
   override fun requestElements(refresh: Boolean) = modelScope.futureVoid {
     // TODO handle refresh
     val threads = api.listThreads()

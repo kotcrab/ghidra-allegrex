@@ -9,8 +9,9 @@ import ghidra.dbg.target.schema.TargetObjectSchema
 import ghidra.dbg.target.schema.TargetObjectSchemaInfo
 import ghidra.program.model.address.Address
 import ghidra.program.model.address.AddressRangeImpl
+import kotlinx.coroutines.future.await
 import kotlinx.coroutines.future.future
-import java.util.concurrent.ConcurrentHashMap
+import kotlinx.coroutines.runBlocking
 
 @TargetObjectSchemaInfo(
   name = PpssppModelTargetProcessMemory.NAME,
@@ -30,25 +31,24 @@ class PpssppModelTargetProcessMemory(
     const val NAME = "Memory"
   }
 
-  // TODO switch to normal map
-  private val ranges = ConcurrentHashMap<PpssppMemoryRange, PpssppModelTargetMemoryRegion>()
-
-  init {
-    requestElements(false)
-  }
+  private val memoryRegions = mutableMapOf<PpssppMemoryRange, PpssppModelTargetMemoryRegion>()
+  private val memory = this
 
   override fun requestElements(refresh: Boolean) = modelScope.futureVoid {
     val ranges = api.getMemoryMap()
-      .map { getTargetMemoryRange(it) }
-    setElements(ranges, "Refreshed") // delta.removed ignored, we can assume memory ranges will never change
+      .map { getTargetMemoryRegion(it) }
+    val delta = setElements(ranges, "Refreshed")
+    if (!delta.isEmpty) {
+      memoryRegions.entries
+        .removeIf { delta.removed.containsValue(it.value) }
+    }
   }
 
-  private fun getTargetMemoryRange(range: PpssppMemoryRange): PpssppModelTargetMemoryRegion {
-    return ranges.getOrPut(range) { PpssppModelTargetMemoryRegion(this, range) }
+  private fun getTargetMemoryRegion(range: PpssppMemoryRange): PpssppModelTargetMemoryRegion {
+    return memoryRegions.getOrPut(range) { PpssppModelTargetMemoryRegion(this, range) }
   }
 
   override fun readMemory(address: Address, length: Int) = modelScope.future {
-    val memory = this@PpssppModelTargetProcessMemory
     val range = AddressRangeImpl(address, length.toLong())
     try {
       val bytes = api.readMemory(address.offset, length.toLong())
@@ -61,7 +61,6 @@ class PpssppModelTargetProcessMemory(
   }
 
   override fun writeMemory(address: Address, data: ByteArray) = modelScope.futureVoid {
-    val memory = this@PpssppModelTargetProcessMemory
     api.writeMemory(address.offset, data)
     listeners.fire.memoryUpdated(memory, address, data)
   }

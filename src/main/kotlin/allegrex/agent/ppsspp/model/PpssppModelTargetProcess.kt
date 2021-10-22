@@ -12,6 +12,7 @@ import ghidra.dbg.target.TargetResumable
 import ghidra.dbg.target.schema.TargetAttributeType
 import ghidra.dbg.target.schema.TargetElementType
 import ghidra.dbg.target.schema.TargetObjectSchemaInfo
+import kotlinx.coroutines.future.await
 import org.apache.logging.log4j.LogManager
 
 @TargetObjectSchemaInfo(
@@ -61,6 +62,11 @@ class PpssppModelTargetProcess(
       ),
       "Initialized"
     )
+  }
+
+  suspend fun syncInitial() {
+    listOf(modules, memory, threads, breakpoints)
+      .map { it.resync().await() }
   }
 
   override fun resume() = modelScope.futureVoid {
