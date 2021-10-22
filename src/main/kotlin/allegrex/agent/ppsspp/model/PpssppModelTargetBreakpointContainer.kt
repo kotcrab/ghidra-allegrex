@@ -41,7 +41,7 @@ class PpssppModelTargetBreakpointContainer(
 //        TargetObject.DISPLAY_ATTRIBUTE_NAME to "",
         TargetBreakpointSpecContainer.SUPPORTED_BREAK_KINDS_ATTRIBUTE_NAME to SUPPORTED_KINDS, // FIXME
       ),
-      "Initialized"
+      UpdateReason.INITIALIZED
     )
   }
 

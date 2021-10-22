@@ -42,7 +42,7 @@ class PpssppModelTargetModule(
         TargetModule.RANGE_ATTRIBUTE_NAME to addressRange,
         TargetModule.MODULE_NAME_ATTRIBUTE_NAME to module.name,
       ),
-      "Initialized"
+      UpdateReason.INITIALIZED
     )
   }
 }

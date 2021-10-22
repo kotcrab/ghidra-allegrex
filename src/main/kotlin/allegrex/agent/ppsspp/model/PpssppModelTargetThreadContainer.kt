@@ -33,7 +33,7 @@ class PpssppModelTargetThreadContainer(
     // TODO handle refresh
     val threads = api.listThreads()
       .map { getTargetThread(it) }
-    val delta = setElements(threads, "Refreshed")
+    val delta = setElements(threads, UpdateReason.REFRESHED)
     delta.removed
       .map { it.value.thread.meta() }
 //      .forEach { getModel().deleteModelObject(it) }
@@ -43,12 +43,16 @@ class PpssppModelTargetThreadContainer(
     return threadModels.getOrPut(thread.meta()) { PpssppModelTargetThread(this, thread) }
   }
 
+  fun getAnyThreadOrNull(): PpssppModelTargetThread? {
+    return threadModels.values.firstOrNull()
+  }
+
   fun getThreadById(id: Long): PpssppModelTargetThread? {
     return threadModels.values.firstOrNull { it.thread.id == id }
   }
 
   fun invalidateRegisterCaches() {
-
+    // TODO
   }
 
   fun updateThreads() {

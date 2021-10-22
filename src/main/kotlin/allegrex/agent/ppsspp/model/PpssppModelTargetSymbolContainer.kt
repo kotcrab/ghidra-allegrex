@@ -30,7 +30,7 @@ class PpssppModelTargetSymbolContainer(
   override fun requestElements(refresh: Boolean) = modelScope.futureVoid {
     val functions = api.listFunctions()
       .map { getTargetSymbol(it) }
-    val delta = setElements(functions, "Refreshed")
+    val delta = setElements(functions, UpdateReason.REFRESHED)
     if (!delta.isEmpty) {
       symbols.entries
         .removeIf { delta.removed.containsValue(it.value) }

@@ -27,7 +27,7 @@ class PpssppModelTargetStack(
 
   init {
 //    requestElements(false)
-    setElements(frames, "Initialized")
+    setElements(frames, UpdateReason.INITIALIZED)
   }
 
   override fun requestElements(refresh: Boolean) = modelScope.futureVoid {
@@ -38,7 +38,7 @@ class PpssppModelTargetStack(
     synchronized(frames) {
       frames.clear()
       frames.add(PpssppModelTargetStackFrame(this, 0, pc))
-      setElements(frames, "Initialized")
+      setElements(frames, UpdateReason.INITIALIZED)
     }
   }
 

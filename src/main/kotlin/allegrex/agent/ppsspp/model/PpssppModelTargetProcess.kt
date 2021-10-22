@@ -60,7 +60,7 @@ class PpssppModelTargetProcess(
         TargetObject.DISPLAY_ATTRIBUTE_NAME to "Process",
         TargetExecutionStateful.STATE_ATTRIBUTE_NAME to TargetExecutionState.STOPPED, // this will be set to the actual state by the first state event
       ),
-      "Initialized"
+      UpdateReason.INITIALIZED
     )
   }
 
@@ -99,7 +99,7 @@ class PpssppModelTargetProcess(
     when (running) {
       true -> {
         session.listeners.fire.event(
-          session, threadTarget, TargetEventScope.TargetEventType.RUNNING, "Running", listOfNotNull(threadTarget)
+          session, threadTarget, TargetEventScope.TargetEventType.RUNNING, UpdateReason.RUNNING, listOfNotNull(threadTarget)
         )
         invalidateMemoryAndRegisterCaches()
       }
@@ -108,7 +108,9 @@ class PpssppModelTargetProcess(
           session.changeFocus(it.getFirstStackFrame())
           it.updateThread()
         }
-        session.listeners.fire.event(session, threadTarget, TargetEventScope.TargetEventType.STOPPED, "Stopped", listOfNotNull(threadTarget))
+        session.listeners.fire.event(
+          session, threadTarget, TargetEventScope.TargetEventType.STOPPED, UpdateReason.STOPPED, listOfNotNull(threadTarget)
+        )
       }
     }
   }
@@ -126,15 +128,11 @@ class PpssppModelTargetProcess(
     }
 //    threads.updateThreads()
     session.listeners.fire.event(
-      session,
-      threadTarget,
-      TargetEventScope.TargetEventType.STEP_COMPLETED,
-      "Step completed",
-      listOf(threadTarget)
+      session, threadTarget, TargetEventScope.TargetEventType.STEP_COMPLETED, UpdateReason.STEP_COMPLETED, listOf(threadTarget)
     )
   }
 
-  private fun invalidateMemoryAndRegisterCaches() {
+  fun invalidateMemoryAndRegisterCaches() {
     memory.invalidateMemoryCaches()
     threads.invalidateRegisterCaches()
   }

@@ -31,7 +31,7 @@ class PpssppModelTargetModuleContainer(
   override fun requestElements(refresh: Boolean) = modelScope.futureVoid {
     val modules = api.listModules()
       .map { getTargetModule(it) }
-    val delta = setElements(modules, "Refreshed")
+    val delta = setElements(modules, UpdateReason.REFRESHED)
     if (!delta.isEmpty) {
       targetModules.entries
         .removeIf { delta.removed.containsValue(it.value) }

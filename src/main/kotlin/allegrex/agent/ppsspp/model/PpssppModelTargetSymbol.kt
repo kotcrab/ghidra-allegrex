@@ -43,7 +43,7 @@ class PpssppModelTargetSymbol(
         TargetSymbol.SIZE_ATTRIBUTE_NAME to 4L,
         TargetSymbol.NAMESPACE_ATTRIBUTE_NAME to namespace,
       ),
-      "Initialized"
+      UpdateReason.INITIALIZED
     )
   }
 }

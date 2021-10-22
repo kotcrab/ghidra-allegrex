@@ -3,7 +3,6 @@ package allegrex.agent.ppsspp.model
 import allegrex.agent.ppsspp.client.model.PpssppLogMessage
 import allegrex.agent.ppsspp.util.futureVoid
 import ghidra.dbg.agent.DefaultTargetModelRoot
-import ghidra.dbg.target.TargetAccessConditioned
 import ghidra.dbg.target.TargetAggregate
 import ghidra.dbg.target.TargetConsole
 import ghidra.dbg.target.TargetEventScope
@@ -15,8 +14,6 @@ import ghidra.dbg.target.schema.TargetElementType
 import ghidra.dbg.target.schema.TargetObjectSchema
 import ghidra.dbg.target.schema.TargetObjectSchemaInfo
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 import java.util.concurrent.CompletableFuture
 
 @TargetObjectSchemaInfo(
@@ -26,11 +23,14 @@ import java.util.concurrent.CompletableFuture
 )
 class PpssppModelTargetSession(model: PpssppDebuggerObjectModel, schema: TargetObjectSchema) :
   DefaultTargetModelRoot(model, "Session", schema),
-  TargetAccessConditioned, TargetAggregate, TargetInterpreter, TargetEventScope, TargetFocusScope {
+  TargetAggregate, TargetInterpreter, TargetEventScope, TargetFocusScope {
+
+  companion object {
+    private const val COMMANDS_UNSUPPORTED_MESSAGE = "Commands are not supported"
+  }
 
   @get:TargetAttributeType(name = PpssppModelTargetProcess.NAME, required = false, fixed = false)
   var process: PpssppModelTargetProcess? = null
-  val processLock = Mutex()
 
   private val session = this
 
@@ -42,26 +42,13 @@ class PpssppModelTargetSession(model: PpssppDebuggerObjectModel, schema: TargetO
         TargetObject.DISPLAY_ATTRIBUTE_NAME to "Session",
         TargetFocusScope.FOCUS_ATTRIBUTE_NAME to this,
         TargetInterpreter.PROMPT_ATTRIBUTE_NAME to "(PPSSPP)",
-        TargetAccessConditioned.ACCESSIBLE_ATTRIBUTE_NAME to true
       ),
-      "Initialized"
+      UpdateReason.INITIALIZED
     )
   }
 
   fun invalidateMemoryAndRegisterCaches() {
-
-  }
-
-  fun changeAccessible(accessible: Boolean) {
-// TODO this doesn't work as expected (prevents model updates)
-
-//    changeAttributes(
-//      listOf(),
-//      mapOf(
-//        TargetAccessConditioned.ACCESSIBLE_ATTRIBUTE_NAME to accessible
-//      ),
-//      "Accessibility changed"
-//    )
+    process?.invalidateMemoryAndRegisterCaches()
   }
 
   override fun getModel(): PpssppDebuggerObjectModel {
@@ -69,11 +56,11 @@ class PpssppModelTargetSession(model: PpssppDebuggerObjectModel, schema: TargetO
   }
 
   override fun execute(cmd: String) = getModel().modelScope.futureVoid {
-    listeners.fire.consoleOutput(session, TargetConsole.Channel.STDOUT, "Commands are not supported")
+    listeners.fire.consoleOutput(session, TargetConsole.Channel.STDOUT, COMMANDS_UNSUPPORTED_MESSAGE)
   }
 
   override fun executeCapture(cmd: String): CompletableFuture<String> {
-    return CompletableFuture.completedFuture("Commands are not supported")
+    return CompletableFuture.completedFuture(COMMANDS_UNSUPPORTED_MESSAGE)
   }
 
   override fun requestFocus(focus: TargetObject?) = getModel().modelScope.futureVoid {
@@ -93,7 +80,7 @@ class PpssppModelTargetSession(model: PpssppDebuggerObjectModel, schema: TargetO
       mapOf(
         TargetFocusScope.FOCUS_ATTRIBUTE_NAME to focus
       ),
-      "Focus changed"
+      UpdateReason.FOCUS_CHANGED
     )
   }
 
@@ -123,24 +110,32 @@ class PpssppModelTargetSession(model: PpssppDebuggerObjectModel, schema: TargetO
 
   fun ppssppNoGame() {
     getModel().modelScope.launch {
-      processLock.withLock {
-        val oldProcess = process
-        process = null
-        resync(true, true) // TODO doesn't work
-        listeners.fire.event(session, null, TargetEventScope.TargetEventType.PROCESS_EXITED, "Process exited", listOf(oldProcess))
-      }
+      val oldProcess = process
+      process = null
+      listeners.fire.event(
+        session,
+        oldProcess?.threads?.getAnyThreadOrNull(),
+        TargetEventScope.TargetEventType.PROCESS_EXITED,
+        UpdateReason.PROCESS_EXITED,
+        listOf(oldProcess)
+      )
+      changeAttributes(listOf(PpssppModelTargetProcess.NAME), emptyList(), emptyMap<String, Any>(), UpdateReason.PROCESS_EXITED)
     }
   }
 
   private fun initializeProcessIfNeededThen(block: suspend () -> Unit) {
     getModel().modelScope.launch {
-      processLock.withLock {
-        if (process == null) {
-          process = PpssppModelTargetProcess(session)
-          process?.syncInitial()
-          changeAttributes(emptyList(), listOf(process), emptyMap<String, Any>(), "Process created")
-          listeners.fire.event(session, null, TargetEventScope.TargetEventType.PROCESS_CREATED, "Process created", listOf(process))
-        }
+      if (process == null) {
+        process = PpssppModelTargetProcess(session)
+        process?.syncInitial()
+        changeAttributes(emptyList(), listOf(process), emptyMap<String, Any>(), UpdateReason.PROCESS_CREATED)
+        listeners.fire.event(
+          session,
+          null,
+          TargetEventScope.TargetEventType.PROCESS_CREATED,
+          UpdateReason.PROCESS_CREATED,
+          listOf(process)
+        )
       }
       block()
     }

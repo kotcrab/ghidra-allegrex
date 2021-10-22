@@ -44,7 +44,7 @@ class PpssppModelTargetMemoryRegion(
         TargetMemoryRegion.EXECUTABLE_ATTRIBUTE_NAME to true,
         TargetObject.DISPLAY_ATTRIBUTE_NAME to range.name
       ),
-      "Initialized"
+      UpdateReason.INITIALIZED
     )
   }
 }

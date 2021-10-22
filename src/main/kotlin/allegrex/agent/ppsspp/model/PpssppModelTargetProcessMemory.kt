@@ -37,7 +37,7 @@ class PpssppModelTargetProcessMemory(
   override fun requestElements(refresh: Boolean) = modelScope.futureVoid {
     val ranges = api.getMemoryMap()
       .map { getTargetMemoryRegion(it) }
-    val delta = setElements(ranges, "Refreshed")
+    val delta = setElements(ranges, UpdateReason.REFRESHED)
     if (!delta.isEmpty) {
       memoryRegions.entries
         .removeIf { delta.removed.containsValue(it.value) }

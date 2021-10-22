@@ -115,20 +115,16 @@ class PpssppDebuggerObjectModel(private val client: PpssppClient) : AbstractDebu
             terminate()
           }
           state == PpssppState.NO_GAME -> {
-            session.changeAccessible(false)
             session.ppssppNoGame()
           }
           paused -> {
-            session.changeAccessible(false)
             session.ppssppPaused()
           }
           state == PpssppState.STEPPING -> {
-            session.changeAccessible(true)
             session.ppssppStepping()
           }
           state == PpssppState.RUNNING -> {
             session.invalidateMemoryAndRegisterCaches()
-            session.changeAccessible(false)
             session.ppssppRunning()
           }
         }

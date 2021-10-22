@@ -33,7 +33,7 @@ class PpssppModelTargetRegister(
         TargetRegister.LENGTH_ATTRIBUTE_NAME to registerMeta.bitLength,
         TargetObject.DISPLAY_ATTRIBUTE_NAME to "[${registerMeta.name}]",
       ),
-      "Initialized"
+      UpdateReason.INITIALIZED
     )
   }
 }

@@ -38,7 +38,7 @@ class PpssppModelTargetEnvironment(
         TargetEnvironment.OS_ATTRIBUTE_NAME to OS,
         TargetEnvironment.ENDIAN_ATTRIBUTE_NAME to ENDIAN,
       ),
-      "Initialized"
+      UpdateReason.INITIALIZED
     )
   }
 }

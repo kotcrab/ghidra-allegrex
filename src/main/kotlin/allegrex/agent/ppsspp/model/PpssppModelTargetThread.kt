@@ -51,7 +51,7 @@ class PpssppModelTargetThread(
         TargetObject.DISPLAY_ATTRIBUTE_NAME to "${thread.name} (${thread.id})",
         TargetSteppable.SUPPORTED_STEP_KINDS_ATTRIBUTE_NAME to SUPPORTED_KINDS, // FIXME
       ),
-      "Initialized"
+      UpdateReason.INITIALIZED
     )
   }
 

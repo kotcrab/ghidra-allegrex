@@ -49,7 +49,7 @@ class PpssppModelTargetRegisterContainerAndBank(
       mapOf(
         DESCRIPTIONS_ATTRIBUTE_NAME to this
       ),
-      "Initialized"
+      UpdateReason.INITIALIZED
     )
     requestElements(false)
   }
@@ -65,10 +65,10 @@ class PpssppModelTargetRegisterContainerAndBank(
           TargetRegister.VALUE_ATTRIBUTE_NAME to reg.uintValue.toString(16),
           TargetRegister.DISPLAY_ATTRIBUTE_NAME to "${reg.meta().name}: ${reg.uintValue.toString(16)}",
         ),
-        "Refreshed"
+        UpdateReason.REFRESHED
       )
     }
-    setElements(registers, "Refreshed") // delta.removed ignored, registers won't change // TODO thread can get removed
+    setElements(registers, UpdateReason.REFRESHED) // delta.removed ignored, registers won't change // TODO thread can get removed
   }
 
   private fun getTargetRegister(register: PpssppCpuRegisterMeta): PpssppModelTargetRegister {

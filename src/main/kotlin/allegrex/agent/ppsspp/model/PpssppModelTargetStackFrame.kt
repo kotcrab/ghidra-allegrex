@@ -34,7 +34,7 @@ class PpssppModelTargetStackFrame(
         TargetStackFrame.PC_ATTRIBUTE_NAME to pcAddr,
         // TODO use comment to show disassembly
       ),
-      "Initialized"
+      UpdateReason.INITIALIZED
     )
   }
 }
