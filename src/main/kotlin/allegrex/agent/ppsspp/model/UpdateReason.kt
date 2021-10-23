@@ -10,4 +10,5 @@ object UpdateReason {
   const val STOPPED = "Stopped"
   const val EXECUTION_STATE_CHANGED = "Execution state change"
   const val STEP_COMPLETED = "Step completed"
+  const val ENABLED_STATE_CHANGED = "Enabled state changed"
 }

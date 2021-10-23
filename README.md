@@ -64,6 +64,7 @@ TODO
   - Target is already being recorded
   - Current frame's bank does not exist
   - Step out error is ignored
+  - Can't trigger breakpoint hit events
 
 ### VFPU Limitations
 

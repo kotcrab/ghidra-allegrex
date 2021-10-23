@@ -4,7 +4,9 @@ val ppssppEventMap = mapOf(
   PpssppCpuBreakpointAddEvent.EVENT_NAME to PpssppCpuBreakpointAddEvent::class.java,
   PpssppCpuBreakpointListEvent.EVENT_NAME to PpssppCpuBreakpointListEvent::class.java,
   PpssppCpuBreakpointRemoveEvent.EVENT_NAME to PpssppCpuBreakpointRemoveEvent::class.java,
+  PpssppCpuBreakpointUpdateEvent.EVENT_NAME to PpssppCpuBreakpointUpdateEvent::class.java,
 
+  PpssppCpuEvaluateEvent.EVENT_NAME to PpssppCpuEvaluateEvent::class.java,
   PpssppCpuRegistersEvent.EVENT_NAME to PpssppCpuRegistersEvent::class.java,
   PpssppCpuResumeEvent.EVENT_NAME to PpssppCpuResumeEvent::class.java,
   PpssppCpuStatusEvent.EVENT_NAME to PpssppCpuStatusEvent::class.java,
@@ -28,6 +30,7 @@ val ppssppEventMap = mapOf(
   PpssppMemoryBreakpointAddEvent.EVENT_NAME to PpssppMemoryBreakpointAddEvent::class.java,
   PpssppMemoryBreakpointListEvent.EVENT_NAME to PpssppMemoryBreakpointListEvent::class.java,
   PpssppMemoryBreakpointRemoveEvent.EVENT_NAME to PpssppMemoryBreakpointRemoveEvent::class.java,
+  PpssppMemoryBreakpointUpdateEvent.EVENT_NAME to PpssppMemoryBreakpointUpdateEvent::class.java,
 
   PpssppMemoryMappingEvent.EVENT_NAME to PpssppMemoryMappingEvent::class.java,
   PpssppMemoryReadEvent.EVENT_NAME to PpssppMemoryReadEvent::class.java,

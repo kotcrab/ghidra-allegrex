@@ -1,6 +1,7 @@
 package allegrex.agent.ppsspp.client
 
 import allegrex.agent.ppsspp.client.model.PpssppCpuBreakpoint
+import allegrex.agent.ppsspp.client.model.PpssppCpuEvaluatedExpression
 import allegrex.agent.ppsspp.client.model.PpssppCpuRegister
 import allegrex.agent.ppsspp.client.model.PpssppCpuStatus
 import allegrex.agent.ppsspp.client.model.PpssppGameStatus
@@ -13,6 +14,8 @@ import allegrex.agent.ppsspp.client.model.PpssppStackFrame
 import allegrex.agent.ppsspp.client.model.event.PpssppCpuBreakpointAddEvent
 import allegrex.agent.ppsspp.client.model.event.PpssppCpuBreakpointListEvent
 import allegrex.agent.ppsspp.client.model.event.PpssppCpuBreakpointRemoveEvent
+import allegrex.agent.ppsspp.client.model.event.PpssppCpuBreakpointUpdateEvent
+import allegrex.agent.ppsspp.client.model.event.PpssppCpuEvaluateEvent
 import allegrex.agent.ppsspp.client.model.event.PpssppCpuRegistersEvent
 import allegrex.agent.ppsspp.client.model.event.PpssppCpuStatusEvent
 import allegrex.agent.ppsspp.client.model.event.PpssppEvent
@@ -24,12 +27,15 @@ import allegrex.agent.ppsspp.client.model.event.PpssppHleThreadsListEvent
 import allegrex.agent.ppsspp.client.model.event.PpssppMemoryBreakpointAddEvent
 import allegrex.agent.ppsspp.client.model.event.PpssppMemoryBreakpointListEvent
 import allegrex.agent.ppsspp.client.model.event.PpssppMemoryBreakpointRemoveEvent
+import allegrex.agent.ppsspp.client.model.event.PpssppMemoryBreakpointUpdateEvent
 import allegrex.agent.ppsspp.client.model.event.PpssppMemoryMappingEvent
 import allegrex.agent.ppsspp.client.model.event.PpssppMemoryReadEvent
 import allegrex.agent.ppsspp.client.model.event.PpssppSetRegisterEvent
 import allegrex.agent.ppsspp.client.model.request.PpssppCpuBreakpointAddRequest
 import allegrex.agent.ppsspp.client.model.request.PpssppCpuBreakpointListRequest
 import allegrex.agent.ppsspp.client.model.request.PpssppCpuBreakpointRemoveRequest
+import allegrex.agent.ppsspp.client.model.request.PpssppCpuBreakpointUpdateRequest
+import allegrex.agent.ppsspp.client.model.request.PpssppCpuEvaluateRequest
 import allegrex.agent.ppsspp.client.model.request.PpssppCpuGetRegistersRequest
 import allegrex.agent.ppsspp.client.model.request.PpssppCpuResumeRequest
 import allegrex.agent.ppsspp.client.model.request.PpssppCpuStatusRequest
@@ -45,6 +51,7 @@ import allegrex.agent.ppsspp.client.model.request.PpssppHleThreadsListRequest
 import allegrex.agent.ppsspp.client.model.request.PpssppMemoryBreakpointAddRequest
 import allegrex.agent.ppsspp.client.model.request.PpssppMemoryBreakpointListRequest
 import allegrex.agent.ppsspp.client.model.request.PpssppMemoryBreakpointRemoveRequest
+import allegrex.agent.ppsspp.client.model.request.PpssppMemoryBreakpointUpdateRequest
 import allegrex.agent.ppsspp.client.model.request.PpssppMemoryMappingRequest
 import allegrex.agent.ppsspp.client.model.request.PpssppMemoryReadRequest
 import allegrex.agent.ppsspp.client.model.request.PpssppMemoryWriteRequest
@@ -80,6 +87,11 @@ class PpssppApi(private val client: PpssppClient) {
 
   suspend fun stepOut(threadId: Long) {
     client.sendRequest(PpssppCpuStepOutRequest(threadId))
+  }
+
+  suspend fun evaluate(expression: String): PpssppCpuEvaluatedExpression {
+    val result = client.sendRequestAndWait<PpssppCpuEvaluateEvent>(PpssppCpuEvaluateRequest(expression))
+    return PpssppCpuEvaluatedExpression(expression, result.uintValue, result.floatValue)
   }
 
   suspend fun listRegisters(threadId: Long): List<PpssppCpuRegister> {
@@ -123,6 +135,10 @@ class PpssppApi(private val client: PpssppClient) {
     )
   }
 
+  suspend fun updateCpuBreakpoint(address: Long, enabled: Boolean) {
+    client.sendRequestAndWait<PpssppCpuBreakpointUpdateEvent>(PpssppCpuBreakpointUpdateRequest(address, enabled))
+  }
+
   suspend fun removeCpuBreakpoint(address: Long) {
     client.sendRequestAndWait<PpssppCpuBreakpointRemoveEvent>(
       PpssppCpuBreakpointRemoveRequest(address)
@@ -147,6 +163,10 @@ class PpssppApi(private val client: PpssppClient) {
     client.sendRequestAndWait<PpssppMemoryBreakpointAddEvent>(
       PpssppMemoryBreakpointAddRequest(address, size, enabled, log, read, write, change, logFormat)
     )
+  }
+
+  suspend fun updateMemoryBreakpoint(address: Long, size: Long, enabled: Boolean) {
+    client.sendRequestAndWait<PpssppMemoryBreakpointUpdateEvent>(PpssppMemoryBreakpointUpdateRequest(address, size, enabled))
   }
 
   suspend fun removeMemoryBreakpoint(address: Long, size: Long) {

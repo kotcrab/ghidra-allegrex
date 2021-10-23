@@ -10,4 +10,6 @@ data class PpssppMemoryBreakpoint(
   val change: Boolean,
   val logFormat: String?,
   val symbol: String?
-)
+) {
+  fun meta() = PpssppMemoryBreakpointMeta(address, size)
+}

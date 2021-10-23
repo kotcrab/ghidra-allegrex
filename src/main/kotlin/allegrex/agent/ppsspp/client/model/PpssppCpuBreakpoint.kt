@@ -8,4 +8,6 @@ data class PpssppCpuBreakpoint(
   val logFormat: String?,
   val symbol: String?,
   val code: String
-)
+) {
+  fun meta() = PpssppCpuBreakpointMeta(address)
+}
