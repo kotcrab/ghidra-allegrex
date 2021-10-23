@@ -87,7 +87,7 @@ class PpssppModelTargetProcess(
       mapOf(
         TargetExecutionStateful.STATE_ATTRIBUTE_NAME to executionState,
       ),
-      "Execution state change"
+      UpdateReason.EXECUTION_STATE_CHANGED
     )
 
     threads.updateThreads()
@@ -105,8 +105,8 @@ class PpssppModelTargetProcess(
       }
       false -> {
         threadTarget?.let {
-          session.changeFocus(it.getFirstStackFrame())
           it.updateThread()
+          session.changeFocus(it.getFirstStackFrame())
         }
         session.listeners.fire.event(
           session, threadTarget, TargetEventScope.TargetEventType.STOPPED, UpdateReason.STOPPED, listOfNotNull(threadTarget)
@@ -118,13 +118,13 @@ class PpssppModelTargetProcess(
   suspend fun stepCompleted() {
     val currentThread = api.listThreads().firstOrNull { it.isCurrent }
     if (currentThread == null) {
-      logger.warn("Can't complete step when current thread is null")
+      logger.warn("Can't complete step when current thread is not set")
       return
     }
     val threadTarget = threads.getThreadById(currentThread.id)
     threadTarget?.let {
-      session.changeFocus(it.getFirstStackFrame())
       it.updateThread()
+      session.changeFocus(it.getFirstStackFrame())
     }
 //    threads.updateThreads()
     session.listeners.fire.event(

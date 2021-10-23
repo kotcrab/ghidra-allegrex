@@ -59,7 +59,10 @@ and set image base.
 
 TODO
 
-- Ghidra file should contain module name to enable automatic dynamic to static listing mapping 
+- Ghidra file should contain module name to enable automatic dynamic to static listing mapping
+- Issues:
+  - Target is already being recorded
+  - Current frame's bank does not exist
 
 ### VFPU Limitations
 

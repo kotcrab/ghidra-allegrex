@@ -3,46 +3,44 @@ package allegrex.agent.ppsspp.model
 import allegrex.agent.ppsspp.util.futureVoid
 import ghidra.dbg.target.TargetStack
 import ghidra.dbg.target.schema.TargetAttributeType
+import ghidra.dbg.target.schema.TargetObjectSchema
 import ghidra.dbg.target.schema.TargetObjectSchemaInfo
 
-// TODO
-
 @TargetObjectSchemaInfo(
-  name = "Stack",
+  name = PpssppModelTargetStack.NAME,
   attributes = [TargetAttributeType(type = Void::class)],
-  canonicalContainer = true
+  canonicalContainer = true,
+  elementResync = TargetObjectSchema.ResyncMode.ONCE
 )
 class PpssppModelTargetStack(
   thread: PpssppModelTargetThread,
+  private val threadId: Long,
 ) :
   PpssppTargetObject<PpssppModelTargetStackFrame, PpssppModelTargetThread>(
-    thread.model, thread, NAME, "Stack"
+    thread.model, thread, NAME, NAME
   ),
   TargetStack {
+
   companion object {
     const val NAME = "Stack"
   }
 
-  private val frames = mutableListOf(PpssppModelTargetStackFrame(this, 0, thread.thread.pc))
-
-  init {
-//    requestElements(false)
-    setElements(frames, UpdateReason.INITIALIZED)
-  }
+  private val targetFrames = mutableMapOf<Int, PpssppModelTargetStackFrame>()
 
   override fun requestElements(refresh: Boolean) = modelScope.futureVoid {
-    // TODO handle refresh properly
+    val frames = api.backtraceThread(threadId)
+    val newTargetFrames = frames
+      .mapIndexed { level, frame ->
+        getTargetFrame(level).apply { updateFrame(frame) }
+      }
+    setElements(newTargetFrames, UpdateReason.REFRESHED)
   }
 
-  fun remakeFrame(pc: Long) {
-    synchronized(frames) {
-      frames.clear()
-      frames.add(PpssppModelTargetStackFrame(this, 0, pc))
-      setElements(frames, UpdateReason.INITIALIZED)
-    }
+  private fun getTargetFrame(level: Int): PpssppModelTargetStackFrame {
+    return targetFrames.getOrPut(level) { PpssppModelTargetStackFrame(this, level) }
   }
 
-  fun getFirstStackFrame(): PpssppModelTargetStackFrame {
-    return frames.first()
+  fun getFirstStackFrame(): PpssppModelTargetStackFrame? {
+    return targetFrames[0]
   }
 }

@@ -8,5 +8,6 @@ object UpdateReason {
   const val FOCUS_CHANGED = "Focus changed"
   const val RUNNING = "Running"
   const val STOPPED = "Stopped"
+  const val EXECUTION_STATE_CHANGED = "Execution state change"
   const val STEP_COMPLETED = "Step completed"
 }

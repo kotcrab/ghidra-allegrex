@@ -10,6 +10,7 @@ import ghidra.dbg.target.schema.TargetAttributeType
 import ghidra.dbg.target.schema.TargetElementType
 import ghidra.dbg.target.schema.TargetObjectSchemaInfo
 import ghidra.dbg.util.PathUtils
+import kotlinx.coroutines.future.await
 
 // TODO
 
@@ -41,12 +42,12 @@ class PpssppModelTargetThread(
   val registers = PpssppModelTargetRegisterContainerAndBank(this, thread.id)
 
   @get:TargetAttributeType(name = PpssppModelTargetStack.NAME, required = true, fixed = true)
-  val stack = PpssppModelTargetStack(this)
+  val stack = PpssppModelTargetStack(this, thread.id)
 
   init {
     changeAttributes(
       emptyList(),
-      listOf(registers, stack), // TODO stack refresh
+      listOf(registers, stack),
       mapOf(
         TargetObject.DISPLAY_ATTRIBUTE_NAME to "${thread.name} (${thread.id})",
         TargetSteppable.SUPPORTED_STEP_KINDS_ATTRIBUTE_NAME to SUPPORTED_KINDS, // TODO
@@ -66,13 +67,13 @@ class PpssppModelTargetThread(
     }
   }
 
-  fun getFirstStackFrame(): PpssppModelTargetStackFrame {
+  fun getFirstStackFrame(): PpssppModelTargetStackFrame? {
     return stack.getFirstStackFrame()
   }
 
   suspend fun updateThread() { // TODO proper update logic
-    val pc = api.listThreads().firstOrNull { it.id == thread.id }?.pc ?: 0
-    stack.remakeFrame(pc)
-    registers.resync(true, true)
+//    val pc = api.listThreads().firstOrNull { it.id == thread.id }?.pc ?: 0
+    stack.resync().await()
+    registers.resync(true, true).await()
   }
 }
