@@ -90,7 +90,7 @@ class PpssppModelTargetBreakpointContainer(
   private suspend fun placeBreakpoint(minAddress: Long, length: Long, kinds: Set<TargetBreakpointKind>) {
     val wantsCpu = kinds.contains(TargetBreakpointKind.HW_EXECUTE)
     val wantsMemory = kinds.contains(TargetBreakpointKind.READ) || kinds.contains(TargetBreakpointKind.WRITE)
-    if (wantsCpu && length <= 4) {
+    if (wantsCpu && length == 1L) {
       api.addCpuBreakpoint(minAddress)
     }
     if (wantsMemory) {

@@ -73,13 +73,16 @@ class PpssppModelTargetCpuBreakpoint(
   }
 
   override fun disable() = modelScope.futureVoid {
-    api.updateCpuBreakpoint(meta.address, enabled = false)
-    changeAttributes(emptyList(), emptyList(), mapOf(TargetTogglable.ENABLED_ATTRIBUTE_NAME to false), UpdateReason.ENABLED_STATE_CHANGED)
+    changeEnabledState(false)
   }
 
   override fun enable() = modelScope.futureVoid {
-    api.updateCpuBreakpoint(meta.address, enabled = true)
-    changeAttributes(emptyList(), emptyList(), mapOf(TargetTogglable.ENABLED_ATTRIBUTE_NAME to true), UpdateReason.ENABLED_STATE_CHANGED)
+    changeEnabledState(true)
+  }
+
+  private suspend fun changeEnabledState(enabled: Boolean) {
+    api.updateCpuBreakpoint(meta.address, enabled)
+    changeAttributes(emptyList(), emptyList(), mapOf(TargetTogglable.ENABLED_ATTRIBUTE_NAME to enabled), UpdateReason.ENABLED_STATE_CHANGED)
   }
 
   override fun addAction(action: TargetBreakpointSpec.TargetBreakpointAction) {

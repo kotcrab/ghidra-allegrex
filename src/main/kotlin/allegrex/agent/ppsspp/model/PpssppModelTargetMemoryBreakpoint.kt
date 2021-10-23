@@ -75,13 +75,16 @@ class PpssppModelTargetMemoryBreakpoint(
   }
 
   override fun disable() = modelScope.futureVoid {
-    api.updateMemoryBreakpoint(meta.address, meta.size, enabled = false)
-    changeAttributes(emptyList(), emptyList(), mapOf(TargetTogglable.ENABLED_ATTRIBUTE_NAME to false), UpdateReason.ENABLED_STATE_CHANGED)
+    changeEnabledState(false)
   }
 
   override fun enable() = modelScope.futureVoid {
-    api.updateMemoryBreakpoint(meta.address, meta.size, enabled = true)
-    changeAttributes(emptyList(), emptyList(), mapOf(TargetTogglable.ENABLED_ATTRIBUTE_NAME to true), UpdateReason.ENABLED_STATE_CHANGED)
+    changeEnabledState(true)
+  }
+
+  private suspend fun changeEnabledState(enabled: Boolean) {
+    api.updateMemoryBreakpoint(meta.address, meta.size, enabled)
+    changeAttributes(emptyList(), emptyList(), mapOf(TargetTogglable.ENABLED_ATTRIBUTE_NAME to enabled), UpdateReason.ENABLED_STATE_CHANGED)
   }
 
   override fun addAction(action: TargetBreakpointSpec.TargetBreakpointAction) {
