@@ -283,6 +283,15 @@ macro ValCast(dest,src) {
     dest = src;
 }
 
+macro ternary(res, cond, avar, bvar) {
+    if (cond != 0) goto <true>;
+    res = bvar;
+    goto <done>;
+<true>
+    res = avar;
+<done>
+}
+
 OFF_BASE:   simmed(base)    is simmed & base { tmp:4 = base + simmed; tmpscaled:4 = 0; ValCast(tmpscaled,tmp); export tmpscaled; }
 
 Rel16: reloc        is off16    [ reloc=inst_start+4+4*off16; ]                                 { export *:4 reloc; }
