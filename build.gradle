@@ -1,12 +1,14 @@
 buildscript {
-    ext.kotlinVersion = '1.5.21'
-    repositories {
-        mavenCentral()
-    }
+  ext.kotlinVersion = '1.5.21'
+  ext.kotlinCoroutinesVersion = '1.5.1-native-mt'
+  ext.ktorVersion = '1.6.2'
+  repositories {
+    mavenCentral()
+  }
 
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
-    }
+  dependencies {
+    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+  }
 }
 
 plugins {
@@ -14,7 +16,7 @@ plugins {
 }
 
 repositories {
-    mavenCentral()
+  mavenCentral()
 }
 
 apply plugin: 'com.github.johnrengelman.shadow'
@@ -23,59 +25,106 @@ apply plugin: 'kotlin'
 
 def ghidraInstallDir
 if (System.env.GHIDRA_INSTALL_DIR) {
-    ghidraInstallDir = System.env.GHIDRA_INSTALL_DIR
+  ghidraInstallDir = System.env.GHIDRA_INSTALL_DIR
 } else if (project.hasProperty("GHIDRA_INSTALL_DIR")) {
-    ghidraInstallDir = project.getProperty("GHIDRA_INSTALL_DIR")
+  ghidraInstallDir = project.getProperty("GHIDRA_INSTALL_DIR")
 }
 if (!ghidraInstallDir) {
-    throw new GradleException("GHIDRA_INSTALL_DIR is not defined!")
+  throw new GradleException("GHIDRA_INSTALL_DIR is not defined!")
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
-    shadow fileTree(dir: ghidraInstallDir + '/Ghidra/Framework', include: "**/*.jar")
-    shadow fileTree(dir: ghidraInstallDir + '/Ghidra/Features', include: "**/*.jar")
+  implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+  implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutinesVersion"
+  implementation "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:$kotlinCoroutinesVersion"
+  implementation "io.ktor:ktor-client-core:$ktorVersion"
+  implementation "io.ktor:ktor-client-cio:$ktorVersion"
+  implementation("io.ktor:ktor-client-gson:$ktorVersion") {
+    exclude group: 'com.google.code.gson', module: 'gson' // already provided by Ghidra
+  }
+  implementation "io.ktor:ktor-client-websockets:$ktorVersion"
+  testImplementation "com.google.code.gson:gson:2.8.7"
+  testImplementation 'org.apache.logging.log4j:log4j-api:2.14.1'
+  testImplementation 'org.apache.logging.log4j:log4j-core:2.14.1'
+  shadow fileTree(dir: ghidraInstallDir + '/Ghidra/Framework', include: "**/*.jar")
+  shadow fileTree(dir: ghidraInstallDir + '/Ghidra/Features', include: "**/*.jar")
+  // Debugger
+  shadow fileTree(dir: ghidraInstallDir + '/Ghidra/Debug/Framework-Debugging', include: "**/*.jar")
+  shadow fileTree(dir: ghidraInstallDir + '/Ghidra/Debug/Framework-AsyncComm', include: "**/*.jar")
+  shadow fileTree(dir: ghidraInstallDir + '/Ghidra/Debug/Framework-TraceModeling', include: "**/*.jar")
+  shadow fileTree(dir: ghidraInstallDir + '/Ghidra/Debug/ProposedUtils', include: "**/*.jar")
+  shadow fileTree(dir: ghidraInstallDir + '/Ghidra/Debug/Debugger', include: "**/*.jar")
 }
 
 compileKotlin {
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
+  kotlinOptions {
+    jvmTarget = "1.8"
+  }
 }
 
 jar {
-    manifest {
-        attributes(
-                'Specification-Title': "Allegrex",
-                'Specification-Version': "10.0.4",
-        )
-    }
+  manifest {
+    attributes(
+      'Specification-Title': "Allegrex",
+      'Specification-Version': "10.0.4",
+    )
+  }
 }
 
 //noinspection GroovyAssignabilityCheck
 task ghidraInstall {
-    dependsOn 'shadowJar'
-    doLast {
-        def allegrexOut = ghidraInstallDir + '/Ghidra/Processors/Allegrex'
-        delete allegrexOut
-        copy {
-            from "data"
-            into allegrexOut + "/data"
-        }
-        copy {
-            from "ghidra_scripts"
-            into allegrexOut + "/ghidra_scripts"
-        }
-        copy {
-            from "build/libs"
-            into allegrexOut + "/lib"
-            include "ghidra-allegrex-all.jar"
-            rename("ghidra-allegrex-all.jar", "Allegrex.jar")
-        }
-        copy {
-            from "."
-            into allegrexOut
-            include "Module.manifest"
-        }
+  dependsOn 'shadowJar'
+  doLast {
+    def allegrexOut = ghidraInstallDir + '/Ghidra/Processors/Allegrex'
+    delete allegrexOut
+    copy {
+      from "data"
+      into allegrexOut + "/data"
     }
+    copy {
+      from "ghidra_scripts"
+      into allegrexOut + "/ghidra_scripts"
+    }
+    copy {
+      from "build/libs"
+      into allegrexOut + "/lib"
+      include "ghidra-allegrex-all.jar"
+      rename("ghidra-allegrex-all.jar", "Allegrex.jar")
+    }
+    copy {
+      from "."
+      into allegrexOut
+      include "Module.manifest"
+    }
+  }
+}
+
+task ghidraInstallThenRun {
+  dependsOn 'ghidraInstall'
+  doLast {
+    exec {
+      if (System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')) {
+        commandLine 'cmd', '/c', 'ghidraRun.bat'
+      } else {
+        commandLine './ghidraRun.sh'
+      }
+      workingDir ghidraInstallDir
+      ignoreExitValue true
+    }
+  }
+}
+
+task ghidraInstallThenDebug {
+  dependsOn 'ghidraInstall'
+  doLast {
+    exec {
+      if (System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')) {
+        commandLine 'cmd', '/c', 'support\\ghidraDebug.bat'
+      } else {
+        commandLine './support/ghidraDebug.sh'
+      }
+      workingDir ghidraInstallDir
+      ignoreExitValue true
+    }
+  }
 }
