@@ -53,7 +53,6 @@ class PpssppModelTargetRegisterContainerAndBank(
       ),
       UpdateReason.INITIALIZED
     )
-    requestElements(false)
   }
 
   override fun requestElements(refresh: Boolean) = modelScope.futureVoid {

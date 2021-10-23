@@ -63,6 +63,7 @@ TODO
 - Issues:
   - Target is already being recorded
   - Current frame's bank does not exist
+  - Step out error is ignored
 
 ### VFPU Limitations
 

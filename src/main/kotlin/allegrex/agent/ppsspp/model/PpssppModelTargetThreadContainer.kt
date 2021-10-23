@@ -7,8 +7,6 @@ import ghidra.dbg.target.schema.TargetAttributeType
 import ghidra.dbg.target.schema.TargetObjectSchema
 import ghidra.dbg.target.schema.TargetObjectSchemaInfo
 
-// TODO
-
 @TargetObjectSchemaInfo(
   name = "ThreadContainer",
   attributes = [TargetAttributeType(type = Void::class)],
@@ -28,13 +26,17 @@ class PpssppModelTargetThreadContainer(
   private val targetThreads = mutableMapOf<PpssppHleThreadMeta, PpssppModelTargetThread>()
 
   override fun requestElements(refresh: Boolean) = modelScope.futureVoid {
-    // TODO handle refresh
-    val threads = api.listThreads()
+    updateUsingThreads(api.listThreads())
+  }
+
+  fun updateUsingThreads(threads: List<PpssppHleThread>) {
+    val newTargetThreads = threads
       .map { getTargetThread(it) }
-    val delta = setElements(threads, UpdateReason.REFRESHED)
-    delta.removed
-      .map { it.value.thread.meta() }
-//      .forEach { getModel().deleteModelObject(it) }
+    val delta = setElements(newTargetThreads, UpdateReason.REFRESHED)
+    if (!delta.isEmpty) {
+      targetThreads.entries
+        .removeIf { delta.removed.containsValue(it.value) }
+    }
   }
 
   private fun getTargetThread(thread: PpssppHleThread): PpssppModelTargetThread {
@@ -50,10 +52,8 @@ class PpssppModelTargetThreadContainer(
   }
 
   fun invalidateRegisterCaches() {
-    // TODO
-  }
-
-  fun updateThreads() {
-    requestElements(true)
+    targetThreads.forEach { (_, thread) ->
+      thread.invalidateRegisterCaches()
+    }
   }
 }

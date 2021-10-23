@@ -12,8 +12,6 @@ import ghidra.dbg.target.schema.TargetObjectSchemaInfo
 import ghidra.dbg.util.PathUtils
 import kotlinx.coroutines.future.await
 
-// TODO
-
 @TargetObjectSchemaInfo(
   name = "Thread",
   elements = [TargetElementType(type = Void::class)],
@@ -50,7 +48,7 @@ class PpssppModelTargetThread(
       listOf(registers, stack),
       mapOf(
         TargetObject.DISPLAY_ATTRIBUTE_NAME to "${thread.name} (${thread.id})",
-        TargetSteppable.SUPPORTED_STEP_KINDS_ATTRIBUTE_NAME to SUPPORTED_KINDS, // TODO
+        TargetSteppable.SUPPORTED_STEP_KINDS_ATTRIBUTE_NAME to SUPPORTED_KINDS,
       ),
       UpdateReason.INITIALIZED
     )
@@ -71,9 +69,12 @@ class PpssppModelTargetThread(
     return stack.getFirstStackFrame()
   }
 
-  suspend fun updateThread() { // TODO proper update logic
-//    val pc = api.listThreads().firstOrNull { it.id == thread.id }?.pc ?: 0
+  suspend fun updateThread() {
     stack.resync().await()
-    registers.resync(true, true).await()
+    registers.resync().await()
+  }
+
+  fun invalidateRegisterCaches() {
+    listeners.fire.invalidateCacheRequested(this)
   }
 }

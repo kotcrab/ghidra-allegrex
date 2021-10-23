@@ -26,7 +26,7 @@ class PpssppModelTargetProcess(
   PpssppTargetObject<TargetObject, PpssppModelTargetSession>(
     session.model, session, NAME, "Process"
   ),
-  TargetAggregate, TargetExecutionStateful, TargetResumable, TargetInterruptible, TargetProcess { // TargetSteppable
+  TargetAggregate, TargetExecutionStateful, TargetResumable, TargetInterruptible, TargetProcess {
 
   companion object {
     const val NAME = "Process"
@@ -55,7 +55,7 @@ class PpssppModelTargetProcess(
   init {
     changeAttributes(
       emptyList(),
-      listOf(environment, modules, memory, symbols, threads, breakpoints),
+      listOf(environment, memory, modules, symbols, threads, breakpoints),
       mapOf(
         TargetObject.DISPLAY_ATTRIBUTE_NAME to "Process",
         TargetExecutionStateful.STATE_ATTRIBUTE_NAME to TargetExecutionState.STOPPED, // this will be set to the actual state by the first state event
@@ -65,7 +65,7 @@ class PpssppModelTargetProcess(
   }
 
   suspend fun syncInitial() {
-    listOf(modules, memory, threads, breakpoints)
+    listOf(memory, modules, threads, breakpoints)
       .map { it.resync().await() }
   }
 
@@ -90,8 +90,9 @@ class PpssppModelTargetProcess(
       UpdateReason.EXECUTION_STATE_CHANGED
     )
 
-    threads.updateThreads()
-    val currentThread = api.listThreads().firstOrNull { it.isCurrent }
+    val remoteThreads = api.listThreads()
+    threads.updateUsingThreads(remoteThreads)
+    val currentThread = remoteThreads.firstOrNull { it.isCurrent }
     if (currentThread == null) {
       logger.warn("Entered stepping state but current thread does not exist")
     }
@@ -104,32 +105,29 @@ class PpssppModelTargetProcess(
         invalidateMemoryAndRegisterCaches()
       }
       false -> {
-        threadTarget?.let {
-          it.updateThread()
-          session.changeFocus(it.getFirstStackFrame())
-        }
-        session.listeners.fire.event(
-          session, threadTarget, TargetEventScope.TargetEventType.STOPPED, UpdateReason.STOPPED, listOfNotNull(threadTarget)
-        )
+        updateAfterThreadStop(threadTarget, TargetEventScope.TargetEventType.STOPPED, UpdateReason.STOPPED)
       }
     }
   }
 
   suspend fun stepCompleted() {
-    val currentThread = api.listThreads().firstOrNull { it.isCurrent }
+    val remoteThreads = api.listThreads()
+    val currentThread = remoteThreads.firstOrNull { it.isCurrent }
     if (currentThread == null) {
       logger.warn("Can't complete step when current thread is not set")
       return
     }
+    threads.updateUsingThreads(remoteThreads)
     val threadTarget = threads.getThreadById(currentThread.id)
+    updateAfterThreadStop(threadTarget, TargetEventScope.TargetEventType.STEP_COMPLETED, UpdateReason.STEP_COMPLETED)
+  }
+
+  private suspend fun updateAfterThreadStop(threadTarget: PpssppModelTargetThread?, type: TargetEventScope.TargetEventType, reason: String) {
     threadTarget?.let {
       it.updateThread()
       session.changeFocus(it.getFirstStackFrame())
     }
-//    threads.updateThreads()
-    session.listeners.fire.event(
-      session, threadTarget, TargetEventScope.TargetEventType.STEP_COMPLETED, UpdateReason.STEP_COMPLETED, listOf(threadTarget)
-    )
+    session.listeners.fire.event(session, threadTarget, type, reason, listOf(threadTarget))
   }
 
   fun invalidateMemoryAndRegisterCaches() {
