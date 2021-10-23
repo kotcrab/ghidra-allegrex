@@ -6,7 +6,6 @@ import allegrex.agent.ppsspp.util.futureVoid
 import ghidra.dbg.target.schema.TargetAttributeType
 import ghidra.dbg.target.schema.TargetObjectSchema
 import ghidra.dbg.target.schema.TargetObjectSchemaInfo
-import java.util.concurrent.ConcurrentHashMap
 
 // TODO
 
@@ -26,8 +25,7 @@ class PpssppModelTargetThreadContainer(
     const val NAME = "Threads"
   }
 
-  // TODO switch to normal map
-  private val threadModels = ConcurrentHashMap<PpssppHleThreadMeta, PpssppModelTargetThread>()
+  private val targetThreads = mutableMapOf<PpssppHleThreadMeta, PpssppModelTargetThread>()
 
   override fun requestElements(refresh: Boolean) = modelScope.futureVoid {
     // TODO handle refresh
@@ -40,15 +38,15 @@ class PpssppModelTargetThreadContainer(
   }
 
   private fun getTargetThread(thread: PpssppHleThread): PpssppModelTargetThread {
-    return threadModels.getOrPut(thread.meta()) { PpssppModelTargetThread(this, thread) }
+    return targetThreads.getOrPut(thread.meta()) { PpssppModelTargetThread(this, thread) }
   }
 
   fun getAnyThreadOrNull(): PpssppModelTargetThread? {
-    return threadModels.values.firstOrNull()
+    return targetThreads.values.firstOrNull()
   }
 
   fun getThreadById(id: Long): PpssppModelTargetThread? {
-    return threadModels.values.firstOrNull { it.thread.id == id }
+    return targetThreads.values.firstOrNull { it.thread.id == id }
   }
 
   fun invalidateRegisterCaches() {

@@ -25,19 +25,19 @@ class PpssppModelTargetSymbolContainer(
     const val NAME = "Symbols"
   }
 
-  private val symbols = mutableMapOf<PpssppHleFunction, PpssppModelTargetSymbol>()
+  private val targetSymbols = mutableMapOf<PpssppHleFunction, PpssppModelTargetSymbol>()
 
   override fun requestElements(refresh: Boolean) = modelScope.futureVoid {
-    val functions = api.listFunctions()
+    val newTargetSymbols = api.listFunctions()
       .map { getTargetSymbol(it) }
-    val delta = setElements(functions, UpdateReason.REFRESHED)
+    val delta = setElements(newTargetSymbols, UpdateReason.REFRESHED)
     if (!delta.isEmpty) {
-      symbols.entries
+      targetSymbols.entries
         .removeIf { delta.removed.containsValue(it.value) }
     }
   }
 
   private fun getTargetSymbol(function: PpssppHleFunction): PpssppModelTargetSymbol {
-    return symbols.getOrPut(function) { PpssppModelTargetSymbol(this, function) }
+    return targetSymbols.getOrPut(function) { PpssppModelTargetSymbol(this, function) }
   }
 }

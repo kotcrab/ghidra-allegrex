@@ -9,9 +9,7 @@ import ghidra.dbg.target.schema.TargetObjectSchema
 import ghidra.dbg.target.schema.TargetObjectSchemaInfo
 import ghidra.program.model.address.Address
 import ghidra.program.model.address.AddressRangeImpl
-import kotlinx.coroutines.future.await
 import kotlinx.coroutines.future.future
-import kotlinx.coroutines.runBlocking
 
 @TargetObjectSchemaInfo(
   name = PpssppModelTargetProcessMemory.NAME,
@@ -31,21 +29,21 @@ class PpssppModelTargetProcessMemory(
     const val NAME = "Memory"
   }
 
-  private val memoryRegions = mutableMapOf<PpssppMemoryRange, PpssppModelTargetMemoryRegion>()
+  private val targetMemoryRegions = mutableMapOf<PpssppMemoryRange, PpssppModelTargetMemoryRegion>()
   private val memory = this
 
   override fun requestElements(refresh: Boolean) = modelScope.futureVoid {
-    val ranges = api.getMemoryMap()
+    val newTargetMemoryRegions = api.getMemoryMap()
       .map { getTargetMemoryRegion(it) }
-    val delta = setElements(ranges, UpdateReason.REFRESHED)
+    val delta = setElements(newTargetMemoryRegions, UpdateReason.REFRESHED)
     if (!delta.isEmpty) {
-      memoryRegions.entries
+      targetMemoryRegions.entries
         .removeIf { delta.removed.containsValue(it.value) }
     }
   }
 
   private fun getTargetMemoryRegion(range: PpssppMemoryRange): PpssppModelTargetMemoryRegion {
-    return memoryRegions.getOrPut(range) { PpssppModelTargetMemoryRegion(this, range) }
+    return targetMemoryRegions.getOrPut(range) { PpssppModelTargetMemoryRegion(this, range) }
   }
 
   override fun readMemory(address: Address, length: Int) = modelScope.future {

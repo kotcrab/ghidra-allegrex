@@ -2,7 +2,6 @@ package allegrex.agent.ppsspp.model
 
 import allegrex.agent.ppsspp.client.model.PpssppCpuRegisterMeta
 import allegrex.agent.ppsspp.util.futureVoid
-import ghidra.dbg.target.TargetRegister
 import ghidra.dbg.target.TargetRegisterBank
 import ghidra.dbg.target.TargetRegisterBank.DESCRIPTIONS_ATTRIBUTE_NAME
 import ghidra.dbg.target.TargetRegisterContainer
@@ -11,9 +10,9 @@ import ghidra.dbg.target.schema.TargetElementType
 import ghidra.dbg.target.schema.TargetObjectSchema.ResyncMode
 import ghidra.dbg.target.schema.TargetObjectSchemaInfo
 import kotlinx.coroutines.future.future
-import java.util.concurrent.ConcurrentHashMap
-
-// TODO
+import org.apache.logging.log4j.LogManager
+import java.math.BigInteger
+import java.nio.ByteBuffer
 
 @TargetObjectSchemaInfo(
   name = "RegisterContainer",
@@ -36,11 +35,14 @@ class PpssppModelTargetRegisterContainerAndBank(
   TargetRegisterContainer, TargetRegisterBank {
 
   companion object {
-    const val REGISTERS_NAME = "Registers" // TODO support mapped VFPU
+    const val REGISTERS_NAME = "Registers"
+
+    private val logger = LogManager.getLogger(PpssppModelTargetRegisterContainerAndBank::class.java)
+    private val ppssppVfpuRegisterNameRegex = """v[\da-f]{3}""".toRegex(RegexOption.IGNORE_CASE)
   }
 
-  // TODO switch to normal map
-  private val registerObjects = ConcurrentHashMap<PpssppCpuRegisterMeta, PpssppModelTargetRegister>()
+  private val container = this
+  private val targetRegisters = mutableMapOf<PpssppCpuRegisterMeta, PpssppModelTargetRegister>()
 
   init {
     changeAttributes(
@@ -55,34 +57,69 @@ class PpssppModelTargetRegisterContainerAndBank(
   }
 
   override fun requestElements(refresh: Boolean) = modelScope.futureVoid {
-    val gprRegisters = api.listRegisters(threadId)
-    val registers = gprRegisters
-      .map { getTargetRegister(it.meta()) }
-    registers.forEachIndexed { index, register ->
-      val reg = gprRegisters[index]
-      register.changeAttributes(
-        emptyList(), emptyList(), mapOf(
-          TargetRegister.VALUE_ATTRIBUTE_NAME to reg.uintValue.toString(16),
-          TargetRegister.DISPLAY_ATTRIBUTE_NAME to "${reg.meta().name}: ${reg.uintValue.toString(16)}",
-        ),
-        UpdateReason.REFRESHED
-      )
+    val cpuRegisters = api.listRegisters(threadId)
+    val newTargetRegisters = cpuRegisters
+      .map { getTargetRegister(mapMetaToSpec(it.meta())) }
+    newTargetRegisters.forEachIndexed { index, targetRegister ->
+      val register = cpuRegisters[index]
+      targetRegister.updateValue(uintValueToBytes(register.uintValue))
     }
-    setElements(registers, UpdateReason.REFRESHED) // delta.removed ignored, registers won't change // TODO thread can get removed
+    val delta = setElements(newTargetRegisters, UpdateReason.REFRESHED)
+    if (!delta.isEmpty) {
+      targetRegisters.entries
+        .removeIf { delta.removed.containsValue(it.value) }
+    }
   }
 
   private fun getTargetRegister(register: PpssppCpuRegisterMeta): PpssppModelTargetRegister {
-    return registerObjects.getOrPut(register) { PpssppModelTargetRegister(this, register) }
+    return targetRegisters.getOrPut(register) { PpssppModelTargetRegister(this, register) }
   }
 
   override fun readRegistersNamed(names: Collection<String>) = modelScope.future {
-    // TODO readRegistersNamed
-    println("WARN: Register read attempt")
-    emptyMap<String, ByteArray>()
+    val values = api.listRegisters(threadId)
+      .filter { names.contains(mapPpssppRegisterNameToSpec(it.name)) }
+      .associateBy({ mapPpssppRegisterNameToSpec(it.name) }, { uintValueToBytes(it.uintValue) })
+    values.forEach { (registerName, value) ->
+      val entry = targetRegisters.entries.firstOrNull { it.key.name == registerName }
+        ?: return@forEach
+      val (_, targetRegister) = entry
+      targetRegister.updateValue(value)
+    }
+    listeners.fire.registersUpdated(container, values)
+    values
   }
 
   override fun writeRegistersNamed(values: Map<String, ByteArray>) = modelScope.futureVoid {
-    // TODO writeRegistersNamed
-    println("WARN: Register write attempt")
+    values.forEach { (registerName, value) ->
+      val entry = targetRegisters.entries.firstOrNull { it.key.name == registerName }
+      if (entry == null) {
+        logger.warn("Register $registerName cannot be written to")
+        return@forEach
+      }
+      val (meta, targetRegister) = entry
+      api.setRegister(threadId, meta.categoryId, meta.id, "0x${BigInteger(1, value).toString(16)}")
+      targetRegister.updateValue(value)
+    }
+    listeners.fire.registersUpdated(container, values)
+  }
+
+  private fun uintValueToBytes(uintValue: Long): ByteArray {
+    val buffer = ByteBuffer.allocate(8)
+    buffer.putLong(uintValue)
+    return buffer.array()
+  }
+
+  private fun mapMetaToSpec(meta: PpssppCpuRegisterMeta): PpssppCpuRegisterMeta {
+    return meta.copy(name = mapPpssppRegisterNameToSpec(meta.name))
+  }
+
+  private fun mapPpssppRegisterNameToSpec(name: String): String {
+    return when {
+      name.matches(ppssppVfpuRegisterNameRegex) -> {
+        val registerId = name.substringAfter("v").toInt(16)
+        return "V${"%02X".format(registerId)}"
+      }
+      else -> name
+    }
   }
 }

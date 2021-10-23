@@ -7,8 +7,7 @@ import ghidra.dbg.target.schema.TargetAttributeType
 import ghidra.dbg.target.schema.TargetElementType
 import ghidra.dbg.target.schema.TargetObjectSchemaInfo
 import ghidra.dbg.util.PathUtils
-
-// TODO
+import java.math.BigInteger
 
 @TargetObjectSchemaInfo(
   name = "RegisterDescriptor",
@@ -17,7 +16,7 @@ import ghidra.dbg.util.PathUtils
 )
 class PpssppModelTargetRegister(
   registers: PpssppModelTargetRegisterContainerAndBank,
-  registerMeta: PpssppCpuRegisterMeta
+  private val registerMeta: PpssppCpuRegisterMeta
 ) :
   PpssppTargetObject<TargetObject, PpssppModelTargetRegisterContainerAndBank>(
     registers.model, registers, PathUtils.makeKey(registerMeta.name), "Register"
@@ -34,6 +33,17 @@ class PpssppModelTargetRegister(
         TargetObject.DISPLAY_ATTRIBUTE_NAME to "[${registerMeta.name}]",
       ),
       UpdateReason.INITIALIZED
+    )
+  }
+
+  fun updateValue(value: ByteArray) {
+    val hexValue = BigInteger(1, value).toString(16)
+    changeAttributes(
+      emptyList(), emptyList(), mapOf(
+        TargetRegister.VALUE_ATTRIBUTE_NAME to hexValue,
+        TargetRegister.DISPLAY_ATTRIBUTE_NAME to "${registerMeta.name}: $hexValue",
+      ),
+      UpdateReason.REFRESHED
     )
   }
 }

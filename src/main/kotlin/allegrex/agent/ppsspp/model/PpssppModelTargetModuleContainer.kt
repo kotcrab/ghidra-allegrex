@@ -29,9 +29,9 @@ class PpssppModelTargetModuleContainer(
   private val targetModules = mutableMapOf<PpssppHleModuleMeta, PpssppModelTargetModule>()
 
   override fun requestElements(refresh: Boolean) = modelScope.futureVoid {
-    val modules = api.listModules()
+    val newTargetModules = api.listModules()
       .map { getTargetModule(it) }
-    val delta = setElements(modules, UpdateReason.REFRESHED)
+    val delta = setElements(newTargetModules, UpdateReason.REFRESHED)
     if (!delta.isEmpty) {
       targetModules.entries
         .removeIf { delta.removed.containsValue(it.value) }

@@ -1,8 +1,6 @@
 package allegrex.agent.ppsspp.model
 
 import allegrex.agent.ppsspp.client.model.PpssppHleFunction
-import ghidra.dbg.attributes.TargetDataType
-import ghidra.dbg.target.TargetNamedDataType
 import ghidra.dbg.target.TargetObject
 import ghidra.dbg.target.TargetSymbol
 import ghidra.dbg.target.schema.TargetAttributeType

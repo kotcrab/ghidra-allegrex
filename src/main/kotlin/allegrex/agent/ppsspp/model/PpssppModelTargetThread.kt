@@ -38,7 +38,7 @@ class PpssppModelTargetThread(
   }
 
   @get:TargetAttributeType(name = PpssppModelTargetRegisterContainerAndBank.REGISTERS_NAME, required = true, fixed = true)
-  val gprRegisters = PpssppModelTargetRegisterContainerAndBank(this, thread.id)
+  val registers = PpssppModelTargetRegisterContainerAndBank(this, thread.id)
 
   @get:TargetAttributeType(name = PpssppModelTargetStack.NAME, required = true, fixed = true)
   val stack = PpssppModelTargetStack(this)
@@ -46,10 +46,10 @@ class PpssppModelTargetThread(
   init {
     changeAttributes(
       emptyList(),
-      listOf(gprRegisters, stack), // FIXME stack refresh
+      listOf(registers, stack), // TODO stack refresh
       mapOf(
         TargetObject.DISPLAY_ATTRIBUTE_NAME to "${thread.name} (${thread.id})",
-        TargetSteppable.SUPPORTED_STEP_KINDS_ATTRIBUTE_NAME to SUPPORTED_KINDS, // FIXME
+        TargetSteppable.SUPPORTED_STEP_KINDS_ATTRIBUTE_NAME to SUPPORTED_KINDS, // TODO
       ),
       UpdateReason.INITIALIZED
     )
@@ -70,8 +70,9 @@ class PpssppModelTargetThread(
     return stack.getFirstStackFrame()
   }
 
-  suspend fun updateThread() { // TODO
+  suspend fun updateThread() { // TODO proper update logic
     val pc = api.listThreads().firstOrNull { it.id == thread.id }?.pc ?: 0
     stack.remakeFrame(pc)
+    registers.resync(true, true)
   }
 }
