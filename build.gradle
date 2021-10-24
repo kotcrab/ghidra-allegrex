@@ -32,6 +32,7 @@ if (System.env.GHIDRA_INSTALL_DIR) {
 if (!ghidraInstallDir) {
   throw new GradleException("GHIDRA_INSTALL_DIR is not defined!")
 }
+def allegrexOut = ghidraInstallDir + '/Ghidra/Processors/Allegrex'
 
 dependencies {
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
@@ -75,7 +76,6 @@ jar {
 task ghidraInstall {
   dependsOn 'shadowJar'
   doLast {
-    def allegrexOut = ghidraInstallDir + '/Ghidra/Processors/Allegrex'
     delete allegrexOut
     copy {
       from "data"
@@ -127,4 +127,28 @@ task ghidraInstallThenDebug {
       ignoreExitValue true
     }
   }
+}
+
+task ghidraInstallThenCompile {
+  dependsOn 'ghidraInstall'
+  doLast {
+    exec {
+      if (System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')) {
+        commandLine 'cmd', '/c', 'support\\sleigh.bat', '-a', 'Ghidra\\Processors\\Allegrex\\data\\languages'
+      } else {
+        commandLine './support/sleigh.sh', '-a', './Ghidra/Processors/Allegrex/data/languages'
+      }
+      workingDir ghidraInstallDir
+      ignoreExitValue false
+    }
+  }
+}
+
+task ghidraInstallThenPackage(type: Zip) {
+  dependsOn 'ghidraInstallThenCompile'
+  archiveFileName = "Allegrex.zip"
+  destinationDirectory = file("$buildDir/dist")
+
+  from allegrexOut
+  into "Allegrex"
 }
