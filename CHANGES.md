@@ -1,6 +1,7 @@
 #### Version: 1.9 (built with Ghidra 10.0.4)
 - Ghidra Debugger can be used to debug games running in PPSSPP
 - Fixed decompilation of `max` and `min`
+- The release zip from now on will contain precompiled Allegrex Sleigh spec
 
 #### Version: 1.8 (built with Ghidra 10.0.4)
 - Updated to Ghidra 10.0.4
