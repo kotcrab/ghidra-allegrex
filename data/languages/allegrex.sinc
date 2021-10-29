@@ -283,12 +283,12 @@ macro ValCast(dest,src) {
     dest = src;
 }
 
-macro ternary(res, cond, avar, bvar) {
-    if (cond != 0) goto <true>;
-    res = bvar;
+macro ternary(res, cond, tvar, fvar) {
+    if (cond == 0) goto <false_cond>;
+    res = tvar;
     goto <done>;
-<true>
-    res = avar;
+<false_cond>
+    res = fvar;
 <done>
 }
 

@@ -765,11 +765,11 @@
 }
 
 :max RD, RSsrc, RTsrc           is prime=0 & sa=0 & fct=44 & RD & RSsrc & RTsrc {
-    ternary(RD, RSsrc s> RTsrc, RSsrc, RTsrc);
+    ternary(RD, RTsrc s> RSsrc, RTsrc, RSsrc);
 }
 
 :min RD, RSsrc, RTsrc           is prime=0 & sa=0 & fct=45 & RD & RSsrc & RTsrc {
-    ternary(RD, RSsrc s< RTsrc, RSsrc, RTsrc);
+    ternary(RD, RTsrc s< RSsrc, RTsrc, RSsrc);
 }
 
 # 0111 0000 000t tttt 0000 0000 0010 0100
