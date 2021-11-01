@@ -462,6 +462,8 @@
 
 # 0100 001c cccc cccc cccc cccc cc10 0000
 :wait                           is prime=16 & fct=32 & copfill & bit25=1  {
+    tmp:4 = copfill;
+    wait(tmp);
 }
 
 # 0100 0001 110t tttt dddd d000 0000 0000
