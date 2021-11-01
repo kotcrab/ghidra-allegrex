@@ -329,3 +329,4 @@ define pcodeop setShadow;               # setShadow(sgpr, value)
 define pcodeop getShadow;               # gpr = getShadow(sgpr)
 define pcodeop getInterruptMask;        # getInterruptMask()
 define pcodeop setInterruptMask;        # setInterruptMask(value)
+define pcodeop SYNC;

@@ -394,6 +394,7 @@
 
 # 0000 0000 0000 0000 0000 0yyy yy00 1111
 :sync scalar                    is prime=0 & fct=15 & szero=0 & stype [ scalar = stype + 0; ] {
+    SYNC(scalar:1);
 }
 
 # 0000 01bb bbb1 1111 iiii iiii iiii iiii
