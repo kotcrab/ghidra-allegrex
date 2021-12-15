@@ -43,7 +43,9 @@ open class PspElfHeader : ElfHeader() {
         val info = section.info // section index of section to which relocations apply (relocation offset base)
         val sectionToBeRelocated = if (info != 0) sections[info] else null
         val relocBaseName = if (sectionToBeRelocated != null) sectionToBeRelocated.nameAsString else "PT_LOAD"
-        val symbolTable = getSymbolTable(sections[link]) ?: createDummySymbolTable(reader, sections[link])
+        val symbolTableSection = sections.getOrNull(link)
+        val symbolTable = getSymbolTable(symbolTableSection)
+          ?: createDummySymbolTable(reader, symbolTableSection ?: sections.first())
         Msg.debug(this, "PSP ELF relocation table section ${section.nameAsString} affecting $relocBaseName")
         relocTableList.add(
           ElfRelocationTable.createElfRelocationTable(

@@ -1,5 +1,6 @@
 #### Version: 1.10 (built with Ghidra 10.0.4)
 - Added missing implementation for `sync` and `wait` instructions
+- [#17](https://github.com/kotcrab/ghidra-allegrex/issues/17) - Added workaround for missing symbol sections when applying relocations
 
 #### Version: 1.9 (built with Ghidra 10.0.4)
 - Ghidra Debugger can be used to debug games running in PPSSPP
