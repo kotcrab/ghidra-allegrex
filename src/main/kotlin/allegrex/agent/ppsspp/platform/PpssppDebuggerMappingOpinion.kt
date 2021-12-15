@@ -2,6 +2,7 @@ package allegrex.agent.ppsspp.platform
 
 import ghidra.app.plugin.core.debug.mapping.DebuggerMappingOffer
 import ghidra.app.plugin.core.debug.mapping.DebuggerMappingOpinion
+import ghidra.app.plugin.core.debug.mapping.DefaultDebuggerMappingOffer
 import ghidra.dbg.target.TargetEnvironment
 import ghidra.dbg.target.TargetProcess
 import ghidra.program.model.lang.CompilerSpecID
@@ -16,11 +17,11 @@ class PpssppDebuggerMappingOpinion : DebuggerMappingOpinion {
     private val COMP_ID_DEFAULT = CompilerSpecID("default")
   }
 
-  private class PpssppAllegrexOffer(process: TargetProcess) : AbstractPpssppDebuggerMappingOffer(
+  private class PpssppAllegrexOffer(process: TargetProcess) : DefaultDebuggerMappingOffer(
     process, 100, PPSSPP, LANG_ID_ALLEGREX_DEFAULT, COMP_ID_DEFAULT, emptySet()
   )
 
-  override fun offersForEnv(env: TargetEnvironment, process: TargetProcess): Set<DebuggerMappingOffer> {
+  override fun offersForEnv(env: TargetEnvironment, process: TargetProcess, includeOverrides: Boolean): Set<DebuggerMappingOffer> {
     return when {
       env.debugger.equals(PPSSPP, ignoreCase = true) && env.architecture.equals(ALLEGREX, ignoreCase = true) -> {
         setOf(PpssppAllegrexOffer(process))

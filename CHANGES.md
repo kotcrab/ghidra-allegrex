@@ -1,4 +1,5 @@
-#### Version: 1.10 (built with Ghidra 10.0.4)
+#### Version: 1.10 (built with Ghidra 10.1)
+- Updated to Ghidra 10.1
 - Added missing implementation for `sync` and `wait` instructions
 - [#17](https://github.com/kotcrab/ghidra-allegrex/issues/17) - Added workaround for missing symbol sections when applying relocations
 
