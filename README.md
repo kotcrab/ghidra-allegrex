@@ -11,7 +11,7 @@ Features:
   - Image rebase after loading is also supported
 - Disassembly and decompilation of VFPU instructions (see limitations bellow)
 - Scripts for importing and exporting PPSSPP `.sym` files (function labels)
-- Ghidra Debugger can be used to debug games running in PPSSPP (beta, available in pre-release)
+- Ghidra Debugger can be used to debug games running in PPSSPP (beta)
 
 ### Installation
 
