@@ -1,0 +1,66 @@
+name: CI
+
+on: [ push, pull_request, workflow_dispatch ]
+
+jobs:
+  build_zip:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        ghidra: [ 'latest', '10.1.3', '10.1.2', '10.1.1' ]
+    steps:
+      - name: Set Ghidra version
+        id: ghidra_version
+        run: |
+          if [ ${{ matrix.ghidra }} = latest ]; then
+            ghidra_version=$(curl -fLsSo /dev/null -w %{url_effective} https://github.com/NationalSecurityAgency/ghidra/releases/latest |
+             grep -oP '(?<=https://github.com/NationalSecurityAgency/ghidra/releases/tag/Ghidra_).+(?=_build)')
+            echo "::set-output name=full::$ghidra_version"
+          else
+            echo "::set-output name=full::${{ matrix.ghidra }}"
+          fi
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          java-version: 11
+          distribution: temurin
+      - name: Setup Ghidra
+        uses: er28-0652/setup-ghidra@master
+        with:
+          version: ${{ steps.ghidra_version.outputs.full }}
+      - name: Build Extension
+        run: |
+          ls ${{ env.GHIDRA_INSTALL_DIR }}
+          chmod +x gradlew
+          ./gradlew shadowJar
+      - name: Prepare artifact
+        run: |
+          mkdir -p Allegrex/lib
+          cp build/libs/ghidra-allegrex-all.jar Allegrex/lib/Allegrex.jar
+          cp -R data ghidra_scripts Allegrex
+          ls -R Allegrex
+          zip -r Allegrex-${{ steps.ghidra_version.outputs.full }}.zip Allegrex
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          path: Allegrex-${{ steps.ghidra_version.outputs.full }}.zip # artifacts
+          if-no-files-found: error
+          retention-days: 7
+
+  push_release:
+    if: |
+      github.event_name != 'pull_request' &&
+      github.repository == 'kotcrab/ghidra-allegrex'
+    needs: build_zip
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Download artifacts
+        uses: actions/download-artifact@v3
+      - name: Create Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release create 1.0${{ GITHUB.RUN_NUMBER }} artifact/*.zip --target ${{ GITHUB.SHA }} -t 1.0${{ GITHUB.RUN_NUMBER }}
