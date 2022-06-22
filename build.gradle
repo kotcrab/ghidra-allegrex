@@ -106,7 +106,7 @@ task ghidraInstallThenRun {
       if (System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')) {
         commandLine 'cmd', '/c', 'ghidraRun.bat'
       } else {
-        commandLine './ghidraRun.sh'
+        commandLine './ghidraRun'
       }
       workingDir ghidraInstallDir
       ignoreExitValue true
@@ -121,7 +121,7 @@ task ghidraInstallThenDebug {
       if (System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')) {
         commandLine 'cmd', '/c', 'support\\ghidraDebug.bat'
       } else {
-        commandLine './support/ghidraDebug.sh'
+        commandLine './support/ghidraDebug'
       }
       workingDir ghidraInstallDir
       ignoreExitValue true
@@ -136,7 +136,7 @@ task ghidraInstallThenCompile {
       if (System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')) {
         commandLine 'cmd', '/c', 'support\\sleigh.bat', '-a', 'Ghidra\\Processors\\Allegrex\\data\\languages'
       } else {
-        commandLine './support/sleigh.sh', '-a', './Ghidra/Processors/Allegrex/data/languages'
+        commandLine './support/sleigh', '-a', './Ghidra/Processors/Allegrex/data/languages'
       }
       workingDir ghidraInstallDir
       ignoreExitValue false
