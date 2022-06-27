@@ -100,3 +100,7 @@ Licensed under Apache License 2.0.
 Derived from Ghidra MIPS module licensed under Apache License 2.0.
 
 Type B relocation parsing based on [prxtool](https://github.com/pspdev/prxtool) licensed under AFL v2.0.
+
+## See also
+
+- [psp-ghidra-scripts](https://github.com/pspdev/psp-ghidra-scripts) - A collection of scripts to aid in reverse engineering PSP binaries in Ghidra.
