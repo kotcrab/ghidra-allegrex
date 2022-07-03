@@ -1,4 +1,4 @@
-name: CI
+name: Build Ghidra Processor Module
 
 on: [ push, pull_request, workflow_dispatch ]
 
@@ -21,6 +21,11 @@ jobs:
           fi
       - name: Checkout
         uses: actions/checkout@v3
+      - name: Checkout pspdev/psp-ghidra-scripts
+        uses: actions/checkout@v3
+        with:
+          repository: pspdev/psp-ghidra-scripts
+          path: psp-ghidra-scripts
       - name: Setup Java
         uses: actions/setup-java@v3
         with:
@@ -32,35 +37,41 @@ jobs:
           version: ${{ steps.ghidra_version.outputs.full }}
       - name: Build Extension
         run: |
-          ls ${{ env.GHIDRA_INSTALL_DIR }}
+          # cp -R psp-ghidra-scripts/* ghidra_scripts
           chmod +x gradlew
-          ./gradlew shadowJar
-      - name: Prepare artifact
-        run: |
-          mkdir -p Allegrex/lib
-          cp build/libs/ghidra-allegrex-all.jar Allegrex/lib/Allegrex.jar
-          cp -R data ghidra_scripts Allegrex
-          ls -R Allegrex
-          zip -r Allegrex-${{ steps.ghidra_version.outputs.full }}.zip Allegrex
+          ./gradlew ghidraInstallThenPackage
+          unzip ./build/dist/Allegrex.zip -d upload
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
-          path: Allegrex-${{ steps.ghidra_version.outputs.full }}.zip # artifacts
+          path: upload
+          name: Allegrex-${{ steps.ghidra_version.outputs.full }}
           if-no-files-found: error
           retention-days: 7
 
   push_release:
     if: |
-      github.event_name != 'pull_request' &&
+      github.event_name == 'workflow_dispatch' &&
       github.repository == 'kotcrab/ghidra-allegrex'
     needs: build_zip
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
       - name: Download artifacts
         uses: actions/download-artifact@v3
+        with:
+          path: release
+      - name: Prepare Release
+        run: |
+          for i in release/*
+            do
+              zip -r "${i%/}.zip" "$i"
+              rm -rf "$i"
+          done
       - name: Create Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh release create 1.0${{ GITHUB.RUN_NUMBER }} artifact/*.zip --target ${{ GITHUB.SHA }} -t 1.0${{ GITHUB.RUN_NUMBER }}
+        run: gh release create 1.0${{ GITHUB.RUN_NUMBER }} release/*.zip --target ${{ GITHUB.SHA }} -t 1.0${{ GITHUB.RUN_NUMBER }}
