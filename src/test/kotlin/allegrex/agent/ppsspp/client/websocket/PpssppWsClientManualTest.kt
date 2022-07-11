@@ -6,18 +6,20 @@ import allegrex.agent.ppsspp.client.model.PpssppLogMessage
 import allegrex.agent.ppsspp.client.model.PpssppState
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.newSingleThreadContext
 import kotlinx.coroutines.runBlocking
 import org.apache.logging.log4j.LogManager
 
+@OptIn(DelicateCoroutinesApi::class)
 fun main() {
   val logger = LogManager.getLogger("main")
   val exceptionHandler = CoroutineExceptionHandler { _, cause ->
     logger.error("Unhandled error: ${cause.message ?: "unknown"}", cause)
   }
-  @Suppress("EXPERIMENTAL_API_USAGE") val thread = newSingleThreadContext("TestThread")
+  val thread = newSingleThreadContext("TestThread")
   val scope = CoroutineScope(SupervisorJob() + thread + exceptionHandler)
   val client = PpssppWsClient()
   val api = PpssppApi(client)

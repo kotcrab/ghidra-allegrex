@@ -25,6 +25,7 @@ import io.ktor.http.cio.websocket.Frame
 import io.ktor.http.cio.websocket.send
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
@@ -55,7 +56,7 @@ class PpssppWsClient(
     install(WebSockets)
   }
 
-  @Suppress("EXPERIMENTAL_API_USAGE")
+  @OptIn(DelicateCoroutinesApi::class)
   private val clientThread = newSingleThreadContext("PpssppWsClientThread")
   private val clientScope = CoroutineScope(CoroutineName("PpssppWsClient") + SupervisorJob() + clientThread)
   private val outgoingChannel = Channel<PpssppRequest>()

@@ -18,6 +18,7 @@ import ghidra.program.model.address.GenericAddressSpace
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.future.future
@@ -50,7 +51,7 @@ class PpssppDebuggerObjectModel(private val client: PpssppClient) : AbstractDebu
     logger.error("Unhandled error in PpssppDebuggerObjectModel: ${cause.message ?: "unknown"} (see log)", cause)
   }
 
-  @Suppress("EXPERIMENTAL_API_USAGE")
+  @OptIn(DelicateCoroutinesApi::class)
   private val modelThread = newSingleThreadContext("PpssppDebuggerThread")
   val modelScope = CoroutineScope(CoroutineName("PpssppDebugger") + SupervisorJob() + modelThread + exceptionHandler)
 

@@ -1,3 +1,7 @@
+#### Version: 1.11 (built with Ghidra 10.1.4)
+- Updated to Ghidra 10.1.4
+- Updated internal dependencies
+
 #### Version: 1.10 (built with Ghidra 10.1)
 - Updated to Ghidra 10.1
 - Added missing implementation for `sync` and `wait` instructions
