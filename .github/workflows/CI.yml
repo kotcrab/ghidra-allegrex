@@ -21,18 +21,13 @@ jobs:
           fi
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Checkout pspdev/psp-ghidra-scripts
-        uses: actions/checkout@v3
-        with:
-          repository: pspdev/psp-ghidra-scripts
-          path: psp-ghidra-scripts
       - name: Setup Java
         uses: actions/setup-java@v3
         with:
           java-version: 11
           distribution: temurin
       - name: Setup Ghidra
-        uses: er28-0652/setup-ghidra@master
+        uses: er28-0652/setup-ghidra@v1
         with:
           version: ${{ steps.ghidra_version.outputs.full }}
       - name: Build Extension
