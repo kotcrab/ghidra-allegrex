@@ -27,7 +27,7 @@ jobs:
           java-version: 11
           distribution: temurin
       - name: Setup Ghidra
-        uses: er28-0652/setup-ghidra@v1
+        uses: er28-0652/setup-ghidra@v0.0.6
         with:
           version: ${{ steps.ghidra_version.outputs.full }}
       - name: Build Extension
