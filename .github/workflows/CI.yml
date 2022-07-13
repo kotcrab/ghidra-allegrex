@@ -32,7 +32,6 @@ jobs:
           version: ${{ steps.ghidra_version.outputs.full }}
       - name: Build Extension
         run: |
-          # cp -R psp-ghidra-scripts/* ghidra_scripts
           chmod +x gradlew
           ./gradlew ghidraInstallThenPackage
           unzip ./build/dist/Allegrex.zip -d upload
