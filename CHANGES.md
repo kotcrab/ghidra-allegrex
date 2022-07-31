@@ -1,4 +1,9 @@
+#### Version: 12
+- Switched to the new numbering scheme
+- Added CI for automatic builds targeting multiple Ghidra versions
+
 #### Version: 1.11 (built with Ghidra 10.1.4)
+- Note: This version won't be released
 - Updated to Ghidra 10.1.4
 - Updated internal dependencies
 

@@ -1,0 +1,34 @@
+name: Publish Ghidra Allegrex
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        ghidra: [ '10.1.5', '10.1.4', '10.1.3' ]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          java-version: 11
+          distribution: temurin
+      - name: Setup Ghidra
+        uses: er28-0652/setup-ghidra@0.0.6
+        with:
+          version: ${{ matrix.ghidra }}
+      - name: Build Extension
+        run: |
+          chmod +x gradlew
+          ./gradlew ghidraInstallThenPackage
+      - name: Upload artifact to release
+        uses: svenstaro/upload-release-action@v1-release
+        with:
+          file: ./build/dist/Allegrex.zip
+          asset_name: Allegrex-Ghidra-${{ matrix.ghidra }}.zip
