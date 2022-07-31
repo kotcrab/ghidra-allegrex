@@ -34,3 +34,5 @@ jobs:
           release_name: ghidra-allegrex ${{ github.ref }}
           file: ./build/dist/Allegrex.zip
           asset_name: Allegrex-Ghidra-${{ matrix.ghidra }}.zip
+          body: See [CHANGES](https://github.com/kotcrab/ghidra-allegrex/blob/master/CHANGES.md) file before updating.
+          tag: ${{ github.ref }}
