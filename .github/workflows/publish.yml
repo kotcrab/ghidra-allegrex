@@ -28,7 +28,7 @@ jobs:
           chmod +x gradlew
           ./gradlew ghidraInstallThenPackage
       - name: Upload artifact to release
-        uses: svenstaro/upload-release-action@v1-release
+        uses: svenstaro/upload-release-action@2.3.0
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           release_name: ghidra-allegrex ${{ github.ref }}
