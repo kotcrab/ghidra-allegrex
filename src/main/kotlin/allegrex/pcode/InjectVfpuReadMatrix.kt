@@ -15,9 +15,12 @@ class InjectVfpuReadMatrix(
   private val createMapper: (VfpuPcode, Varnode, Boolean) -> MatrixMapper,
   private val vfpuPcode: VfpuPcode = DefaultVfpuPcode
 ) : InjectPayloadCallother(sourceName) {
-  override fun getPcode(program: Program, con: InjectContext): Array<PcodeOp> {
+  override fun getPcode(program: Program, con: InjectContext): Array<PcodeOp>? {
     val output = con.output[0]
     val baseReg = con.inputlist[0]
+    if (!baseReg.isRegister) {
+      return null
+    }
     val transpose = con.inputlist[1].offset.toInt() != 0
 
     val mapper = createMapper(vfpuPcode, baseReg, transpose)

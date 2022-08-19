@@ -15,9 +15,12 @@ class InjectVfpuWriteMatrixRow(
   private val createMapper: (VfpuPcode, Varnode, Boolean) -> MatrixMapper,
   private val vfpuPcode: VfpuPcode = DefaultVfpuPcode
 ) : InjectPayloadCallother(sourceName) {
-  override fun getPcode(program: Program, con: InjectContext): Array<PcodeOp> {
+  override fun getPcode(program: Program, con: InjectContext): Array<PcodeOp>? {
     var input = 0
     val baseReg = con.inputlist[input++]
+    if (!baseReg.isRegister) {
+      return null
+    }
     val row = con.inputlist[input++].offset.toInt()
 
     val mapper = createMapper(vfpuPcode, baseReg, false) // write is always transpose = false

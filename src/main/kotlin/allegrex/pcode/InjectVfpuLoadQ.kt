@@ -13,9 +13,12 @@ class InjectVfpuLoadQ(
   private val maxUniqueBase: Long,
   private val vfpuPcode: VfpuPcode = DefaultVfpuPcode
 ) : InjectPayloadCallother(sourceName) {
-  override fun getPcode(program: Program, con: InjectContext): Array<PcodeOp> {
+  override fun getPcode(program: Program, con: InjectContext): Array<PcodeOp>? {
     var input = 0
     val baseReg = con.inputlist[input++]
+    if (!baseReg.isRegister) {
+      return null
+    }
     val columnMode = con.inputlist[input++].offset == 0L
 
     val baseRegId = vfpuPcode.regVarnodeToRegId(baseReg)

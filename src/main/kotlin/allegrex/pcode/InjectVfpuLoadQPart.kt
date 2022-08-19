@@ -13,8 +13,11 @@ class InjectVfpuLoadQPart(
   private val maxUniqueBase: Long,
   private val vfpuPcode: VfpuPcode = DefaultVfpuPcode
 ) : InjectPayloadCallother(sourceName) {
-  override fun getPcode(program: Program, con: InjectContext): Array<PcodeOp> {
+  override fun getPcode(program: Program, con: InjectContext): Array<PcodeOp>? {
     val baseReg = con.inputlist[0]
+    if (!baseReg.isRegister) {
+      return null
+    }
     val columnMode = con.inputlist[1].offset == 0L
     val part = con.inputlist[2].offset.toInt()
     val value = con.inputlist[3]

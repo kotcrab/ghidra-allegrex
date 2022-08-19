@@ -1,3 +1,6 @@
+#### Version 13
+- Added workaround for `Register must already exist` errors during analysis 
+
 #### Version 12
 - Switched to the new version numbering scheme
 - Added CI for automatic builds targeting multiple Ghidra versions

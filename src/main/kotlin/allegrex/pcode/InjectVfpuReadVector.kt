@@ -15,9 +15,12 @@ class InjectVfpuReadVector(
   private val createMapper: (VfpuPcode, Varnode) -> VectorMapper,
   private val vfpuPcode: VfpuPcode = DefaultVfpuPcode
 ) : InjectPayloadCallother(sourceName) {
-  override fun getPcode(program: Program, con: InjectContext): Array<PcodeOp> {
+  override fun getPcode(program: Program, con: InjectContext): Array<PcodeOp>? {
     val output = con.output[0]
     val baseReg = con.inputlist[0]
+    if (!baseReg.isRegister) {
+      return null
+    }
 
     val mapper = createMapper(vfpuPcode, baseReg)
     val pCode = PcodeOpEmitter(language, con.baseAddr, uniqueBase, maxUniqueBase)
