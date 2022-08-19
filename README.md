@@ -16,8 +16,8 @@ Features:
 
 ## Installation
 
-Download prebuilt package from the [Releases](https://github.com/kotcrab/ghidra-allegrex/releases) section. After extracting
-copy the `Allegrex` directory into `GHIDRA_INSTALL_DIR/Ghidra/Processors`.
+Download prebuilt package from the [Releases](https://github.com/kotcrab/ghidra-allegrex/releases) section. Select release which matches
+your Ghidra version. After extracting copy the `Allegrex` directory into `GHIDRA_INSTALL_DIR/Ghidra/Processors`.
 
 ## Usage
 
