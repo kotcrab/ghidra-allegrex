@@ -29,14 +29,12 @@ class StoredRelocationUpdater {
       if (table.relocations.isEmpty()) {
         return@forEach
       }
-
-      val deferredHi16 = mutableListOf<(loValue: Int) -> Unit>()
-
       if (table.tableSectionHeader?.type != PspElfConstants.SHT_PSP_REL) {
         Msg.warn(this, "Found relocation table in non-PSP format (section ${table.sectionToBeRelocated.nameAsString} won't be relocated)")
         return@forEach
       }
 
+      val deferredHi16 = mutableListOf<(loValue: Int) -> Unit>()
       table.relocations.forEach { elfReloc ->
         val reloc = AllegrexRelocation.TypeA.fromElf(elfHeader, elfReloc, 0)
         val addr = baseAddr.add(reloc.offset.toLong()).add(reloc.relative.toLong())
