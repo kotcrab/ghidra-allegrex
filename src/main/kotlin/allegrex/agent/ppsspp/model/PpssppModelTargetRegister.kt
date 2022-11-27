@@ -29,7 +29,7 @@ class PpssppModelTargetRegister(
       listOf(),
       mapOf(
         TargetRegister.CONTAINER_ATTRIBUTE_NAME to registers,
-        TargetRegister.LENGTH_ATTRIBUTE_NAME to registerMeta.bitLength,
+        TargetRegister.BIT_LENGTH_ATTRIBUTE_NAME to registerMeta.bitLength,
         TargetObject.DISPLAY_ATTRIBUTE_NAME to "[${registerMeta.name}]",
       ),
       UpdateReason.INITIALIZED

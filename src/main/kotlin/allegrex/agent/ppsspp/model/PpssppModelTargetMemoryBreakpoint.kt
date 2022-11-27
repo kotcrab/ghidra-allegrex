@@ -34,6 +34,7 @@ class PpssppModelTargetMemoryBreakpoint(
     val address: Address = getModel().addressFactory
       .defaultAddressSpace
       .getAddress(meta.address.toString(16))
+    val addressRange = address.rangeTo(address.add(meta.size))
 
     changeAttributes(
       emptyList(),
@@ -41,8 +42,7 @@ class PpssppModelTargetMemoryBreakpoint(
       mapOf(
         TargetBreakpointSpec.CONTAINER_ATTRIBUTE_NAME to breakpoints,
         TargetBreakpointSpec.EXPRESSION_ATTRIBUTE_NAME to meta.address.toString(),
-        TargetBreakpointLocation.ADDRESS_ATTRIBUTE_NAME to address,
-        TargetBreakpointLocation.LENGTH_ATTRIBUTE_NAME to meta.size.toInt(),
+        TargetBreakpointLocation.RANGE_ATTRIBUTE_NAME to addressRange,
         TargetBreakpointLocation.SPEC_ATTRIBUTE_NAME to this,
       ),
       UpdateReason.INITIALIZED

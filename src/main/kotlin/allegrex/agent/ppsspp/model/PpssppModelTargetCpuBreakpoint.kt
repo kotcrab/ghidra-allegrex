@@ -38,6 +38,7 @@ class PpssppModelTargetCpuBreakpoint(
     val address: Address = getModel().addressFactory
       .defaultAddressSpace
       .getAddress(meta.address.toString(16))
+    val addressRange = address.rangeTo(address.add(3))
 
     changeAttributes(
       emptyList(),
@@ -48,8 +49,7 @@ class PpssppModelTargetCpuBreakpoint(
         TargetBreakpointSpec.KINDS_ATTRIBUTE_NAME to TargetBreakpointSpecContainer.TargetBreakpointKindSet.of(
           TargetBreakpointSpec.TargetBreakpointKind.HW_EXECUTE
         ),
-        TargetBreakpointLocation.ADDRESS_ATTRIBUTE_NAME to address,
-        TargetBreakpointLocation.LENGTH_ATTRIBUTE_NAME to 1,
+        TargetBreakpointLocation.RANGE_ATTRIBUTE_NAME to addressRange,
         TargetBreakpointLocation.SPEC_ATTRIBUTE_NAME to this,
       ),
       UpdateReason.INITIALIZED
