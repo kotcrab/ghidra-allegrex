@@ -1,3 +1,6 @@
+#### Version 14
+- Updated to Ghidra 10.2
+
 #### Version 13
 - Added workaround for `Register must already exist` errors during analysis 
 
