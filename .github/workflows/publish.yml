@@ -33,6 +33,6 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           release_name: ghidra-allegrex ${{ github.ref_name }}
           file: ./build/dist/Allegrex.zip
-          asset_name: Allegrex-${{ github.ref_name }}-Ghidra-${{ matrix.ghidra }}.zip
+          asset_name: Allegrex-${{ github.ref_name }}-for-Ghidra-${{ matrix.ghidra }}.zip
           body: See [CHANGES](https://github.com/kotcrab/ghidra-allegrex/blob/master/CHANGES.md) file before updating.
           tag: ${{ github.ref }}

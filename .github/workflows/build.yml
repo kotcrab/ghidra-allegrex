@@ -29,5 +29,5 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           path: upload
-          name: Allegrex-Ghidra-${{ matrix.ghidra }}
+          name: Allegrex-snapshot-for-Ghidra-${{ matrix.ghidra }}
           if-no-files-found: error
