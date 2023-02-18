@@ -1,7 +1,6 @@
 package ghidra.app.util.bin.format.elf.extend;
 
 import allegrex.format.elf.relocation.AuxRelocationProcessor;
-import allegrex.format.elf.relocation.StoredRelocationUpdater;
 import ghidra.app.util.bin.format.elf.ElfDefaultGotPltMarkup;
 import ghidra.app.util.bin.format.elf.ElfDynamicTable;
 import ghidra.app.util.bin.format.elf.ElfDynamicType;
@@ -104,7 +103,6 @@ public class Allegrex_ElfExtension extends ElfExtension {
   public static final byte ODK_IDENT = 10;
   public static final byte ODK_PAGESIZE = 11;
 
-  private final StoredRelocationUpdater storedRelocationUpdater = new StoredRelocationUpdater();
   private final AuxRelocationProcessor auxRelocationProcessor = new AuxRelocationProcessor();
 
   @Override
@@ -201,7 +199,6 @@ public class Allegrex_ElfExtension extends ElfExtension {
 
   @Override
   public void processElf (ElfLoadHelper elfLoadHelper, TaskMonitor monitor) throws CancelledException {
-    storedRelocationUpdater.resetAndCollectForUpdate(elfLoadHelper);
     processMipsHeaders(elfLoadHelper, monitor);
     processMipsDyanmics(elfLoadHelper, monitor);
   }
@@ -429,11 +426,6 @@ public class Allegrex_ElfExtension extends ElfExtension {
   @Override
   public void processGotPlt (ElfLoadHelper elfLoadHelper, TaskMonitor monitor) throws CancelledException {
     // Only possible injection point into the loading process after processing relocation and imports
-    monitor.setMessage("Updating stored relocations...");
-    if (storedRelocationUpdater.finalizeUpdate(elfLoadHelper)) {
-      elfLoadHelper.log("Failed to fully update stored relocation tables to Allegrex format. " +
-        "Image rebase may not work correctly.");
-    }
     monitor.setMessage("Processing additional relocations...");
     boolean useRebootBinTypeBMapping = false;
     if (elfLoadHelper.getElfHeader() instanceof PspElfHeader) {
