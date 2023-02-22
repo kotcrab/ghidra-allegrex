@@ -5,6 +5,7 @@ import ghidra.app.plugin.core.disassembler.AddressTable;
 import ghidra.app.util.importer.MessageLog;
 import ghidra.framework.options.Options;
 import ghidra.program.model.address.Address;
+import ghidra.program.model.address.AddressOutOfBoundsException;
 import ghidra.program.model.address.AddressRange;
 import ghidra.program.model.address.AddressRangeIterator;
 import ghidra.program.model.address.AddressSet;
@@ -222,14 +223,15 @@ public class AllegrexAddressAnalyzer extends ConstantPropagationAnalyzer {
 
     final AddressSet coveredSet = new AddressSet();
 
+    Address currentGPAssumptionValue = gp_assumption_value;
+
     if (func != null) {
       flowStart = func.getEntryPoint();
-      if (gp_assumption_value != null) {
+      if (currentGPAssumptionValue != null) {
         ProgramContext programContext = program.getProgramContext();
         RegisterValue gpVal = programContext.getRegisterValue(gp, flowStart);
         if (gpVal == null || !gpVal.hasValue()) {
-          gpVal =
-            new RegisterValue(gp, BigInteger.valueOf(gp_assumption_value.getOffset()));
+          gpVal = new RegisterValue(gp, BigInteger.valueOf(currentGPAssumptionValue.getOffset()));
           try {
             program.getProgramContext().setRegisterValue(func.getEntryPoint(),
               func.getEntryPoint(), gpVal);
@@ -243,6 +245,7 @@ public class AllegrexAddressAnalyzer extends ConstantPropagationAnalyzer {
     // follow all flows building up context
     // use context to fill out addresses on certain instructions
     ContextEvaluator eval = new ConstantPropagationContextEvaluator(trustWriteMemOption) {
+      private Address localGPAssumptionValue = currentGPAssumptionValue;
 
       private boolean mustStopNow = false; // if something discovered in processing, mustStop flag
 
@@ -267,7 +270,7 @@ public class AllegrexAddressAnalyzer extends ConstantPropagationAnalyzer {
             if (target == (addr.getOffset() + 1) && !instr.getFlowType().isCall()) {
               instr.setFlowOverride(FlowOverride.CALL);
               // need to trigger disassembly below! if not already
-              // MipsExtDisassembly(program, instr, context, addr.add(1), monitor);
+              // mipsExtDisassembly(program, instr, context, addr.add(1), monitor);
 
               // need to trigger re-function creation!
               Function f = program.getFunctionManager().getFunctionContaining(
@@ -294,8 +297,8 @@ public class AllegrexAddressAnalyzer extends ConstantPropagationAnalyzer {
           if (registerValue != null) {
             BigInteger value = registerValue.getUnsignedValue();
             long unsignedValue = value.longValue();
-            if (gp_assumption_value == null ||
-              !(unsignedValue == gp_assumption_value.getOffset())) {
+            if (localGPAssumptionValue == null ||
+              !(unsignedValue == localGPAssumptionValue.getOffset())) {
               synchronized (gp) {
                 Address gpRefAddr =
                   instr.getMinAddress().getNewAddress(unsignedValue);
@@ -314,17 +317,17 @@ public class AllegrexAddressAnalyzer extends ConstantPropagationAnalyzer {
                   instr.getMinAddress().getAddressSpace().getSpaceID(),
                   unsignedValue, 1, RefType.DATA, PcodeOp.UNIMPLEMENTED, true,
                   monitor);
-                if (gp_assumption_value == null) {
+                if (localGPAssumptionValue == null) {
                   program.getBookmarkManager().setBookmark(
                     lastSetInstr.getMinAddress(), BookmarkType.WARNING,
                     "GP Global Register Set",
                     "Global GP Register is set here.");
                 }
-                if (gp_assumption_value != null &&
-                  !gp_assumption_value.equals(gpRefAddr)) {
-                  gp_assumption_value = null;
+                if (localGPAssumptionValue != null &&
+                  !localGPAssumptionValue.equals(gpRefAddr)) {
+                  localGPAssumptionValue = gp_assumption_value = null;
                 } else {
-                  gp_assumption_value = gpRefAddr;
+                  localGPAssumptionValue = gp_assumption_value = gpRefAddr;
                 }
               }
             }
@@ -341,7 +344,13 @@ public class AllegrexAddressAnalyzer extends ConstantPropagationAnalyzer {
             BigInteger val = context.getValue(reg, false);
             if (val != null) {
               long lval = val.longValue();
-              Address refAddr = instr.getMinAddress().getNewAddress(lval);
+              Address refAddr = null;
+              try {
+                refAddr = instr.getMinAddress().getNewAddress(lval);
+              } catch (AddressOutOfBoundsException e) {
+                // invalid reference
+                return;
+              }
               if ((lval > 4096 || lval < 0) && lval != 0xffff &&
                 program.getMemory().contains(refAddr)) {
 
@@ -377,7 +386,7 @@ public class AllegrexAddressAnalyzer extends ConstantPropagationAnalyzer {
 
         // if this is a call, some processors use the register value
         // used in the call for PIC calculations
-        if (refType.isCall()) {
+        if (refType.isCall() && !addr.isExternalAddress()) {
           // set the called function to have a constant value for this register
           // WARNING: This might not always be the case, if called directly or with a different register
           //          But then it won't matter, because the function won't depend on the registers value.
@@ -455,6 +464,11 @@ public class AllegrexAddressAnalyzer extends ConstantPropagationAnalyzer {
                   AutoAnalysisManager.getAnalysisManager(program);
                 coveredSet.add(func.getBody());
                 amgr.codeDefined(coveredSet);
+              } else {
+                // else T9 was set at the beginning of the function
+                // something within the function must have set it to
+                // an unknown value, so can continue
+                return null;
               }
             } catch (ContextChangeException e) {
               throw new AssertException("Unexpected Exception", e);

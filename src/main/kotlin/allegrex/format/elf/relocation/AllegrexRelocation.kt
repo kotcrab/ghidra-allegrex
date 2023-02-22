@@ -3,7 +3,10 @@ package allegrex.format.elf.relocation
 import ghidra.app.util.bin.format.elf.ElfHeader
 import ghidra.app.util.bin.format.elf.ElfRelocation
 
-sealed class AllegrexRelocation {
+sealed class AllegrexRelocation(
+  val offset: Int,
+  val type: Int,
+) {
   companion object {
     fun fromLongArray(arr: LongArray): AllegrexRelocation {
       return when (arr.size) {
@@ -18,20 +21,25 @@ sealed class AllegrexRelocation {
     }
   }
 
+  abstract fun toLongArray(): LongArray
+
   class TypeA private constructor(
-    val offset: Int,
-    val type: Int,
+    offset: Int,
+    type: Int,
     val relativeIndex: Int,
     val relocateToIndex: Int,
     val relative: Int,
     val relocateTo: Int,
-    val linkedLoValue: Int
-  ) : AllegrexRelocation() {
+    val linkedLoValue: Int,
+  ) : AllegrexRelocation(offset, type) {
     companion object {
       const val PACKED_SIZE = 7
 
       fun fromElf(header: ElfHeader, relocation: ElfRelocation, linkedLoValue: Int): TypeA {
-        val info = relocation.relocationInfo.toInt()
+        return fromElf(header, relocation.offset.toInt(), relocation.relocationInfo.toInt(), linkedLoValue)
+      }
+
+      fun fromElf(header: ElfHeader, offset: Int, info: Int, linkedLoValue: Int): TypeA {
         val type = info and 0xFF
         val relativeIndex = info shr 8 and 0xFF
         val relocateToIndex = info shr 16 and 0xFF
@@ -39,7 +47,7 @@ sealed class AllegrexRelocation {
         val relativeSect = header.programHeaders[relativeIndex].virtualAddress.toInt()
         val relocateTo = header.programHeaders[relocateToIndex].virtualAddress.toInt()
         return TypeA(
-          relocation.offset.toInt(),
+          offset,
           type,
           relativeIndex,
           relocateToIndex,
@@ -63,7 +71,7 @@ sealed class AllegrexRelocation {
       }
     }
 
-    fun toLongArray(): LongArray {
+    override fun toLongArray(): LongArray {
       return arrayOf(offset, type, relativeIndex, relocateToIndex, relative, relocateTo, linkedLoValue)
         .map { it.toLong() }
         .toLongArray()
@@ -71,15 +79,15 @@ sealed class AllegrexRelocation {
   }
 
   class TypeB(
-    val offset: Int,
-    val type: Int,
+    offset: Int,
+    type: Int,
     val offsetBaseIndex: Int,
     val addressBaseIndex: Int,
     val offsetBase: Long,
     val addressBase: Long,
     val addend: Int,
-    private val unused: Int = 0
-  ) : AllegrexRelocation() {
+    private val unused: Int = 0,
+  ) : AllegrexRelocation(offset, type) {
     companion object {
       const val PACKED_SIZE = 8
 
@@ -98,7 +106,7 @@ sealed class AllegrexRelocation {
       }
     }
 
-    fun toLongArray(): LongArray {
+    override fun toLongArray(): LongArray {
       return arrayOf(offset, type, offsetBaseIndex, addressBaseIndex, offsetBase, addressBase, addend, unused)
         .map { it.toLong() }
         .toLongArray()

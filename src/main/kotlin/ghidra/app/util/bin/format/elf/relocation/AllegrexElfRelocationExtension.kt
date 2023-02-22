@@ -5,7 +5,6 @@ import ghidra.program.model.data.CategoryPath
 import ghidra.program.model.data.DataType
 import ghidra.program.model.data.StructureDataType
 
-/** DO NOT USE THIS CONSTRUCTOR, USE create*(GenericFactory ...) FACTORY METHODS INSTEAD.  */
 open class AllegrexElfRelocationExtension : ElfRelocation() {
   override fun getSymbolIndex(): Int {
     return 0

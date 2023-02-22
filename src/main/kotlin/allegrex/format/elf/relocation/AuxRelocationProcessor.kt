@@ -3,8 +3,10 @@ package allegrex.format.elf.relocation
 import ghidra.app.util.bin.format.elf.ElfLoadHelper
 import ghidra.app.util.bin.format.elf.ElfProgramHeader
 import ghidra.app.util.bin.format.elf.ElfProgramHeaderConstants
+import ghidra.app.util.bin.format.elf.ElfSectionHeader
 import ghidra.app.util.bin.format.elf.PspElfConstants
 import ghidra.app.util.bin.format.elf.relocation.AllegrexElfRelocationConstants
+import ghidra.program.model.address.Address
 import ghidra.util.Msg
 
 class AuxRelocationProcessor {
@@ -14,6 +16,18 @@ class AuxRelocationProcessor {
 
   fun process(elfLoadHelper: ElfLoadHelper, useRebootBinMapping: Boolean) {
     val elfHeader = elfLoadHelper.elfHeader
+
+    elfHeader.sections.forEach {
+      if (it.type == PspElfConstants.SHT_PSP_REL) {
+        runCatching { processRelocationsTypeA(elfLoadHelper, it) }
+          .onFailure { cause ->
+            "Can't process type A relocations".also { msg ->
+              Msg.error(msg, cause)
+              elfLoadHelper.log("$msg: ${cause.message}. Please report this.")
+            }
+          }
+      }
+    }
 
     // kernel module most likely won't have any sections but this check is more permissive
     if (elfHeader.sections.any { it.type in relocTypes }) {
@@ -26,15 +40,78 @@ class AuxRelocationProcessor {
           elfLoadHelper.log("Type A relocations are not currently supported for ELFs without sections. Please report this.")
         }
         PspElfConstants.SHT_PSP_REL_TYPE_B -> {
-          runCatching {
-            processRelocationsTypeB(elfLoadHelper, it, useRebootBinMapping)
-          }.onFailure { cause ->
-            Msg.error("Can't process type B relocations!", cause)
-            elfLoadHelper.log("Can't process type B relocations: ${cause.message}. Please report this.")
-          }
+          runCatching { processRelocationsTypeB(elfLoadHelper, it, useRebootBinMapping) }
+            .onFailure { cause ->
+              "Can't process type B relocations".also { msg ->
+                Msg.error(msg, cause)
+                elfLoadHelper.log("$msg: ${cause.message}. Please report this.")
+              }
+            }
         }
       }
     }
+  }
+
+  private fun processRelocationsTypeA(elfLoadHelper: ElfLoadHelper, section: ElfSectionHeader) {
+    val program = elfLoadHelper.program
+    val relocations = parseRelocationsTypeA(elfLoadHelper, section)
+    relocations.forEach { relocation ->
+      AllegrexRelocationApplicator.applyTo(
+        program, program.imageBase, relocation.address, relocation.origInstr, relocation.reloc,
+        useInstructionStasher = false, addToRelocationTable = true
+      )
+    }
+  }
+
+  private fun parseRelocationsTypeA(
+    loadHelper: ElfLoadHelper,
+    section: ElfSectionHeader,
+  ): List<PendingRelocationTypeA> {
+    val relocations = mutableListOf<PendingRelocationTypeA>()
+
+    val reader = section.reader
+    val end = section.offset + section.size
+
+    val program = loadHelper.program
+    val elfHeader = loadHelper.elfHeader
+    val memory = program.memory
+    val baseAddr = program.imageBase
+
+    val deferredHi16 = mutableListOf<(loValue: Int) -> Unit>()
+    while (reader.pointerIndex < end) {
+      val elfRelocOffset = reader.readNextInt()
+      val elfRelocInfo = reader.readNextInt()
+
+      val reloc = AllegrexRelocation.TypeA.fromElf(elfHeader, elfRelocOffset, elfRelocInfo, 0)
+      val addr = baseAddr.add(reloc.offset.toLong()).add(reloc.relative.toLong())
+
+      val instrValue = loadHelper.program.memory.getInt(addr)
+      val instrBytes = ByteArray(4)
+      memory.getBytes(addr, instrBytes)
+
+      when (reloc.type) {
+        AllegrexElfRelocationConstants.R_MIPS_HI16 -> {
+          deferredHi16.add { linkedLoValue ->
+            val newReloc = AllegrexRelocation.TypeA.fromElf(elfHeader, elfRelocOffset, elfRelocInfo, linkedLoValue)
+            relocations.add(PendingRelocationTypeA(addr, newReloc, instrBytes))
+          }
+        }
+        AllegrexElfRelocationConstants.R_MIPS_LO16 -> {
+          deferredHi16.forEach { commit -> commit((instrValue and 0xFFFF).toShort().toInt()) }
+          relocations.add(PendingRelocationTypeA(addr, reloc, instrBytes))
+          deferredHi16.clear()
+        }
+        else -> {
+          relocations.add(PendingRelocationTypeA(addr, reloc, instrBytes))
+        }
+      }
+    }
+
+    if (deferredHi16.size != 0) {
+      Msg.warn(this, "Failed to resolve some deferred R_MIPS_HI16 relocations")
+    }
+
+    return relocations
   }
 
   private fun processRelocationsTypeB(elfLoadHelper: ElfLoadHelper, header: ElfProgramHeader, useRebootBinMapping: Boolean) {
@@ -214,3 +291,9 @@ class AuxRelocationProcessor {
     return relocations
   }
 }
+
+private class PendingRelocationTypeA(
+  val address: Address,
+  val reloc: AllegrexRelocation.TypeA,
+  val origInstr: ByteArray,
+)
