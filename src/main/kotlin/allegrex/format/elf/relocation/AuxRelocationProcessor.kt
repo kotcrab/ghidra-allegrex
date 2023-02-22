@@ -70,6 +70,7 @@ class AuxRelocationProcessor {
     val relocations = mutableListOf<PendingRelocationTypeA>()
 
     val reader = section.reader
+    reader.pointerIndex = section.offset
     val end = section.offset + section.size
 
     val program = loadHelper.program
