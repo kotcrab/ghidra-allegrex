@@ -1,3 +1,6 @@
+#### Version 15
+- Fixed debugger breakpoint placing
+
 #### Version 14
 - Updated to Ghidra 10.2
 

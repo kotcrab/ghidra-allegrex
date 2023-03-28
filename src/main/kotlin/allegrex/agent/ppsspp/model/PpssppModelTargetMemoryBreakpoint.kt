@@ -14,6 +14,7 @@ import ghidra.dbg.target.schema.TargetElementType
 import ghidra.dbg.target.schema.TargetObjectSchemaInfo
 import ghidra.dbg.util.PathUtils
 import ghidra.program.model.address.Address
+import ghidra.program.model.address.AddressRangeImpl
 import kotlinx.coroutines.future.await
 
 @TargetObjectSchemaInfo(
@@ -34,7 +35,7 @@ class PpssppModelTargetMemoryBreakpoint(
     val address: Address = getModel().addressFactory
       .defaultAddressSpace
       .getAddress(meta.address.toString(16))
-    val addressRange = address.rangeTo(address.add(meta.size))
+    val addressRange = AddressRangeImpl(address, meta.size)
 
     changeAttributes(
       emptyList(),
