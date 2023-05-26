@@ -5,6 +5,7 @@ import allegrex.agent.ppsspp.client.model.PpssppCpuBreakpointMeta
 import allegrex.agent.ppsspp.client.model.PpssppMemoryBreakpoint
 import allegrex.agent.ppsspp.client.model.PpssppMemoryBreakpointMeta
 import allegrex.agent.ppsspp.util.futureVoid
+import ghidra.dbg.DebuggerObjectModel
 import ghidra.dbg.target.TargetBreakpointLocationContainer
 import ghidra.dbg.target.TargetBreakpointSpec.TargetBreakpointKind
 import ghidra.dbg.target.TargetBreakpointSpecContainer
@@ -15,6 +16,7 @@ import ghidra.dbg.target.schema.TargetObjectSchema
 import ghidra.dbg.target.schema.TargetObjectSchemaInfo
 import ghidra.program.model.address.AddressRange
 import kotlinx.coroutines.future.await
+import java.util.concurrent.CompletableFuture
 
 @TargetObjectSchemaInfo(
   name = "BreakpointContainer",
@@ -53,7 +55,7 @@ class PpssppModelTargetBreakpointContainer(
     )
   }
 
-  override fun requestElements(refresh: Boolean) = modelScope.futureVoid {
+  override fun requestElements(refresh: DebuggerObjectModel.RefreshBehavior?): CompletableFuture<Void?> = modelScope.futureVoid {
     val newTargetCpuBreakpoints = api.listCpuBreakpoints()
       .map { getTargetCpuBreakpoint(it) }
     val newTargetMemoryBreakpoints = api.listMemoryBreakpoints()

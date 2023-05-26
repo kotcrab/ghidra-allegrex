@@ -3,9 +3,11 @@ package allegrex.agent.ppsspp.model
 import allegrex.agent.ppsspp.client.model.PpssppHleThread
 import allegrex.agent.ppsspp.client.model.PpssppHleThreadMeta
 import allegrex.agent.ppsspp.util.futureVoid
+import ghidra.dbg.DebuggerObjectModel
 import ghidra.dbg.target.schema.TargetAttributeType
 import ghidra.dbg.target.schema.TargetObjectSchema
 import ghidra.dbg.target.schema.TargetObjectSchemaInfo
+import java.util.concurrent.CompletableFuture
 
 @TargetObjectSchemaInfo(
   name = "ThreadContainer",
@@ -25,7 +27,7 @@ class PpssppModelTargetThreadContainer(
 
   private val targetThreads = mutableMapOf<PpssppHleThreadMeta, PpssppModelTargetThread>()
 
-  override fun requestElements(refresh: Boolean) = modelScope.futureVoid {
+  override fun requestElements(refresh: DebuggerObjectModel.RefreshBehavior?): CompletableFuture<Void?> = modelScope.futureVoid {
     updateUsingThreads(api.listThreads())
   }
 

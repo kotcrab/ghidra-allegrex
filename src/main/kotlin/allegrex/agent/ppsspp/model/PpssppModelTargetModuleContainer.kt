@@ -3,10 +3,12 @@ package allegrex.agent.ppsspp.model
 import allegrex.agent.ppsspp.client.model.PpssppHleModule
 import allegrex.agent.ppsspp.client.model.PpssppHleModuleMeta
 import allegrex.agent.ppsspp.util.futureVoid
+import ghidra.dbg.DebuggerObjectModel
 import ghidra.dbg.target.TargetModuleContainer
 import ghidra.dbg.target.schema.TargetAttributeType
 import ghidra.dbg.target.schema.TargetObjectSchema
 import ghidra.dbg.target.schema.TargetObjectSchemaInfo
+import java.util.concurrent.CompletableFuture
 
 @TargetObjectSchemaInfo(
   name = "ModuleContainer",
@@ -28,7 +30,7 @@ class PpssppModelTargetModuleContainer(
 
   private val targetModules = mutableMapOf<PpssppHleModuleMeta, PpssppModelTargetModule>()
 
-  override fun requestElements(refresh: Boolean) = modelScope.futureVoid {
+  override fun requestElements(refresh: DebuggerObjectModel.RefreshBehavior?): CompletableFuture<Void?> = modelScope.futureVoid {
     val newTargetModules = api.listModules()
       .map { getTargetModule(it) }
     val delta = setElements(newTargetModules, UpdateReason.REFRESHED)

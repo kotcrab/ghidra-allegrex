@@ -10,6 +10,7 @@ import ghidra.program.model.address.AddressRange;
 import ghidra.program.model.address.AddressRangeIterator;
 import ghidra.program.model.address.AddressSet;
 import ghidra.program.model.address.AddressSetView;
+import ghidra.program.model.data.DataType;
 import ghidra.program.model.lang.Processor;
 import ghidra.program.model.lang.Register;
 import ghidra.program.model.lang.RegisterValue;
@@ -244,7 +245,7 @@ public class AllegrexAddressAnalyzer extends ConstantPropagationAnalyzer {
 
     // follow all flows building up context
     // use context to fill out addresses on certain instructions
-    ContextEvaluator eval = new ConstantPropagationContextEvaluator(trustWriteMemOption) {
+    ContextEvaluator eval = new ConstantPropagationContextEvaluator(monitor, trustWriteMemOption) {
       private Address localGPAssumptionValue = currentGPAssumptionValue;
 
       private boolean mustStopNow = false; // if something discovered in processing, mustStop flag
@@ -315,8 +316,8 @@ public class AllegrexAddressAnalyzer extends ConstantPropagationAnalyzer {
                 }
                 symEval.makeReference(context, lastSetInstr, -1,
                   instr.getMinAddress().getAddressSpace().getSpaceID(),
-                  unsignedValue, 1, RefType.DATA, PcodeOp.UNIMPLEMENTED, true,
-                  monitor);
+                  unsignedValue, 1, null, RefType.DATA, PcodeOp.UNIMPLEMENTED, true,
+                  false, monitor);
                 if (localGPAssumptionValue == null) {
                   program.getBookmarkManager().setBookmark(
                     lastSetInstr.getMinAddress(), BookmarkType.WARNING,
@@ -367,8 +368,7 @@ public class AllegrexAddressAnalyzer extends ConstantPropagationAnalyzer {
 
       @Override
       public boolean evaluateReference (VarnodeContext context, Instruction instr, int pcodeop,
-                                        Address address, int size, RefType refType) {
-
+                                       Address address, int size, DataType dataType, RefType refType) {
         Address addr = address;
 
         //if (instr.getFlowType().isJump() && !instr.getPrototype().hasDelaySlots()) {
@@ -421,7 +421,7 @@ public class AllegrexAddressAnalyzer extends ConstantPropagationAnalyzer {
           }
         }
 
-        return super.evaluateReference(context, instr, pcodeop, address, size, refType);
+        return super.evaluateReference(context, instr, pcodeop, address, size, dataType, refType);
       }
 
       @Override

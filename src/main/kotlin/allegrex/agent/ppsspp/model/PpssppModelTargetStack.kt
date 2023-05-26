@@ -1,10 +1,12 @@
 package allegrex.agent.ppsspp.model
 
 import allegrex.agent.ppsspp.util.futureVoid
+import ghidra.dbg.DebuggerObjectModel
 import ghidra.dbg.target.TargetStack
 import ghidra.dbg.target.schema.TargetAttributeType
 import ghidra.dbg.target.schema.TargetObjectSchema
 import ghidra.dbg.target.schema.TargetObjectSchemaInfo
+import java.util.concurrent.CompletableFuture
 
 @TargetObjectSchemaInfo(
   name = PpssppModelTargetStack.NAME,
@@ -27,7 +29,7 @@ class PpssppModelTargetStack(
 
   private val targetFrames = mutableMapOf<Int, PpssppModelTargetStackFrame>()
 
-  override fun requestElements(refresh: Boolean) = modelScope.futureVoid {
+  override fun requestElements(refresh: DebuggerObjectModel.RefreshBehavior?): CompletableFuture<Void?> = modelScope.futureVoid {
     val frames = api.backtraceThread(threadId)
     val newTargetFrames = frames
       .mapIndexed { level, frame ->

@@ -2,6 +2,7 @@ package allegrex.agent.ppsspp.model
 
 import allegrex.agent.ppsspp.client.model.PpssppCpuRegisterMeta
 import allegrex.agent.ppsspp.util.futureVoid
+import ghidra.dbg.DebuggerObjectModel
 import ghidra.dbg.target.TargetRegisterBank
 import ghidra.dbg.target.TargetRegisterBank.DESCRIPTIONS_ATTRIBUTE_NAME
 import ghidra.dbg.target.TargetRegisterContainer
@@ -13,6 +14,7 @@ import kotlinx.coroutines.future.future
 import org.apache.logging.log4j.LogManager
 import java.math.BigInteger
 import java.nio.ByteBuffer
+import java.util.concurrent.CompletableFuture
 
 @TargetObjectSchemaInfo(
   name = "RegisterContainer",
@@ -55,7 +57,7 @@ class PpssppModelTargetRegisterContainerAndBank(
     )
   }
 
-  override fun requestElements(refresh: Boolean) = modelScope.futureVoid {
+  override fun requestElements(refresh: DebuggerObjectModel.RefreshBehavior?): CompletableFuture<Void?> = modelScope.futureVoid {
     val cpuRegisters = api.listRegisters(threadId)
     val newTargetRegisters = cpuRegisters
       .map { getTargetRegister(mapMetaToSpec(it.meta())) }
@@ -84,7 +86,7 @@ class PpssppModelTargetRegisterContainerAndBank(
       val (_, targetRegister) = entry
       targetRegister.updateValue(value)
     }
-    listeners.fire.registersUpdated(container, values)
+    broadcast().registersUpdated(container, values)
     values
   }
 
@@ -99,7 +101,7 @@ class PpssppModelTargetRegisterContainerAndBank(
       api.setRegister(threadId, meta.categoryId, meta.id, "0x${BigInteger(1, value).toString(16)}")
       targetRegister.updateValue(value)
     }
-    listeners.fire.registersUpdated(container, values)
+    broadcast().registersUpdated(container, values)
   }
 
   private fun uintValueToBytes(uintValue: Long): ByteArray {

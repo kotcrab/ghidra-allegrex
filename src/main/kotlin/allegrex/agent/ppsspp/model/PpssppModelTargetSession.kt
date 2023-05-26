@@ -56,7 +56,7 @@ class PpssppModelTargetSession(model: PpssppDebuggerObjectModel, schema: TargetO
   }
 
   override fun execute(cmd: String) = getModel().modelScope.futureVoid {
-    listeners.fire.consoleOutput(session, TargetConsole.Channel.STDOUT, COMMANDS_UNSUPPORTED_MESSAGE)
+    broadcast().consoleOutput(session, TargetConsole.Channel.STDOUT, COMMANDS_UNSUPPORTED_MESSAGE)
   }
 
   override fun executeCapture(cmd: String): CompletableFuture<String> {
@@ -112,7 +112,7 @@ class PpssppModelTargetSession(model: PpssppDebuggerObjectModel, schema: TargetO
     getModel().modelScope.launch {
       val oldProcess = process
       process = null
-      listeners.fire.event(
+      broadcast().event(
         session,
         oldProcess?.threads?.getAnyThreadOrNull(),
         TargetEventScope.TargetEventType.PROCESS_EXITED,
@@ -129,7 +129,7 @@ class PpssppModelTargetSession(model: PpssppDebuggerObjectModel, schema: TargetO
         process = PpssppModelTargetProcess(session)
         process?.syncInitial()
         changeAttributes(emptyList(), listOf(process), emptyMap<String, Any>(), UpdateReason.PROCESS_CREATED)
-        listeners.fire.event(
+        broadcast().event(
           session,
           null,
           TargetEventScope.TargetEventType.PROCESS_CREATED,
@@ -146,6 +146,6 @@ class PpssppModelTargetSession(model: PpssppDebuggerObjectModel, schema: TargetO
       message.isError() -> TargetConsole.Channel.STDERR
       else -> TargetConsole.Channel.STDOUT
     }
-    listeners.fire.consoleOutput(this, channel, message.asFormattedMessage())
+    broadcast().consoleOutput(this, channel, message.asFormattedMessage())
   }
 }

@@ -99,7 +99,7 @@ class PpssppModelTargetProcess(
     val threadTarget = if (currentThread != null) threads.getThreadById(currentThread.id) else null
     when (running) {
       true -> {
-        session.listeners.fire.event(
+        session.broadcast().event(
           session, threadTarget, TargetEventScope.TargetEventType.RUNNING, UpdateReason.RUNNING, listOfNotNull(threadTarget)
         )
         invalidateMemoryAndRegisterCaches()
@@ -127,7 +127,7 @@ class PpssppModelTargetProcess(
       it.updateThread()
       session.changeFocus(it.getFirstStackFrame())
     }
-    session.listeners.fire.event(session, threadTarget, type, reason, listOf(threadTarget))
+    session.broadcast().event(session, threadTarget, type, reason, listOf(threadTarget))
   }
 
   fun invalidateMemoryAndRegisterCaches() {

@@ -4,6 +4,7 @@ import allegrex.MipsInstructionStasher
 import ghidra.app.util.bin.format.elf.relocation.AllegrexElfRelocationConstants
 import ghidra.program.model.address.Address
 import ghidra.program.model.listing.Program
+import ghidra.program.model.reloc.Relocation
 import ghidra.util.LittleEndianDataConverter
 
 object AllegrexRelocationApplicator {
@@ -118,7 +119,7 @@ object AllegrexRelocationApplicator {
     instructionStasher?.restore()
 
     if (addToRelocationTable) {
-      program.relocationTable.add(address, relocation.type, relocation.toLongArray(), origBytes, null)
+      program.relocationTable.add(address, Relocation.Status.UNKNOWN, relocation.type, relocation.toLongArray(), origBytes, null)
     }
   }
 }

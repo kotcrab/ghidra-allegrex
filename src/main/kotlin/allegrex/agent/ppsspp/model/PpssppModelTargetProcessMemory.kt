@@ -2,6 +2,7 @@ package allegrex.agent.ppsspp.model
 
 import allegrex.agent.ppsspp.client.model.PpssppMemoryRange
 import allegrex.agent.ppsspp.util.futureVoid
+import ghidra.dbg.DebuggerObjectModel
 import ghidra.dbg.error.DebuggerMemoryAccessException
 import ghidra.dbg.target.TargetMemory
 import ghidra.dbg.target.schema.TargetAttributeType
@@ -10,6 +11,7 @@ import ghidra.dbg.target.schema.TargetObjectSchemaInfo
 import ghidra.program.model.address.Address
 import ghidra.program.model.address.AddressRangeImpl
 import kotlinx.coroutines.future.future
+import java.util.concurrent.CompletableFuture
 
 @TargetObjectSchemaInfo(
   name = PpssppModelTargetProcessMemory.NAME,
@@ -32,7 +34,7 @@ class PpssppModelTargetProcessMemory(
   private val targetMemoryRegions = mutableMapOf<PpssppMemoryRange, PpssppModelTargetMemoryRegion>()
   private val memory = this
 
-  override fun requestElements(refresh: Boolean) = modelScope.futureVoid {
+  override fun requestElements(refresh: DebuggerObjectModel.RefreshBehavior?): CompletableFuture<Void?> = modelScope.futureVoid {
     val newTargetMemoryRegions = api.getMemoryMap()
       .map { getTargetMemoryRegion(it) }
     val delta = setElements(newTargetMemoryRegions, UpdateReason.REFRESHED)
@@ -50,20 +52,20 @@ class PpssppModelTargetProcessMemory(
     val range = AddressRangeImpl(address, length.toLong())
     try {
       val bytes = api.readMemory(address.offset, length.toLong())
-      listeners.fire.memoryUpdated(memory, address, bytes)
+      broadcast().memoryUpdated(memory, address, bytes)
       return@future bytes
     } catch (e: Exception) {
-      listeners.fire.memoryReadError(memory, range, DebuggerMemoryAccessException("Can't read memory!", e))
+      broadcast().memoryReadError(memory, range, DebuggerMemoryAccessException("Can't read memory!", e))
       throw e
     }
   }
 
   override fun writeMemory(address: Address, data: ByteArray) = modelScope.futureVoid {
     api.writeMemory(address.offset, data)
-    listeners.fire.memoryUpdated(memory, address, data)
+    broadcast().memoryUpdated(memory, address, data)
   }
 
   fun invalidateMemoryCaches() {
-    listeners.fire.invalidateCacheRequested(this)
+    broadcast().invalidateCacheRequested(this)
   }
 }

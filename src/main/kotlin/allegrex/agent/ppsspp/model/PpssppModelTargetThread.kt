@@ -75,6 +75,6 @@ class PpssppModelTargetThread(
   }
 
   fun invalidateRegisterCaches() {
-    listeners.fire.invalidateCacheRequested(this)
+    broadcast().invalidateCacheRequested(this)
   }
 }
