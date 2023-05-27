@@ -31,7 +31,6 @@ import ghidra.program.model.symbol.ReferenceIterator;
 import ghidra.program.model.symbol.SourceType;
 import ghidra.program.model.symbol.Symbol;
 import ghidra.program.model.symbol.SymbolUtilities;
-import ghidra.program.util.ContextEvaluator;
 import ghidra.program.util.SymbolicPropogator;
 import ghidra.program.util.VarnodeContext;
 import ghidra.util.Msg;
@@ -245,7 +244,7 @@ public class AllegrexAddressAnalyzer extends ConstantPropagationAnalyzer {
 
     // follow all flows building up context
     // use context to fill out addresses on certain instructions
-    ContextEvaluator eval = new ConstantPropagationContextEvaluator(monitor, trustWriteMemOption) {
+    ConstantPropagationContextEvaluator eval = new ConstantPropagationContextEvaluator(monitor, trustWriteMemOption) {
       private Address localGPAssumptionValue = currentGPAssumptionValue;
 
       private boolean mustStopNow = false; // if something discovered in processing, mustStop flag
@@ -265,7 +264,7 @@ public class AllegrexAddressAnalyzer extends ConstantPropagationAnalyzer {
         // this was copylefted from the arm analyzer
         Varnode raVal = context.getRegisterVarnodeValue(rareg);
         if (raVal != null) {
-          if (raVal.isConstant()) {
+          if (context.isConstant(raVal)) {
             long target = raVal.getAddress().getOffset();
             Address addr = instr.getMaxAddress();
             if (target == (addr.getOffset() + 1) && !instr.getFlowType().isCall()) {
@@ -314,21 +313,24 @@ public class AllegrexAddressAnalyzer extends ConstantPropagationAnalyzer {
                     lastSetInstr = instructionAt;
                   }
                 }
-                symEval.makeReference(context, lastSetInstr, -1,
-                  instr.getMinAddress().getAddressSpace().getSpaceID(),
-                  unsignedValue, 1, null, RefType.DATA, PcodeOp.UNIMPLEMENTED, true,
-                  false, monitor);
-                if (localGPAssumptionValue == null) {
-                  program.getBookmarkManager().setBookmark(
-                    lastSetInstr.getMinAddress(), BookmarkType.WARNING,
-                    "GP Global Register Set",
-                    "Global GP Register is set here.");
-                }
-                if (localGPAssumptionValue != null &&
-                  !localGPAssumptionValue.equals(gpRefAddr)) {
-                  localGPAssumptionValue = gp_assumption_value = null;
-                } else {
-                  localGPAssumptionValue = gp_assumption_value = gpRefAddr;
+                // if an instruction actually set the GP
+                if (lastSetAddr != null) {
+                  symEval.makeReference(context, lastSetInstr, -1,
+                    instr.getMinAddress().getAddressSpace().getSpaceID(),
+                    unsignedValue, 1, null, RefType.DATA, PcodeOp.UNIMPLEMENTED, true,
+                    false, monitor);
+                  if (localGPAssumptionValue == null) {
+                    program.getBookmarkManager().setBookmark(
+                      lastSetInstr.getMinAddress(), BookmarkType.WARNING,
+                      "GP Global Register Set",
+                      "Global GP Register is set here.");
+                  }
+                  if (localGPAssumptionValue != null &&
+                    !localGPAssumptionValue.equals(gpRefAddr)) {
+                    localGPAssumptionValue = gp_assumption_value = null;
+                  } else {
+                    localGPAssumptionValue = gp_assumption_value = gpRefAddr;
+                  }
                 }
               }
             }
@@ -368,8 +370,12 @@ public class AllegrexAddressAnalyzer extends ConstantPropagationAnalyzer {
 
       @Override
       public boolean evaluateReference (VarnodeContext context, Instruction instr, int pcodeop,
-                                       Address address, int size, DataType dataType, RefType refType) {
+                                        Address address, int size, DataType dataType, RefType refType) {
         Address addr = address;
+
+        if (addr == Address.NO_ADDRESS) {
+          return false;
+        }
 
         //if (instr.getFlowType().isJump() && !instr.getPrototype().hasDelaySlots()) {
         //  if this isn't straight code (thunk computation), let someone else lay down the reference
@@ -402,7 +408,8 @@ public class AllegrexAddressAnalyzer extends ConstantPropagationAnalyzer {
                   context.clearRegister(reg);
 
                   // need to add the reference here, register operand will no longer have a value
-                  instr.addOperandReference(0, addr, refType, SourceType.ANALYSIS);
+                  instr.addOperandReference(0, addr, instr.getFlowType(),
+                    SourceType.ANALYSIS);
 
                   // set the register value on the target address
                   ProgramContext progContext = program.getProgramContext();
@@ -482,6 +489,12 @@ public class AllegrexAddressAnalyzer extends ConstantPropagationAnalyzer {
         return null;
       }
     };
+
+    eval.setTrustWritableMemory(trustWriteMemOption)
+      .setMinpeculativeOffset(minSpeculativeRefAddress)
+      .setMaxSpeculativeOffset(maxSpeculativeRefAddress)
+      .setMinStoreLoadOffset(minStoreLoadRefAddress)
+      .setCreateComplexDataFromPointers(createComplexDataFromPointers);
 
     AddressSet resultSet = symEval.flowConstants(flowStart, null, eval, true, monitor);
 
@@ -634,37 +647,36 @@ public class AllegrexAddressAnalyzer extends ConstantPropagationAnalyzer {
   }
 
   @Override
-  public void optionsChanged (Options options, Program program) {
-    super.optionsChanged(options, program);
+  public void registerOptions (Options options, Program program) {
+    super.registerOptions(options, program);
 
-    options.registerOption(OPTION_NAME_SWITCH_TABLE, OPTION_DEFAULT_SWITCH_TABLE, null,
+    options.registerOption(OPTION_NAME_SWITCH_TABLE, trySwitchTables, null,
       OPTION_DESCRIPTION_SWITCH_TABLE);
 
     options.registerOption(OPTION_NAME_MARK_DUAL_INSTRUCTION,
-      OPTION_DEFAULT_MARK_DUAL_INSTRUCTION, null, OPTION_DESCRIPTION_MARK_DUAL_INSTRUCTION);
+      markupDualInstructionOption, null, OPTION_DESCRIPTION_MARK_DUAL_INSTRUCTION);
 
-    options.registerOption(OPTION_NAME_ASSUME_T9_ENTRY, OPTION_DEFAULT_ASSUME_T9_ENTRY, null,
+    options.registerOption(OPTION_NAME_ASSUME_T9_ENTRY, assumeT9EntryAddress, null,
       OPTION_DESCRIPTION_ASSUME_T9_ENTRY);
 
-    options.registerOption(OPTION_NAME_ASSUME_T9_ENTRY, OPTION_DEFAULT_ASSUME_T9_ENTRY, null,
-      OPTION_DESCRIPTION_ASSUME_T9_ENTRY);
-
-    options.registerOption(OPTION_NAME_RECOVER_GP, OPTION_DEFAULT_RECOVER_GP, null,
+    options.registerOption(OPTION_NAME_RECOVER_GP, discoverGlobalGPSetting, null,
       OPTION_DESCRIPTION_RECOVER_GP);
+  }
 
-    trySwitchTables = options.getBoolean(OPTION_NAME_SWITCH_TABLE, OPTION_DEFAULT_SWITCH_TABLE);
+  @Override
+  public void optionsChanged (Options options, Program program) {
+    super.optionsChanged(options, program);
+
+    trySwitchTables = options.getBoolean(OPTION_NAME_SWITCH_TABLE, trySwitchTables);
 
     markupDualInstructionOption = options.getBoolean(OPTION_NAME_MARK_DUAL_INSTRUCTION,
-      OPTION_DEFAULT_MARK_DUAL_INSTRUCTION);
+      markupDualInstructionOption);
 
     assumeT9EntryAddress =
-      options.getBoolean(OPTION_NAME_ASSUME_T9_ENTRY, OPTION_DEFAULT_ASSUME_T9_ENTRY);
-
-    assumeT9EntryAddress =
-      options.getBoolean(OPTION_NAME_ASSUME_T9_ENTRY, OPTION_DEFAULT_ASSUME_T9_ENTRY);
+      options.getBoolean(OPTION_NAME_ASSUME_T9_ENTRY, assumeT9EntryAddress);
 
     discoverGlobalGPSetting =
-      options.getBoolean(OPTION_NAME_RECOVER_GP, OPTION_DEFAULT_RECOVER_GP);
+      options.getBoolean(OPTION_NAME_RECOVER_GP, discoverGlobalGPSetting);
   }
 
 }

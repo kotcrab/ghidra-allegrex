@@ -1,4 +1,5 @@
 #### Version 16
+- Updated to Ghidra 10.3 
 - [#25](https://github.com/kotcrab/ghidra-allegrex/issues/25) - added support for type A relocations only present in program headers
 
 #### Version 15

@@ -14,7 +14,6 @@ import kotlinx.coroutines.future.future
 import org.apache.logging.log4j.LogManager
 import java.math.BigInteger
 import java.nio.ByteBuffer
-import java.util.concurrent.CompletableFuture
 
 @TargetObjectSchemaInfo(
   name = "RegisterContainer",
@@ -57,7 +56,7 @@ class PpssppModelTargetRegisterContainerAndBank(
     )
   }
 
-  override fun requestElements(refresh: DebuggerObjectModel.RefreshBehavior?): CompletableFuture<Void?> = modelScope.futureVoid {
+  override fun requestElements(refresh: DebuggerObjectModel.RefreshBehavior) = modelScope.futureVoid {
     val cpuRegisters = api.listRegisters(threadId)
     val newTargetRegisters = cpuRegisters
       .map { getTargetRegister(mapMetaToSpec(it.meta())) }

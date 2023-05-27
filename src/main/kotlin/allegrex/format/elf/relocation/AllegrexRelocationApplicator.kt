@@ -119,7 +119,7 @@ object AllegrexRelocationApplicator {
     instructionStasher?.restore()
 
     if (addToRelocationTable) {
-      program.relocationTable.add(address, Relocation.Status.UNKNOWN, relocation.type, relocation.toLongArray(), origBytes, null)
+      program.relocationTable.add(address, Relocation.Status.APPLIED, relocation.type, relocation.toLongArray(), origBytes, null)
     }
   }
 }

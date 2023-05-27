@@ -8,7 +8,6 @@ import ghidra.dbg.target.TargetModuleContainer
 import ghidra.dbg.target.schema.TargetAttributeType
 import ghidra.dbg.target.schema.TargetObjectSchema
 import ghidra.dbg.target.schema.TargetObjectSchemaInfo
-import java.util.concurrent.CompletableFuture
 
 @TargetObjectSchemaInfo(
   name = "ModuleContainer",
@@ -30,7 +29,7 @@ class PpssppModelTargetModuleContainer(
 
   private val targetModules = mutableMapOf<PpssppHleModuleMeta, PpssppModelTargetModule>()
 
-  override fun requestElements(refresh: DebuggerObjectModel.RefreshBehavior?): CompletableFuture<Void?> = modelScope.futureVoid {
+  override fun requestElements(refresh: DebuggerObjectModel.RefreshBehavior) = modelScope.futureVoid {
     val newTargetModules = api.listModules()
       .map { getTargetModule(it) }
     val delta = setElements(newTargetModules, UpdateReason.REFRESHED)

@@ -16,7 +16,6 @@ import ghidra.dbg.target.schema.TargetObjectSchema
 import ghidra.dbg.target.schema.TargetObjectSchemaInfo
 import ghidra.program.model.address.AddressRange
 import kotlinx.coroutines.future.await
-import java.util.concurrent.CompletableFuture
 
 @TargetObjectSchemaInfo(
   name = "BreakpointContainer",
@@ -55,7 +54,7 @@ class PpssppModelTargetBreakpointContainer(
     )
   }
 
-  override fun requestElements(refresh: DebuggerObjectModel.RefreshBehavior?): CompletableFuture<Void?> = modelScope.futureVoid {
+  override fun requestElements(refresh: DebuggerObjectModel.RefreshBehavior) = modelScope.futureVoid {
     val newTargetCpuBreakpoints = api.listCpuBreakpoints()
       .map { getTargetCpuBreakpoint(it) }
     val newTargetMemoryBreakpoints = api.listMemoryBreakpoints()

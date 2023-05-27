@@ -7,7 +7,6 @@ import ghidra.dbg.DebuggerObjectModel
 import ghidra.dbg.target.schema.TargetAttributeType
 import ghidra.dbg.target.schema.TargetObjectSchema
 import ghidra.dbg.target.schema.TargetObjectSchemaInfo
-import java.util.concurrent.CompletableFuture
 
 @TargetObjectSchemaInfo(
   name = "ThreadContainer",
@@ -27,7 +26,7 @@ class PpssppModelTargetThreadContainer(
 
   private val targetThreads = mutableMapOf<PpssppHleThreadMeta, PpssppModelTargetThread>()
 
-  override fun requestElements(refresh: DebuggerObjectModel.RefreshBehavior?): CompletableFuture<Void?> = modelScope.futureVoid {
+  override fun requestElements(refresh: DebuggerObjectModel.RefreshBehavior) = modelScope.futureVoid {
     updateUsingThreads(api.listThreads())
   }
 

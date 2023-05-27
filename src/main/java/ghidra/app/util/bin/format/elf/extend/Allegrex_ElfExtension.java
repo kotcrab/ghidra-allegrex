@@ -11,7 +11,6 @@ import ghidra.app.util.bin.format.elf.ElfProgramHeader;
 import ghidra.app.util.bin.format.elf.ElfProgramHeaderType;
 import ghidra.app.util.bin.format.elf.ElfRelocation;
 import ghidra.app.util.bin.format.elf.ElfSectionHeader;
-import ghidra.app.util.bin.format.elf.ElfSectionHeaderConstants;
 import ghidra.app.util.bin.format.elf.ElfSectionHeaderType;
 import ghidra.app.util.bin.format.elf.ElfSymbol;
 import ghidra.app.util.bin.format.elf.ElfSymbolTable;
@@ -20,12 +19,12 @@ import ghidra.app.util.bin.format.elf.PspElfHeader;
 import ghidra.app.util.bin.format.elf.relocation.AllegrexElfRelocationExtension;
 import ghidra.program.model.address.Address;
 import ghidra.program.model.address.AddressOutOfBoundsException;
+import ghidra.program.model.address.AddressSpace;
 import ghidra.program.model.data.ArrayDataType;
 import ghidra.program.model.data.ByteDataType;
 import ghidra.program.model.data.CategoryPath;
 import ghidra.program.model.data.DWordDataType;
 import ghidra.program.model.data.EnumDataType;
-import ghidra.program.model.data.MutabilitySettingsDefinition;
 import ghidra.program.model.data.PointerDataType;
 import ghidra.program.model.data.QWordDataType;
 import ghidra.program.model.data.Structure;
@@ -46,6 +45,9 @@ import ghidra.util.exception.CancelledException;
 import ghidra.util.exception.InvalidInputException;
 import ghidra.util.exception.NotFoundException;
 import ghidra.util.task.TaskMonitor;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @SuppressWarnings("unused")
 public class Allegrex_ElfExtension extends ElfExtension {
@@ -53,8 +55,8 @@ public class Allegrex_ElfExtension extends ElfExtension {
   private static final String MIPS_STUBS_SECTION_NAME = ".MIPS.stubs";
 
   // GP value reflected by symbol address
-  // TODO: In the future symbol could be created in the constant space
   public static final String MIPS_GP_VALUE_SYMBOL = "_mips_gp_value";
+  public static final String MIPS_GP0_VALUE_SYMBOL = "_mips_gp0_value";
 
   // Elf Program Header Extensions
   public static final ElfProgramHeaderType PT_MIPS_REGINFO = new ElfProgramHeaderType(0x70000000,
@@ -198,12 +200,16 @@ public class Allegrex_ElfExtension extends ElfExtension {
   }
 
   @Override
-  public void processElf (ElfLoadHelper elfLoadHelper, TaskMonitor monitor) throws CancelledException {
+  public void processElf (ElfLoadHelper elfLoadHelper, TaskMonitor monitor)
+    throws CancelledException {
+
     processMipsHeaders(elfLoadHelper, monitor);
+
     processMipsDyanmics(elfLoadHelper, monitor);
   }
 
   private void processMipsDyanmics (ElfLoadHelper elfLoadHelper, TaskMonitor monitor) {
+
     ElfDynamicTable dynamicTable = elfLoadHelper.getElfHeader().getDynamicTable();
     if (dynamicTable != null && dynamicTable.containsDynamicValue(DT_MIPS_GP_VALUE)) {
       try {
@@ -291,8 +297,6 @@ public class Allegrex_ElfExtension extends ElfExtension {
     odkHeader.add(WordDataType.dataType, "section", null);
     odkHeader.add(DWordDataType.dataType, "info", null);
 
-    Structure odkRegInfo = buildRegInfoStructure(elf64, true);
-
     Memory memory = elfLoadHelper.getProgram().getMemory();
     long limit = 0;
     MemoryBlock block = memory.getBlock(mipsOptionsAddr);
@@ -328,15 +332,15 @@ public class Allegrex_ElfExtension extends ElfExtension {
         switch (kind) {
 
           case ODK_REGINFO:
-            Data regInfoData = elfLoadHelper.createData(nextOptionAddr, odkRegInfo);
-            // TODO: need better understanding of ri_gp_value
-            // TODO: adjust gp for section relocation and apply to section context somehow (need for relocation processing?)
+            processMipsRegInfo(elfLoadHelper, nextOptionAddr);
             break;
 
           default:
-            // consume unprocessed option description bytes
-            elfLoadHelper.createData(nextOptionAddr,
-              new ArrayDataType(ByteDataType.dataType, optionDataSize, 1));
+            if (optionDataSize > 0) {
+              // consume unprocessed option description bytes
+              elfLoadHelper.createData(nextOptionAddr,
+                new ArrayDataType(ByteDataType.dataType, optionDataSize, 1));
+            }
         }
 
         limit -= odkHeader.getLength() + optionDataSize;
@@ -344,12 +348,9 @@ public class Allegrex_ElfExtension extends ElfExtension {
     } catch (AddressOutOfBoundsException | MemoryAccessException e) {
       // ignore
     }
-
-    elfLoadHelper.log(
-      "WARNING: .MIPS.options section has not been processed (not yet implemented)");
   }
 
-  private Structure buildRegInfoStructure (boolean elf64, boolean mipsOptions) {
+  private Structure buildRegInfoStructure (boolean elf64) {
 
     String prefix = elf64 ? "Elf64" : "Elf32";
 
@@ -390,11 +391,11 @@ public class Allegrex_ElfExtension extends ElfExtension {
     Structure regInfoStruct =
       new StructureDataType(new CategoryPath("/ELF"), prefix + "_RegInfo_MIPS", 0);
     regInfoStruct.add(gprMask, "ri_gprmask", null);
-    if (mipsOptions && elf64) {
+    if (elf64) {
       regInfoStruct.add(DWordDataType.dataType, "ri_pad", null);
     }
     regInfoStruct.add(new ArrayDataType(DWordDataType.dataType, 4, 4));
-    if (mipsOptions & elf64) {
+    if (elf64) {
       regInfoStruct.add(QWordDataType.dataType, "ri_gp_value", null);
     } else {
       regInfoStruct.add(DWordDataType.dataType, "ri_gp_value", null);
@@ -404,18 +405,38 @@ public class Allegrex_ElfExtension extends ElfExtension {
 
   private void processMipsRegInfo (ElfLoadHelper elfLoadHelper, Address regInfoAddr) {
 
-    Structure regInfoStruct =
-      buildRegInfoStructure(elfLoadHelper.getElfHeader().is64Bit(), false);
+    // NOTES: assumes only one gp0 value
+
+    AtomicBoolean multipleGp0 = new AtomicBoolean(false);
+    Symbol gp0Sym = SymbolUtilities.getLabelOrFunctionSymbol(elfLoadHelper.getProgram(),
+      MIPS_GP0_VALUE_SYMBOL, msg -> multipleGp0.set(true));
+    Long otherGp0Value = gp0Sym != null ? gp0Sym.getAddress().getOffset() : null;
+
+    AddressSpace defaultSpace =
+      elfLoadHelper.getProgram().getAddressFactory().getDefaultAddressSpace();
+    boolean is64bit = elfLoadHelper.getElfHeader().is64Bit();
+    Structure regInfoStruct = buildRegInfoStructure(is64bit);
 
     Data data = elfLoadHelper.createData(regInfoAddr, regInfoStruct);
-    Data gpValueComponent = data.getComponent(5); // gp_value
+    Data gpValueComponent = data.getComponent(is64bit ? 3 : 2); // ri_gp_value value -> gp0
     if (gpValueComponent != null) {
       try {
-        Scalar gpValue = gpValueComponent.getScalar(0);
-        Address gpAddr = elfLoadHelper.getDefaultAddress(gpValue.getUnsignedValue());
-        elfLoadHelper.createSymbol(gpAddr, MIPS_GP_VALUE_SYMBOL, false, false, null);
-        elfLoadHelper.log(
-          MIPS_GP_VALUE_SYMBOL + "=0x" + Long.toHexString(gpValue.getUnsignedValue()));
+        // Create gp0 symbol in default space which represents a constant value (pinned)
+        Scalar gp0Value = gpValueComponent.getScalar(0);
+        long gp0 = gp0Value.getUnsignedValue();
+        if (multipleGp0.get() || otherGp0Value != null) {
+          if (multipleGp0.get() || gp0 != otherGp0Value) {
+            elfLoadHelper.log(
+              "Multiple gp0 values defined (not supported): 0x" +
+                Long.toHexString(gp0));
+          }
+          return;
+        }
+
+        Address gpAddr = defaultSpace.getAddress(gp0);
+        elfLoadHelper.createSymbol(gpAddr, MIPS_GP0_VALUE_SYMBOL, false, false,
+          null).setPinned(true);
+        elfLoadHelper.log(MIPS_GP0_VALUE_SYMBOL + "=0x" + Long.toHexString(gp0));
       } catch (InvalidInputException e) {
         // ignore
       }
@@ -435,8 +456,11 @@ public class Allegrex_ElfExtension extends ElfExtension {
 
     monitor.setMessage("Processing PLT/GOT...");
     fixupGot(elfLoadHelper, monitor);
+
     fixupMipsGot(elfLoadHelper, monitor);
+
     super.processGotPlt(elfLoadHelper, monitor);
+
     processMipsStubsSection(elfLoadHelper, monitor);
   }
 
@@ -454,7 +478,8 @@ public class Allegrex_ElfExtension extends ElfExtension {
       stubsBlock.getEnd(), monitor);
   }
 
-  private void fixupGot (ElfLoadHelper elfLoadHelper, TaskMonitor monitor) {
+  private void fixupGot (ElfLoadHelper elfLoadHelper, TaskMonitor monitor)
+    throws CancelledException {
 
     // see Wiki at  https://dmz-portal.mips.com/wiki/MIPS_Multi_GOT
     // see related doc at https://www.cr0.org/paper/mips.elf.external.resolution.txt
@@ -491,24 +516,30 @@ public class Allegrex_ElfExtension extends ElfExtension {
 
       // process local symbol got entries
       for (int i = 0; i < gotLocalEntryCount; i++) {
+        monitor.checkCancelled();
         Address gotEntryAddr =
           adjustTableEntryIfNonZero(gotBaseAddress, i, imageShift, elfLoadHelper);
         Data pointerData = elfLoadHelper.createData(gotEntryAddr, PointerDataType.dataType);
-        setConstant(pointerData);
+        if (ElfDefaultGotPltMarkup.isValidPointer(pointerData)) {
+          ElfDefaultGotPltMarkup.setConstant(pointerData);
+        }
       }
 
       // process global/external symbol got entries
       int gotIndex = gotLocalEntryCount;
       for (int i = gotSymbolIndex; i < elfSymbols.length; i++) {
+        monitor.checkCancelled();
         Address gotEntryAddr = adjustTableEntryIfNonZero(gotBaseAddress, gotIndex++,
           imageShift, elfLoadHelper);
         Data pointerData = elfLoadHelper.createData(gotEntryAddr, PointerDataType.dataType);
-        setConstant(pointerData);
+        ElfDefaultGotPltMarkup.setConstant(pointerData);
         if (elfSymbols[i].isFunction() && elfSymbols[i].getSectionHeaderIndex() == 0) {
           // ensure that external function/thunk are created in absence of sections
-          Address refAddr = (Address) pointerData.getValue();
-          elfLoadHelper.createExternalFunctionLinkage(elfSymbols[i].getNameAsString(),
-            refAddr, gotEntryAddr);
+          String symName = elfSymbols[i].getNameAsString();
+          if (!StringUtils.isBlank(symName)) {
+            Address refAddr = (Address) pointerData.getValue();
+            elfLoadHelper.createExternalFunctionLinkage(symName, refAddr, gotEntryAddr);
+          }
         }
       }
     } catch (NotFoundException e) {
@@ -518,7 +549,7 @@ public class Allegrex_ElfExtension extends ElfExtension {
     }
   }
 
-  private void fixupMipsGot (ElfLoadHelper elfLoadHelper, TaskMonitor monitor) {
+  private void fixupMipsGot (ElfLoadHelper elfLoadHelper, TaskMonitor monitor) throws CancelledException {
 
     ElfHeader elfHeader = elfLoadHelper.getElfHeader();
     ElfDynamicTable dynamicTable = elfHeader.getDynamicTable();
@@ -550,16 +581,18 @@ public class Allegrex_ElfExtension extends ElfExtension {
 
       long imageShift = elfLoadHelper.getImageBaseWordAdjustmentOffset();
 
-      // process local symbol got entries
+      // process global dynamic symbol got entries
       int gotEntryIndex = 1;
       for (int i = 0; i < gotSymbolIndex; i++) {
-        if (!elfSymbols[i].isFunction() || elfSymbols[i].getSectionHeaderIndex() != 0) {
+        monitor.checkCancelled();
+        if (!elfSymbols[i].isFunction() || !elfSymbols[i].isGlobal() ||
+          elfSymbols[i].getSectionHeaderIndex() != 0) {
           continue;
         }
         Address gotEntryAddr = adjustTableEntryIfNonZero(mipsPltgotBase, ++gotEntryIndex,
           imageShift, elfLoadHelper);
         Data pointerData = elfLoadHelper.createData(gotEntryAddr, PointerDataType.dataType);
-        setConstant(pointerData);
+        ElfDefaultGotPltMarkup.setConstant(pointerData);
       }
     } catch (NotFoundException e) {
       throw new AssertException("unexpected", e);
@@ -568,33 +601,31 @@ public class Allegrex_ElfExtension extends ElfExtension {
     }
   }
 
-  private void setConstant (Data pointerData) {
-    Memory memory = pointerData.getProgram().getMemory();
-    MemoryBlock block = memory.getBlock(pointerData.getAddress());
-    if (!block.isWrite() || block.getName().startsWith(ElfSectionHeaderConstants.dot_got)) {
-      // .got blocks will be force to read-only by ElfDefaultGotPltMarkup
-      return;
-    }
-    pointerData.setLong(MutabilitySettingsDefinition.MUTABILITY,
-      MutabilitySettingsDefinition.CONSTANT);
-  }
-
   private Address adjustTableEntryIfNonZero (Address tableBaseAddr, int entryIndex,
-                                             long adjustment, ElfLoadHelper elfLoadHelper) throws MemoryAccessException {
+                                             long adjustment, ElfLoadHelper elfLoadHelper)
+    throws MemoryAccessException {
     boolean is64Bit = elfLoadHelper.getElfHeader().is64Bit();
     Memory memory = elfLoadHelper.getProgram().getMemory();
     Address tableEntryAddr;
     if (is64Bit) {
       tableEntryAddr = tableBaseAddr.add(entryIndex * 8);
-      long offset = memory.getLong(tableEntryAddr);
-      if (offset != 0) {
-        memory.setLong(tableEntryAddr, offset + adjustment);
+      if (adjustment != 0) {
+        long offset = memory.getLong(tableEntryAddr);
+        long newValue = offset + adjustment;
+        if (offset != 0 && offset != newValue) {
+          elfLoadHelper.addArtificialRelocTableEntry(tableEntryAddr, 8);
+          memory.setLong(tableEntryAddr, newValue);
+        }
       }
     } else {
       tableEntryAddr = tableBaseAddr.add(entryIndex * 4);
-      int offset = memory.getInt(tableEntryAddr);
-      if (offset != 0) {
-        memory.setInt(tableEntryAddr, (int) (offset + adjustment));
+      if (adjustment != 0) {
+        int offset = memory.getInt(tableEntryAddr);
+        int newValue = (int) (offset + adjustment);
+        if (offset != 0 && offset != newValue) {
+          elfLoadHelper.addArtificialRelocTableEntry(tableEntryAddr, 4);
+          memory.setInt(tableEntryAddr, newValue);
+        }
       }
     }
     return tableEntryAddr;
@@ -608,13 +639,15 @@ public class Allegrex_ElfExtension extends ElfExtension {
     if (is64Bit) {
       tableEntryAddr = tableBaseAddr.add(entryIndex * 8);
       long offset = memory.getLong(tableEntryAddr);
-      if (offset == 0) {
+      if (offset == 0 && value != 0) {
+        elfLoadHelper.addArtificialRelocTableEntry(tableEntryAddr, 8);
         memory.setLong(tableEntryAddr, value);
       }
     } else {
       tableEntryAddr = tableBaseAddr.add(entryIndex * 4);
       int offset = memory.getInt(tableEntryAddr);
-      if (offset == 0) {
+      if (offset == 0 && value != 0) {
+        elfLoadHelper.addArtificialRelocTableEntry(tableEntryAddr, 4);
         memory.setInt(tableEntryAddr, (int) value);
       }
     }

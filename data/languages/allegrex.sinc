@@ -322,8 +322,6 @@ define pcodeop setCopControlWord;       # setCopControlWord(cop_num, reg_num, va
 define pcodeop getCopControlWord;       # getCopControlWord(cop_num, reg_num)
 define pcodeop setCopReg;               # setCopReg(cop_num, reg_num, value)
 define pcodeop getCopReg;               # getCopReg(cop_num, reg_num)
-define pcodeop countLeadingOnes;        # countLeadingOnes(val)
-define pcodeop countLeadingZeros;       # countLeadingZeros(val)
 define pcodeop getHWRegister;           # getHWRegister(regnum)
 define pcodeop setShadow;               # setShadow(sgpr, value)
 define pcodeop getShadow;               # gpr = getShadow(sgpr)

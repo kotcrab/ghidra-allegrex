@@ -11,7 +11,6 @@ import ghidra.dbg.target.schema.TargetObjectSchemaInfo
 import ghidra.program.model.address.Address
 import ghidra.program.model.address.AddressRangeImpl
 import kotlinx.coroutines.future.future
-import java.util.concurrent.CompletableFuture
 
 @TargetObjectSchemaInfo(
   name = PpssppModelTargetProcessMemory.NAME,
@@ -34,7 +33,7 @@ class PpssppModelTargetProcessMemory(
   private val targetMemoryRegions = mutableMapOf<PpssppMemoryRange, PpssppModelTargetMemoryRegion>()
   private val memory = this
 
-  override fun requestElements(refresh: DebuggerObjectModel.RefreshBehavior?): CompletableFuture<Void?> = modelScope.futureVoid {
+  override fun requestElements(refresh: DebuggerObjectModel.RefreshBehavior) = modelScope.futureVoid {
     val newTargetMemoryRegions = api.getMemoryMap()
       .map { getTargetMemoryRegion(it) }
     val delta = setElements(newTargetMemoryRegions, UpdateReason.REFRESHED)

@@ -70,7 +70,7 @@ public class AllegrexPreAnalyzer extends AbstractAnalyzer {
 
     AddressSet pairSet = new AddressSet();
     while (addresses.hasNext()) {
-      monitor.checkCanceled();
+      monitor.checkCancelled();
 
       Address addr = addresses.next();
 
@@ -309,7 +309,7 @@ public class AllegrexPreAnalyzer extends AbstractAnalyzer {
 
     Disassembler dis = Disassembler.getDisassembler(program, monitor, null);
     for (AddressRange addressRange : pairSet) {
-      monitor.checkCanceled();
+      monitor.checkCancelled();
       if (locationCount > NOTIFICATION_INTERVAL) {
 
         if ((count % NOTIFICATION_INTERVAL) == 0) {
@@ -370,6 +370,7 @@ public class AllegrexPreAnalyzer extends AbstractAnalyzer {
    * 1) mnemonics are correct
    * 2) offset difference is correct
    * 3) destination and base registers match
+   * @param str start inst mnemonic
    * @return Instruction that is the pair of this one
    */
   private Instruction checkPair (Scalar offset1, Scalar offset2, Register base1, Register base2,

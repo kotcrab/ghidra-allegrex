@@ -760,11 +760,11 @@
 }
 
 :clz RD, RSsrc                  is prime=0 & sa=0 & rt=0 & fct=22 & RD & RSsrc {
-    RD = countLeadingZeros( RSsrc );
+    RD = lzcount( RSsrc );
 }
 
 :clo RD, RSsrc                  is prime=0 & sa=0 & rt=0 & fct=23 & RD & RSsrc {
-    RD = countLeadingOnes( RSsrc );
+    RD = lzcount( ~RSsrc );
 }
 
 :max RD, RSsrc, RTsrc           is prime=0 & sa=0 & fct=44 & RD & RSsrc & RTsrc {
