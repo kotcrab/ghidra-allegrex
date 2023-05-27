@@ -1,9 +1,9 @@
 package allegrex.format.elf.relocation
 
+import ghidra.app.util.bin.BinaryReader
 import ghidra.app.util.bin.format.elf.ElfLoadHelper
 import ghidra.app.util.bin.format.elf.ElfProgramHeader
 import ghidra.app.util.bin.format.elf.ElfProgramHeaderConstants
-import ghidra.app.util.bin.format.elf.ElfSectionHeader
 import ghidra.app.util.bin.format.elf.PspElfConstants
 import ghidra.app.util.bin.format.elf.relocation.AllegrexElfRelocationConstants
 import ghidra.program.model.address.Address
@@ -19,17 +19,16 @@ class AuxRelocationProcessor {
 
     elfHeader.sections.forEach {
       if (it.type == PspElfConstants.SHT_PSP_REL) {
-        runCatching { processRelocationsTypeA(elfLoadHelper, it) }
+        runCatching { processRelocationsTypeA(elfLoadHelper, it.reader, it.offset, it.size) }
           .onFailure { cause ->
-            "Can't process type A relocations".also { msg ->
-              Msg.error(msg, cause)
-              elfLoadHelper.log("$msg: ${cause.message}. Please report this.")
-            }
+            logRelocationProcessingError(elfLoadHelper, cause, "Can't process type A relocations (source: sections)")
           }
       }
     }
 
-    // kernel module most likely won't have any sections but this check is more permissive
+    // if relocations were processed for sections then don't try to process them again from program headers
+    // kernel module most likely won't have any sections
+    // games usually have sections but there are exceptions (issue #25)
     if (elfHeader.sections.any { it.type in relocTypes }) {
       return
     }
@@ -37,24 +36,29 @@ class AuxRelocationProcessor {
     elfHeader.programHeaders.forEach {
       when (it.type) {
         PspElfConstants.SHT_PSP_REL -> {
-          elfLoadHelper.log("Type A relocations are not currently supported for ELFs without sections. Please report this.")
+          runCatching { processRelocationsTypeA(elfLoadHelper, it.reader, it.offset, it.fileSize) }
+            .onFailure { cause ->
+              logRelocationProcessingError(elfLoadHelper, cause, "Can't process type A relocations (source: program headers)")
+            }
         }
         PspElfConstants.SHT_PSP_REL_TYPE_B -> {
           runCatching { processRelocationsTypeB(elfLoadHelper, it, useRebootBinMapping) }
             .onFailure { cause ->
-              "Can't process type B relocations".also { msg ->
-                Msg.error(msg, cause)
-                elfLoadHelper.log("$msg: ${cause.message}. Please report this.")
-              }
+              logRelocationProcessingError(elfLoadHelper, cause, "Can't process type B relocations")
             }
         }
       }
     }
   }
 
-  private fun processRelocationsTypeA(elfLoadHelper: ElfLoadHelper, section: ElfSectionHeader) {
+  private fun logRelocationProcessingError(elfLoadHelper: ElfLoadHelper, cause: Throwable, msg: String) {
+    Msg.error(msg, cause)
+    elfLoadHelper.log("$msg: ${cause.message}. Please report this.")
+  }
+
+  private fun processRelocationsTypeA(elfLoadHelper: ElfLoadHelper, reader: BinaryReader, offset: Long, size: Long) {
     val program = elfLoadHelper.program
-    val relocations = parseRelocationsTypeA(elfLoadHelper, section)
+    val relocations = parseRelocationsTypeA(elfLoadHelper, reader, offset, size)
     relocations.forEach { relocation ->
       AllegrexRelocationApplicator.applyTo(
         program, program.imageBase, relocation.address, relocation.origInstr, relocation.reloc,
@@ -65,13 +69,14 @@ class AuxRelocationProcessor {
 
   private fun parseRelocationsTypeA(
     loadHelper: ElfLoadHelper,
-    section: ElfSectionHeader,
+    reader: BinaryReader,
+    offset: Long,
+    size: Long,
   ): List<PendingRelocationTypeA> {
     val relocations = mutableListOf<PendingRelocationTypeA>()
 
-    val reader = section.reader
-    reader.pointerIndex = section.offset
-    val end = section.offset + section.size
+    reader.pointerIndex = offset
+    val end = offset + size
 
     val program = loadHelper.program
     val elfHeader = loadHelper.elfHeader
@@ -134,7 +139,7 @@ class AuxRelocationProcessor {
   private fun parseRelocationsTypeB(
     programHeaders: Array<ElfProgramHeader>,
     relocHeader: ElfProgramHeader,
-    useRebootBinMapping: Boolean
+    useRebootBinMapping: Boolean,
   ): List<AllegrexRelocation.TypeB> {
     val relocations = mutableListOf<AllegrexRelocation.TypeB>()
 
