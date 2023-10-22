@@ -6,6 +6,7 @@ import allegrex.MipsInstructionStasher.LinkedCuRestorePolicy.RestoreLast
 import ghidra.program.model.address.Address
 import ghidra.program.model.lang.InstructionPrototype
 import ghidra.program.model.lang.ProgramProcessorContext
+import ghidra.program.model.listing.FlowOverride
 import ghidra.program.model.listing.Program
 import ghidra.program.model.mem.DumbMemBufferImpl
 import ghidra.program.model.symbol.Reference
@@ -56,15 +57,23 @@ private class CodeUnitCtx(
   val minAddress: Address,
   val maxAddress: Address,
   val prototype: InstructionPrototype,
-  val referencesFrom: Array<Reference>
+  val referencesFrom: Array<Reference>,
+  val flowOverride: FlowOverride,
+  val fallthroughOverride: Address?,
+  val lengthOverride: Int
 ) {
   companion object {
     fun fromProgram(program: Program, address: Address): CodeUnitCtx? {
       val instruction = program.listing.getInstructionContaining(address) ?: return null
       return CodeUnitCtx(
-        program,
-        instruction.minAddress, instruction.maxAddress,
-        instruction.prototype, instruction.referencesFrom
+        program = program,
+        minAddress = instruction.minAddress,
+        maxAddress = instruction.maxAddress,
+        prototype = instruction.prototype,
+        referencesFrom = instruction.referencesFrom,
+        flowOverride = instruction.flowOverride,
+        fallthroughOverride = if (instruction.isFallThroughOverridden) instruction.fallThrough else null,
+        lengthOverride = if (instruction.isLengthOverridden) instruction.length else 0
       )
     }
   }
@@ -76,7 +85,13 @@ private class CodeUnitCtx(
   fun restore() {
     val buf = DumbMemBufferImpl(program.memory, minAddress)
     val context = ProgramProcessorContext(program.programContext, minAddress)
-    program.listing.createInstruction(minAddress, prototype, buf, context)
+    val instruction = program.listing.createInstruction(minAddress, prototype, buf, context, lengthOverride)
+    if (flowOverride != FlowOverride.NONE) {
+      instruction.flowOverride = flowOverride
+    }
+    if (fallthroughOverride != null) {
+      instruction.fallThrough = fallthroughOverride
+    }
     for (reference in referencesFrom) {
       if (reference.source != SourceType.DEFAULT) {
         program.referenceManager.addReference(reference)
