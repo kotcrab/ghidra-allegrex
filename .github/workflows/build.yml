@@ -16,6 +16,7 @@ jobs:
         with:
           java-version: 17
           distribution: temurin
+          cache: gradle
       - name: Setup Ghidra
         uses: er28-0652/setup-ghidra@0.0.6
         with:
