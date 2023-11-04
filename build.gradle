@@ -25,17 +25,6 @@ apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'java'
 apply plugin: 'kotlin'
 
-def ghidraInstallDir
-if (System.env.GHIDRA_INSTALL_DIR) {
-  ghidraInstallDir = System.env.GHIDRA_INSTALL_DIR
-} else if (project.hasProperty("GHIDRA_INSTALL_DIR")) {
-  ghidraInstallDir = project.getProperty("GHIDRA_INSTALL_DIR")
-}
-if (!ghidraInstallDir) {
-  throw new GradleException("GHIDRA_INSTALL_DIR is not defined!")
-}
-def allegrexOut = ghidraInstallDir + '/Ghidra/Processors/Allegrex'
-
 dependencies {
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
   implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutinesVersion"
@@ -49,111 +38,26 @@ dependencies {
   testImplementation "com.google.code.gson:gson:$testGsonVersion"
   testImplementation "org.apache.logging.log4j:log4j-api:$testLog4j2Version"
   testImplementation "org.apache.logging.log4j:log4j-core:$testLog4j2Version"
-  shadow fileTree(dir: ghidraInstallDir + '/Ghidra/Framework', include: "**/*.jar")
-  shadow fileTree(dir: ghidraInstallDir + '/Ghidra/Features', include: "**/*.jar")
-  // Debugger
-  shadow fileTree(dir: ghidraInstallDir + '/Ghidra/Debug/Framework-Debugging', include: "**/*.jar")
-  shadow fileTree(dir: ghidraInstallDir + '/Ghidra/Debug/Framework-AsyncComm', include: "**/*.jar")
-  shadow fileTree(dir: ghidraInstallDir + '/Ghidra/Debug/Framework-TraceModeling', include: "**/*.jar")
-  shadow fileTree(dir: ghidraInstallDir + '/Ghidra/Debug/ProposedUtils', include: "**/*.jar")
-  shadow fileTree(dir: ghidraInstallDir + '/Ghidra/Debug/Debugger', include: "**/*.jar")
 }
 
-sourceCompatibility = JavaVersion.VERSION_17
-targetCompatibility = JavaVersion.VERSION_17
-
-compileKotlin {
-  kotlinOptions {
-    jvmTarget = "17"
+kotlin {
+  jvmToolchain {
+    languageVersion.set(JavaLanguageVersion.of("17"))
   }
 }
 
-jar {
-  manifest {
-    attributes(
-      'Specification-Title': "Allegrex",
-      'Specification-Version': "10.2.0",
-    )
-  }
+def ghidraInstallDir
+
+if (System.env.GHIDRA_INSTALL_DIR) {
+	ghidraInstallDir = System.env.GHIDRA_INSTALL_DIR
+}
+else if (project.hasProperty("GHIDRA_INSTALL_DIR")) {
+	ghidraInstallDir = project.getProperty("GHIDRA_INSTALL_DIR")
 }
 
-//noinspection GroovyAssignabilityCheck
-task ghidraInstall {
-  dependsOn 'shadowJar'
-  doLast {
-    delete allegrexOut
-    copy {
-      from "data"
-      into allegrexOut + "/data"
-    }
-    copy {
-      from "ghidra_scripts"
-      into allegrexOut + "/ghidra_scripts"
-    }
-    copy {
-      from "build/libs"
-      into allegrexOut + "/lib"
-      include "ghidra-allegrex-all.jar"
-      rename("ghidra-allegrex-all.jar", "Allegrex.jar")
-    }
-    copy {
-      from "."
-      into allegrexOut
-      include "Module.manifest"
-    }
-  }
+if (ghidraInstallDir) {
+	apply from: new File(ghidraInstallDir).getCanonicalPath() + "/support/buildExtension.gradle"
 }
-
-task ghidraInstallThenRun {
-  dependsOn 'ghidraInstall'
-  doLast {
-    exec {
-      if (System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')) {
-        commandLine 'cmd', '/c', 'ghidraRun.bat'
-      } else {
-        commandLine './ghidraRun'
-      }
-      workingDir ghidraInstallDir
-      ignoreExitValue true
-    }
-  }
-}
-
-task ghidraInstallThenDebug {
-  dependsOn 'ghidraInstall'
-  doLast {
-    exec {
-      if (System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')) {
-        commandLine 'cmd', '/c', 'support\\ghidraDebug.bat'
-      } else {
-        commandLine './support/ghidraDebug'
-      }
-      workingDir ghidraInstallDir
-      ignoreExitValue true
-    }
-  }
-}
-
-task ghidraInstallThenCompile {
-  dependsOn 'ghidraInstall'
-  doLast {
-    exec {
-      if (System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')) {
-        commandLine 'cmd', '/c', 'support\\sleigh.bat', '-a', 'Ghidra\\Processors\\Allegrex\\data\\languages'
-      } else {
-        commandLine './support/sleigh', '-a', './Ghidra/Processors/Allegrex/data/languages'
-      }
-      workingDir ghidraInstallDir
-      ignoreExitValue false
-    }
-  }
-}
-
-task ghidraInstallThenPackage(type: Zip) {
-  dependsOn 'ghidraInstallThenCompile'
-  archiveFileName = "Allegrex.zip"
-  destinationDirectory = file("$buildDir/dist")
-
-  from allegrexOut
-  into "Allegrex"
+else {
+	throw new GradleException("GHIDRA_INSTALL_DIR is not defined!")
 }
