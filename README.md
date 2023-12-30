@@ -90,7 +90,7 @@ After running `./gradlew shadowJar` you can manually install extension by copyin
 Ghidra should automatically recompile Sleigh files when importing an executable, if not run:
 
 ```bash
-/ghidra_10.x.x/support$ ./sleigh -a ../Ghidra/Processors/Allegrex/data/languages/
+/ghidra_x.x.x/support$ ./sleigh -a ../Ghidra/Processors/Allegrex/data/languages/
 ```
 
 ## License
