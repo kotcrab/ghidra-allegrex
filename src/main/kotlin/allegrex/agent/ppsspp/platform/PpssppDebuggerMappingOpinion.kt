@@ -1,7 +1,7 @@
 package allegrex.agent.ppsspp.platform
 
-import ghidra.app.plugin.core.debug.mapping.DebuggerMappingOffer
-import ghidra.app.plugin.core.debug.mapping.DebuggerMappingOpinion
+import ghidra.debug.api.model.DebuggerMappingOffer
+import ghidra.debug.api.model.DebuggerMappingOpinion
 import ghidra.app.plugin.core.debug.mapping.DefaultDebuggerMappingOffer
 import ghidra.dbg.target.TargetEnvironment
 import ghidra.dbg.target.TargetObject

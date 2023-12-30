@@ -79,7 +79,7 @@ class PpssppDebuggerObjectModel(private val client: PpssppClient) : AbstractDebu
   }
 
   private fun terminate() {
-    listeners.fire.modelClosed(DebuggerModelClosedReason.NORMAL)
+    listeners.invoke().modelClosed(DebuggerModelClosedReason.NORMAL)
     session.invalidateSubtree(session, "Debugger is terminating")
     client.close()
     modelScope.cancel()

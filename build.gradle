@@ -57,6 +57,7 @@ dependencies {
   shadow fileTree(dir: ghidraInstallDir + '/Ghidra/Debug/Framework-TraceModeling', include: "**/*.jar")
   shadow fileTree(dir: ghidraInstallDir + '/Ghidra/Debug/ProposedUtils', include: "**/*.jar")
   shadow fileTree(dir: ghidraInstallDir + '/Ghidra/Debug/Debugger', include: "**/*.jar")
+  shadow fileTree(dir: ghidraInstallDir + '/Ghidra/Debug/Debugger-api', include: "**/*.jar")
 }
 
 sourceCompatibility = JavaVersion.VERSION_17
