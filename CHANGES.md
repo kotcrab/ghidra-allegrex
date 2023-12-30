@@ -1,3 +1,6 @@
+#### Version 18
+- Updated to Ghidra 11.0
+
 #### Version 17
 - Updated to Ghidra 10.4
 
