@@ -38,7 +38,7 @@ object AllegrexRelocationApplicator {
         newAddr += relocation.linkedLoValue
         newAddr += relocateToSect
         val newLo = (newAddr and 0xFFFF).toShort()
-        val newHi = (newAddr - newLo) shr 16
+        val newHi = (newAddr - newLo) ushr 16
         newInstr = (initialValue and 0xFFFF0000.toInt()) or newHi
       }
       AllegrexElfRelocationConstants.R_MIPS_LO16 -> {

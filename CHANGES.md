@@ -1,3 +1,6 @@
+#### Version 19
+- Fixed HI16 relocation calculation when relocating to a very high address
+
 #### Version 18
 - Updated to Ghidra 11.0
 
