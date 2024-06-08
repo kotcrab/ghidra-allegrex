@@ -5,14 +5,14 @@ Ghidra processor module adding support for the Allegrex CPU used in the PlayStat
 
 Features:
 
-- Support for PSP specific ELF relocation sections (type A and B)
-  - Image rebase after loading is also supported
-- Support for Allegrex specific instructions
-- Processor type auto-detection for ELF files
-- PSP calling convention support
-- Disassembly and decompilation of VFPU instructions (see limitations bellow)
-- Scripts for importing and exporting PPSSPP `.sym` files (function labels)
-- Ghidra Debugger can be used to debug games running in PPSSPP (beta)
+- Support for PSP specific ELF relocation sections (type A and B).
+  - Image rebase after loading is also supported.
+- Support for Allegrex specific instructions.
+- Processor type auto-detection for ELF files.
+- PSP calling convention support.
+- Disassembly and decompilation of VFPU instructions (see limitations below).
+- Scripts for importing and exporting PPSSPP `.sym` files (function labels).
+- Ghidra Debugger can be used to debug games running in PPSSPP.
 
 ## Installation
 
@@ -53,6 +53,11 @@ Raw binaries are also supported. In that case you will need to manually select A
 
 ### PPSSPP debugger integration
 
+Note: Ghidra 11.1 is replacing API required by this integration with a new one (Trace RMI). The new API is not compatible with the
+old one so a full rewrite of this integration would be required. This is not planned, this integration will be removed once the
+old API is no longer available. To use this integration starting from Ghidra 11.1 you will need to modify the default Debugger 
+tool and enable `DebuggerObjectsPlugin` and `DebuggerTargetsPlugin` plugins.
+
 Since version 1.9 Ghidra Debugger can be used to debug games running in PPSSPP over the WebSocket API. To get started open
 PPSSPP and make sure "Allow remote debugger" is enabled in PPSSPP settings. Then open your binary using the Debugger tool and
 in the `Debugger Targets` panel press the `Connect` button. Select `PPSSPP WebSocket debugger (beta)` and press `Connect`.
@@ -66,8 +71,8 @@ Tips:
 
 ## VFPU Limitations
 
-- Decompilation support is rather basic, almost every operation is converted to a function call such as `vadd_q(...)`
-  - Semantics of `vpfxs`, `vpfxt` and `vpfxd` are not currently modeled
+- Decompilation support is rather basic, almost every operation is converted to a function call such as `vadd_q(...)`.
+  - Semantics of `vpfxs`, `vpfxt` and `vpfxd` are not currently modeled in the decompiler.
 - Second operand of `vfim.s` will be shown as an integer, should be shown as a half float. Sleigh does not support float
   tokens.
 
@@ -76,16 +81,16 @@ Tips:
 `GHIDRA_INSTALL_DIR` environment variable must be set to Ghidra root installation directory.
 
 - `./gradlew ghidraInstall` - build and install into Ghidra (warning: contents
-  of `GHIDRA_INSTALL_DIR/Ghidra/Processors/Allegrex` will be deleted before installing)
-- `./gradlew ghidraInstallThenRun` - run `ghidraInstall` task then start Ghidra, useful for development
-- `./gradlew ghidraInstallThenDebug` - run `ghidraInstall` task then start Ghidra in debug mode, useful for development
-- `./gradlew ghidraInstallThenPackage` - run `ghidraInstall` task then create release zip
-- `./gradlew shadowJar` - create single library jar file with all external dependencies included
+  of `GHIDRA_INSTALL_DIR/Ghidra/Processors/Allegrex` will be deleted before installing).
+- `./gradlew ghidraInstallThenRun` - run `ghidraInstall` task then start Ghidra, useful for development.
+- `./gradlew ghidraInstallThenDebug` - run `ghidraInstall` task then start Ghidra in debug mode, useful for development.
+- `./gradlew ghidraInstallThenPackage` - run `ghidraInstall` task then create release zip.
+- `./gradlew shadowJar` - create single library jar file with all external dependencies included.
 
 After running `./gradlew shadowJar` you can manually install extension by copying:
 
-- `build/libs/ghidra-allegrex-all.jar` file to `GHIDRA_INSTALL_DIR/Ghidra/Processors/Allegrex/lib/Allegrex.jar`
-- `data` and `ghidra_scripts` directories to `GHIDRA_INSTALL_DIR/Ghidra/Processors/Allegrex/`
+- `build/libs/ghidra-allegrex-all.jar` file to `GHIDRA_INSTALL_DIR/Ghidra/Processors/Allegrex/lib/Allegrex.jar`.
+- `data` and `ghidra_scripts` directories to `GHIDRA_INSTALL_DIR/Ghidra/Processors/Allegrex/`.
 
 Ghidra should automatically recompile Sleigh files when importing an executable, if not run:
 
