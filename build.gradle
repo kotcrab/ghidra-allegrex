@@ -1,9 +1,9 @@
 buildscript {
-  ext.kotlinVersion = '1.7.0'
+  ext.kotlinVersion = '1.9.24'
   ext.kotlinCoroutinesVersion = '1.6.3-native-mt'
   ext.ktorVersion = '1.6.8'
   ext.testGsonVersion = '2.9.0'
-  ext.testLog4j2Version = '2.17.2'
+  ext.testLog4j2Version = '2.23.1'
   repositories {
     mavenCentral()
   }
@@ -73,7 +73,7 @@ jar {
   manifest {
     attributes(
       'Specification-Title': "Allegrex",
-      'Specification-Version': "10.2.0",
+      'Specification-Version': "11.1",
     )
   }
 }
