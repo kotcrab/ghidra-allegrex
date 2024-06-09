@@ -19,7 +19,7 @@ Features:
 Download prebuilt package from the [Releases](https://github.com/kotcrab/ghidra-rest-api/releases) section. Select release which matches
 your Ghidra version. Then depending on the version you're installing:
 
-#### Version 19 or newer
+### Version 19 or newer
 
 In main Ghidra window:
 1. Select `File -> Install Extensions`.
@@ -27,7 +27,7 @@ In main Ghidra window:
 3. Select downloaded ZIP.
 4. Restart Ghidra.
 
-#### Version 18 or earlier
+### Version 18 or earlier
 
 Extract downloaded ZIP. After extracting copy the `Allegrex` directory into `GHIDRA_INSTALL_DIR/Ghidra/Processors`.
 
@@ -55,9 +55,9 @@ file in PPSSPP.
 
 ### Kernel modules
 
-Since version 1.7 relocations found in kernel modules are supported. Usage is very similar as when importing games though
-kernel modules are usually loaded starting from address `88000000`. Note that for some files (e.g. `sysmem`, `loadcore`) you
-will need to click `Options...` during import and select option to use `reboot.bin` type B relocation mapping.
+Usage is very similar as when importing games though kernel modules are usually loaded starting from address `88000000`.
+Note that for some files (e.g. `sysmem`, `loadcore`) you will need to click `Options...` during import and select checkbox to 
+use `reboot.bin` type B relocation mapping.
 
 ### Raw binaries
 
@@ -70,7 +70,7 @@ old one so a full rewrite of this integration would be required. This is not pla
 old API is no longer available. To use this integration starting from Ghidra 11.1 you will need to modify the default Debugger 
 tool and enable `DebuggerObjectsPlugin` and `DebuggerTargetsPlugin` plugins.
 
-Since version 1.9 Ghidra Debugger can be used to debug games running in PPSSPP over the WebSocket API. To get started open
+Ghidra Debugger can be used to debug games running in PPSSPP over the WebSocket API. To get started open
 PPSSPP and make sure "Allow remote debugger" is enabled in PPSSPP settings. Then open your binary using the Debugger tool and
 in the `Debugger Targets` panel press the `Connect` button. Select `PPSSPP WebSocket debugger (beta)` and press `Connect`.
 See Ghidra's built-in help to learn more about the debugger features.
