@@ -24,11 +24,10 @@ jobs:
       - name: Build Extension
         run: |
           chmod +x gradlew
-          ./gradlew ghidraInstallThenPackage
-          unzip ./build/dist/Allegrex.zip -d upload
+          ./gradlew buildExtension
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
-          path: upload
-          name: Allegrex-snapshot-for-Ghidra-${{ matrix.ghidra }}
+          path: dist/*ghidra-allegrex.zip
+          name: ghidra-allegrex-snapshot-for-Ghidra-${{ matrix.ghidra }}
           if-no-files-found: error

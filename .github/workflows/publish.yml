@@ -5,6 +5,9 @@ on:
     tags:
       - 'v*'
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -27,13 +30,13 @@ jobs:
       - name: Build Extension
         run: |
           chmod +x gradlew
-          ./gradlew ghidraInstallThenPackage
+          ./gradlew buildExtension
       - name: Upload artifact to release
-        uses: svenstaro/upload-release-action@2.3.0
+        uses: svenstaro/upload-release-action@2.9.0
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           release_name: ghidra-allegrex ${{ github.ref_name }}
-          file: ./build/dist/Allegrex.zip
-          asset_name: Allegrex-${{ github.ref_name }}-for-Ghidra-${{ matrix.ghidra }}.zip
+          file: dist/*ghidra-allegrex.zip
+          file_glob: true
           body: See [CHANGES](https://github.com/kotcrab/ghidra-allegrex/blob/master/CHANGES.md) file before updating.
           tag: ${{ github.ref }}

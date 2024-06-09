@@ -16,8 +16,20 @@ Features:
 
 ## Installation
 
-Download prebuilt package from the [Releases](https://github.com/kotcrab/ghidra-allegrex/releases) section. Select release which matches
-your Ghidra version. After extracting copy the `Allegrex` directory into `GHIDRA_INSTALL_DIR/Ghidra/Processors`.
+Download prebuilt package from the [Releases](https://github.com/kotcrab/ghidra-rest-api/releases) section. Select release which matches
+your Ghidra version. Then depending on the version you're installing:
+
+#### Version 19 or newer
+
+In main Ghidra window:
+1. Select `File -> Install Extensions`.
+2. Press the green plus button.
+3. Select downloaded ZIP.
+4. Restart Ghidra.
+
+#### Version 18 or earlier
+
+Extract downloaded ZIP. After extracting copy the `Allegrex` directory into `GHIDRA_INSTALL_DIR/Ghidra/Processors`.
 
 ## Usage
 
@@ -80,23 +92,14 @@ Tips:
 
 `GHIDRA_INSTALL_DIR` environment variable must be set to Ghidra root installation directory.
 
-- `./gradlew ghidraInstall` - build and install into Ghidra (warning: contents
-  of `GHIDRA_INSTALL_DIR/Ghidra/Processors/Allegrex` will be deleted before installing).
+- `./gradlew buildExtension` - build extension, this will create a zip file in the `dist` directory.
+
+The following commands require `GHIDRA_USER_DIR` environment variable, it must be set to your Ghidra user
+directory, for example: `C:\Users\<user>\AppData\Roaming\ghidra\ghidra_11.1_PUBLIC`.
+
+- `./gradlew ghidraInstall` - build and install into Ghidra (contents of `$GHIDRA_USER_DIR/Extensions/ghidra-allegrex` will be overwritten).
 - `./gradlew ghidraInstallThenRun` - run `ghidraInstall` task then start Ghidra, useful for development.
 - `./gradlew ghidraInstallThenDebug` - run `ghidraInstall` task then start Ghidra in debug mode, useful for development.
-- `./gradlew ghidraInstallThenPackage` - run `ghidraInstall` task then create release zip.
-- `./gradlew shadowJar` - create single library jar file with all external dependencies included.
-
-After running `./gradlew shadowJar` you can manually install extension by copying:
-
-- `build/libs/ghidra-allegrex-all.jar` file to `GHIDRA_INSTALL_DIR/Ghidra/Processors/Allegrex/lib/Allegrex.jar`.
-- `data` and `ghidra_scripts` directories to `GHIDRA_INSTALL_DIR/Ghidra/Processors/Allegrex/`.
-
-Ghidra should automatically recompile Sleigh files when importing an executable, if not run:
-
-```bash
-/ghidra_x.x.x/support$ ./sleigh -a ../Ghidra/Processors/Allegrex/data/languages/
-```
 
 ## License
 

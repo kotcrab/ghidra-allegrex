@@ -1,4 +1,7 @@
 #### Version 19
+- [#8](https://github.com/kotcrab/ghidra-allegrex/issues/8) - switched to the official way of packaging the extension.
+  - **Warning**: The installation method is different now, please see the updated README.
+  - Note: If you're updating from version 18 in an already existing Ghidra installation you must delete the plugin first.
 - Fixed HI16 relocation calculation when relocating to a very high address
 - Updated internal dependencies
 
