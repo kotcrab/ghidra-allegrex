@@ -1,3 +1,7 @@
+#### Version 19.1
+- Added build for Ghidra 11.1.1
+- Updated internal dependencies
+
 #### Version 19
 - [#8](https://github.com/kotcrab/ghidra-allegrex/issues/8) - switched to the official way of packaging the extension
   - **Warning**: The installation method is different now, please see the updated README
