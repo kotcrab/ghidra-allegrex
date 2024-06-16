@@ -13,16 +13,16 @@ import allegrex.agent.ppsspp.client.model.request.PpssppGameStatusRequest
 import allegrex.agent.ppsspp.client.model.request.PpssppRequest
 import com.google.gson.Gson
 import io.ktor.client.HttpClient
+import io.ktor.client.call.body
 import io.ktor.client.engine.cio.CIO
-import io.ktor.client.features.json.GsonSerializer
-import io.ktor.client.features.json.JsonFeature
-import io.ktor.client.features.websocket.DefaultClientWebSocketSession
-import io.ktor.client.features.websocket.WebSockets
-import io.ktor.client.features.websocket.webSocketSession
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.websocket.DefaultClientWebSocketSession
+import io.ktor.client.plugins.websocket.WebSockets
+import io.ktor.client.plugins.websocket.webSocketSession
 import io.ktor.client.request.get
 import io.ktor.http.HttpMethod
-import io.ktor.http.cio.websocket.Frame
-import io.ktor.http.cio.websocket.send
+import io.ktor.serialization.gson.gson
+import io.ktor.websocket.Frame
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -50,8 +50,8 @@ class PpssppWsClient(
   }
 
   private val client = HttpClient(CIO) {
-    install(JsonFeature) {
-      serializer = GsonSerializer()
+    install(ContentNegotiation) {
+      gson()
     }
     install(WebSockets)
   }
@@ -96,7 +96,7 @@ class PpssppWsClient(
 
   private suspend fun getPpssppInstances(): List<PpssppInstance> {
     return when {
-      connectionUrl.isNullOrBlank() -> client.get(REPORT_PPSSPP_URL)
+      connectionUrl.isNullOrBlank() -> client.get(REPORT_PPSSPP_URL).body()
       else -> {
         val parts = connectionUrl.split(":", limit = 2)
         val ip = parts[0]
@@ -128,7 +128,7 @@ class PpssppWsClient(
     for (message in outgoingChannel) {
       val request = gson.toJson(message)
       logger.debug(">>> WS ${request.take(MAX_WS_LOG_LENGTH)}")
-      session.send(request)
+      session.send(Frame.Text(request))
     }
   }
 
