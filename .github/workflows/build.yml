@@ -1,6 +1,16 @@
 name: Build Ghidra Allegrex
 
-on: [ push, pull_request, workflow_dispatch ]
+on:
+  push:
+    branches:
+      - '**'
+    tags:
+      - 'v*'
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -10,24 +20,34 @@ jobs:
         ghidra: [ '11.0.3', '11.1', '11.1.1' ]
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Setup Java
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: 17
           distribution: temurin
           cache: gradle
       - name: Setup Ghidra
-        uses: antoniovazquezblanco/setup-ghidra@v1.2.4
+        uses: antoniovazquezblanco/setup-ghidra@021eb688b995b2c3aa4d607dea9cb332ab4eb9c8
         with:
           version: ${{ matrix.ghidra }}
       - name: Build Extension
         run: |
           chmod +x gradlew
           ./gradlew buildExtension
-      - name: Upload artifact
-        uses: actions/upload-artifact@v3
+      - name: Upload artifact to workflow
+        uses: actions/upload-artifact@v4
         with:
           path: dist/*ghidra-allegrex.zip
           name: ghidra-allegrex-snapshot-for-Ghidra-${{ matrix.ghidra }}
           if-no-files-found: error
+      - name: Upload artifact to release
+        if: github.event_name == 'push' && github.ref_type == 'tag' && startsWith(github.ref, 'refs/tags/v')
+        uses: svenstaro/upload-release-action@2.9.0
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          release_name: ghidra-allegrex ${{ github.ref_name }}
+          file: dist/*ghidra-allegrex.zip
+          file_glob: true
+          body: See [CHANGES](https://github.com/kotcrab/ghidra-allegrex/blob/master/CHANGES.md) file before updating.
+          tag: ${{ github.ref }}
