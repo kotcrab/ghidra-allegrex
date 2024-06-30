@@ -111,4 +111,5 @@ Type B relocation parsing based on [prxtool](https://github.com/pspdev/prxtool) 
 
 ## See also
 
+- [PSP RE quick start guide](https://psp-re.github.io/quickstart/) - Short guide that will present you all the necessary resources you need to start reverse engineering on PSP.
 - [psp-ghidra-scripts](https://github.com/pspdev/psp-ghidra-scripts) - A collection of scripts to aid in reverse engineering PSP binaries in Ghidra.
