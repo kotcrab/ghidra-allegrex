@@ -1,3 +1,6 @@
+#### Version 20
+- [#36](https://github.com/kotcrab/ghidra-allegrex/issues/36) - Fixed importing binaries with debug symbols
+
 #### Version 19.1
 - Added build for Ghidra 11.1.1
 - Updated internal dependencies
