@@ -1,15 +1,14 @@
 package allegrex.format.elf.relocation
 
+import allegrex.format.elf.PspElfConstants
 import ghidra.app.util.bin.BinaryReader
 import ghidra.app.util.bin.format.elf.ElfLoadHelper
 import ghidra.app.util.bin.format.elf.ElfProgramHeader
 import ghidra.app.util.bin.format.elf.ElfProgramHeaderConstants
-import ghidra.app.util.bin.format.elf.PspElfConstants
-import ghidra.app.util.bin.format.elf.relocation.AllegrexElfRelocationConstants
 import ghidra.program.model.address.Address
 import ghidra.util.Msg
 
-class AuxRelocationProcessor {
+class AllegrexRelocationProcessor {
   companion object {
     private val relocTypes = listOf(PspElfConstants.SHT_PSP_REL, PspElfConstants.SHT_PSP_REL_TYPE_B)
   }

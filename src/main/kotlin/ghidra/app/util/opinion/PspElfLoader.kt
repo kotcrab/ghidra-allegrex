@@ -1,10 +1,10 @@
 package ghidra.app.util.opinion
 
+import allegrex.format.elf.PspElfHeader
 import ghidra.app.util.Option
 import ghidra.app.util.OptionUtils
 import ghidra.app.util.bin.ByteProvider
 import ghidra.app.util.bin.format.elf.ElfException
-import ghidra.app.util.bin.format.elf.PspElfHeader
 import ghidra.app.util.importer.MessageLog
 import ghidra.framework.model.DomainObject
 import ghidra.program.model.listing.Program

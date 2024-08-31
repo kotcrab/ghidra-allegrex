@@ -1,4 +1,4 @@
-package ghidra.app.util.bin.format.elf.relocation
+package allegrex.format.elf.relocation
 
 object AllegrexElfRelocationConstants {
   const val R_MIPS_NONE = 0

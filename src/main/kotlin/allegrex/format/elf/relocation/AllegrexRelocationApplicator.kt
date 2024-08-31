@@ -1,7 +1,6 @@
 package allegrex.format.elf.relocation
 
 import allegrex.MipsInstructionStasher
-import ghidra.app.util.bin.format.elf.relocation.AllegrexElfRelocationConstants
 import ghidra.program.model.address.Address
 import ghidra.program.model.listing.Program
 import ghidra.program.model.reloc.Relocation

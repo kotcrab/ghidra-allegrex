@@ -1,4 +1,4 @@
-package ghidra.app.util.bin.format.elf.relocation
+package allegrex.format.elf.relocation
 
 import ghidra.app.util.bin.format.elf.ElfRelocation
 import ghidra.program.model.data.CategoryPath

@@ -1,4 +1,4 @@
-package ghidra.program.emulation
+package allegrex.program.emulation
 
 import ghidra.pcode.emulate.Emulate
 import ghidra.pcode.emulate.EmulateInstructionStateModifier

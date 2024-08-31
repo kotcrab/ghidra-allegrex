@@ -1,6 +1,9 @@
 package ghidra.app.util.bin.format.elf.extend;
 
-import allegrex.format.elf.relocation.AuxRelocationProcessor;
+import allegrex.format.elf.PspElfHeader;
+import allegrex.format.elf.relocation.AllegrexElfRelocationExtension;
+import allegrex.format.elf.relocation.AllegrexRelocationProcessor;
+import ghidra.app.util.bin.format.elf.ElfConstants;
 import ghidra.app.util.bin.format.elf.ElfDefaultGotPltMarkup;
 import ghidra.app.util.bin.format.elf.ElfDynamicTable;
 import ghidra.app.util.bin.format.elf.ElfDynamicType;
@@ -14,9 +17,6 @@ import ghidra.app.util.bin.format.elf.ElfSectionHeader;
 import ghidra.app.util.bin.format.elf.ElfSectionHeaderType;
 import ghidra.app.util.bin.format.elf.ElfSymbol;
 import ghidra.app.util.bin.format.elf.ElfSymbolTable;
-import ghidra.app.util.bin.format.elf.PspElfConstants;
-import ghidra.app.util.bin.format.elf.PspElfHeader;
-import ghidra.app.util.bin.format.elf.relocation.AllegrexElfRelocationExtension;
 import ghidra.program.model.address.Address;
 import ghidra.program.model.address.AddressOutOfBoundsException;
 import ghidra.program.model.address.AddressSpace;
@@ -136,11 +136,11 @@ public class Allegrex_ElfExtension extends ElfExtension {
   public static final short SHN_MIPS_TEXT = (short) 0xff01;
   public static final short SHN_MIPS_DATA = (short) 0xff02;
 
-  private final AuxRelocationProcessor auxRelocationProcessor = new AuxRelocationProcessor();
+  private final AllegrexRelocationProcessor allegrexRelocationProcessor = new AllegrexRelocationProcessor();
 
   @Override
   public boolean canHandle (ElfHeader elf) {
-    return elf.e_machine() == PspElfConstants.INSTANCE.getEM_MIPS_PSP_HACK();
+    return elf.e_machine() == ElfConstants.EM_MIPS;
   }
 
   @Override
@@ -502,7 +502,7 @@ public class Allegrex_ElfExtension extends ElfExtension {
     if (elfLoadHelper.getElfHeader() instanceof PspElfHeader) {
       useRebootBinTypeBMapping = ((PspElfHeader) elfLoadHelper.getElfHeader()).getUseRebootBinTypeBMapping();
     }
-    auxRelocationProcessor.process(elfLoadHelper, useRebootBinTypeBMapping);
+    allegrexRelocationProcessor.process(elfLoadHelper, useRebootBinTypeBMapping);
 
     monitor.setMessage("Processing PLT/GOT...");
     fixupGot(elfLoadHelper, monitor);
