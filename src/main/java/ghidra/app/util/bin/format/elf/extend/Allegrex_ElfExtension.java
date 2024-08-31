@@ -50,13 +50,21 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @SuppressWarnings("unused")
+// Note that this class is derived from the MIPS_ElfExtension. When the comment
+// says "PSP relocation section are not supported" it refers to the built-in
+// MIPS plugin, not the Allegrex one.
 public class Allegrex_ElfExtension extends ElfExtension {
 
   private static final String MIPS_STUBS_SECTION_NAME = ".MIPS.stubs";
 
   // GP value reflected by symbol address
+  public static final String MIPS_GP_DISP_SYMBOL_NAME = "_gp_disp"; // relocation GP marker symbol
+  public static final String MIPS_GP_GNU_LOCAL_SYMBOL_NAME = "__gnu_local_gp";
   public static final String MIPS_GP_VALUE_SYMBOL = "_mips_gp_value";
   public static final String MIPS_GP0_VALUE_SYMBOL = "_mips_gp0_value";
+
+  // Elf Header - File Type
+  public static final short ET_MIPS_PSP_PRX = (short) 0xffa0;
 
   // Elf Program Header Extensions
   public static final ElfProgramHeaderType PT_MIPS_REGINFO = new ElfProgramHeaderType(0x70000000,
@@ -64,11 +72,29 @@ public class Allegrex_ElfExtension extends ElfExtension {
   public static final ElfProgramHeaderType PT_MIPS_OPTIONS =
     new ElfProgramHeaderType(0x70000002, "PT_MIPS_OPTIONS", ".MIPS.options section");
 
+  // PT_MIPS_PSPREL1 relocation format not supported (does not link to symbol table):
+  //  type = r_info & 0xf, readwrite = (r_info >> 8) & 0xff, relative = (r_info >> 16) & 0xff
+  // Uses Elf32_Rel but relocation processing differs from standard MIPS relocation handler
+  // see https://github.com/hrydgard/ppsspp/blob/master/Core/ELF/ElfReader.cpp
+  public static final ElfProgramHeaderType PT_MIPS_PSPREL1 =
+    new ElfProgramHeaderType(0x700000a0, "PT_MIPS_PSPREL1", "PSP relocation table");
+
+  // PT_MIPS_PSPREL2 relocation format not supported (does not link to symbol table, non-standard format):
+  // see https://github.com/hrydgard/ppsspp/blob/master/Core/ELF/ElfReader.cpp
+  public static final ElfProgramHeaderType PT_MIPS_PSPREL2 =
+    new ElfProgramHeaderType(0x700000a1, "PT_MIPS_PSPREL2", "PSP relocation table");
+
   // Elf Section Header Extensions
   public static final ElfSectionHeaderType SHT_MIPS_REGINFO = new ElfSectionHeaderType(0x70000006,
     "SHT_MIPS_REGINFO", "Section contains register usage information");
   public static final ElfSectionHeaderType SHT_MIPS_OPTIONS = new ElfSectionHeaderType(0x7000000d,
     "SHT_MIPS_OPTIONS", "Section contains miscellaneous options");
+
+  // SHT_MIPS_PSPREL relocation format not supported (does not link to symbol table, uses Elf32_Rel):
+  //   type = r_info & 0xf, readwrite = (r_info >> 8) & 0xff, relative = (r_info >> 16) & 0xff
+  // see https://github.com/hrydgard/ppsspp/blob/master/Core/ELF/ElfReader.cpp
+  public static final ElfSectionHeaderType SHT_MIPS_PSPREL =
+    new ElfSectionHeaderType(0x700000a0, "SHT_MIPS_PSPREL", "PSP relocation table"); // relocations not supported
 
   // Elf Dynamic Type Extensions
   public static final ElfDynamicType DT_MIPS_LOCAL_GOTNO =
@@ -105,6 +131,11 @@ public class Allegrex_ElfExtension extends ElfExtension {
   public static final byte ODK_IDENT = 10;
   public static final byte ODK_PAGESIZE = 11;
 
+  // MIPS-specific SHN values
+  public static final short SHN_MIPS_ACOMMON = (short) 0xff00;
+  public static final short SHN_MIPS_TEXT = (short) 0xff01;
+  public static final short SHN_MIPS_DATA = (short) 0xff02;
+
   private final AuxRelocationProcessor auxRelocationProcessor = new AuxRelocationProcessor();
 
   @Override
@@ -115,7 +146,8 @@ public class Allegrex_ElfExtension extends ElfExtension {
   @Override
   public boolean canHandle (ElfLoadHelper elfLoadHelper) {
     Language language = elfLoadHelper.getProgram().getLanguage();
-    return canHandle(elfLoadHelper.getElfHeader()) && "Allegrex".equals(language.getProcessor().toString());
+    return canHandle(elfLoadHelper.getElfHeader()) &&
+      "Allegrex".equals(language.getProcessor().toString());
   }
 
   @Override
@@ -124,8 +156,23 @@ public class Allegrex_ElfExtension extends ElfExtension {
   }
 
   @Override
-  public Class<? extends ElfRelocation> getRelocationClass (ElfHeader elfHeader) {
-    return AllegrexElfRelocationExtension.class;
+  public Address calculateSymbolAddress (ElfLoadHelper elfLoadHelper, ElfSymbol elfSymbol) {
+
+    if (!elfSymbol.hasProcessorSpecificSymbolSectionIndex()) {
+      return null;
+    }
+
+    short sectionIndex = elfSymbol.getSectionHeaderIndex();
+    if (sectionIndex == SHN_MIPS_ACOMMON || sectionIndex == SHN_MIPS_TEXT ||
+      sectionIndex == SHN_MIPS_DATA) {
+      // NOTE: logic assumes no memory conflict occured during section loading
+      AddressSpace defaultSpace =
+        elfLoadHelper.getProgram().getAddressFactory().getDefaultAddressSpace();
+      return defaultSpace.getAddress(
+        elfSymbol.getValue() + elfLoadHelper.getImageBaseWordAdjustmentOffset());
+    }
+
+    return null;
   }
 
   @Override
@@ -137,10 +184,14 @@ public class Allegrex_ElfExtension extends ElfExtension {
       return address;
     }
 
+    String symName = elfSymbol.getNameAsString();
+    if (StringUtils.isBlank(symName)) {
+      return address;
+    }
+
     if (elfSymbol.getType() == ElfSymbol.STT_FUNC) {
       if (!isExternal && (elfSymbol.getOther() & STO_MIPS_PLT) != 0) {
-        elfLoadHelper.createExternalFunctionLinkage(elfSymbol.getNameAsString(), address,
-          null);
+        elfLoadHelper.createExternalFunctionLinkage(symName, address, null);
       }
     }
     return address;
@@ -426,16 +477,15 @@ public class Allegrex_ElfExtension extends ElfExtension {
         long gp0 = gp0Value.getUnsignedValue();
         if (multipleGp0.get() || otherGp0Value != null) {
           if (multipleGp0.get() || gp0 != otherGp0Value) {
-            elfLoadHelper.log(
-              "Multiple gp0 values defined (not supported): 0x" +
-                Long.toHexString(gp0));
+            elfLoadHelper.log("Multiple gp0 values defined (not supported): 0x" +
+              Long.toHexString(gp0));
           }
           return;
         }
 
         Address gpAddr = defaultSpace.getAddress(gp0);
-        elfLoadHelper.createSymbol(gpAddr, MIPS_GP0_VALUE_SYMBOL, false, false,
-          null).setPinned(true);
+        elfLoadHelper.createSymbol(gpAddr, MIPS_GP0_VALUE_SYMBOL, false, false, null)
+          .setPinned(true);
         elfLoadHelper.log(MIPS_GP0_VALUE_SYMBOL + "=0x" + Long.toHexString(gp0));
       } catch (InvalidInputException e) {
         // ignore
@@ -653,4 +703,25 @@ public class Allegrex_ElfExtension extends ElfExtension {
     }
     return tableEntryAddr;
   }
+
+  @Override
+  public Class<? extends ElfRelocation> getRelocationClass (ElfHeader elfHeader) {
+    return AllegrexElfRelocationExtension.class;
+  }
+
+  @Override
+  public Long getSectionSymbolRelativeOffset (ElfSectionHeader symSection, Address symSectionBase,
+                                              ElfSymbol elfSymbol) {
+
+    // NOTE: PSP PRX files should really be wired to ElfHeader.isRelocatable(), however we do
+    // not support the associated relocation tables so we do offer the image base option
+    // during import.  If image base should be changed we leave that to a user script to change
+    // the image base and process the relocation tables as needed.
+    if (symSection.getElfHeader().e_type() == ET_MIPS_PSP_PRX) {
+      return elfSymbol.getValue();
+    }
+
+    return super.getSectionSymbolRelativeOffset(symSection, symSectionBase, elfSymbol);
+  }
+
 }
