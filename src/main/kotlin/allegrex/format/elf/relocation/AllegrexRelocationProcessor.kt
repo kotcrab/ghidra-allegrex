@@ -101,19 +101,16 @@ class AllegrexRelocationProcessor {
             relocations.add(PendingRelocationTypeA(addr, newReloc, instrBytes))
           }
         }
-        AllegrexElfRelocationConstants.R_MIPS_LO16 -> {
+        else -> {
           deferredHi16.forEach { commit -> commit((instrValue and 0xFFFF).toShort().toInt()) }
           relocations.add(PendingRelocationTypeA(addr, reloc, instrBytes))
           deferredHi16.clear()
-        }
-        else -> {
-          relocations.add(PendingRelocationTypeA(addr, reloc, instrBytes))
         }
       }
     }
 
     if (deferredHi16.size != 0) {
-      Msg.warn(this, "Failed to resolve some deferred R_MIPS_HI16 relocations")
+      Msg.warn(this, "Failed to resolve ${deferredHi16.size} deferred R_MIPS_HI16 relocations")
     }
 
     return relocations

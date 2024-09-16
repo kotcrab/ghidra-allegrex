@@ -497,7 +497,7 @@ public class Allegrex_ElfExtension extends ElfExtension {
   @Override
   public void processGotPlt (ElfLoadHelper elfLoadHelper, TaskMonitor monitor) throws CancelledException {
     // Only possible injection point into the loading process after processing relocation and imports
-    monitor.setMessage("Processing additional relocations...");
+    monitor.setMessage("Processing PSP relocations...");
     boolean useRebootBinTypeBMapping = false;
     if (elfLoadHelper.getElfHeader() instanceof PspElfHeader) {
       useRebootBinTypeBMapping = ((PspElfHeader) elfLoadHelper.getElfHeader()).getUseRebootBinTypeBMapping();
