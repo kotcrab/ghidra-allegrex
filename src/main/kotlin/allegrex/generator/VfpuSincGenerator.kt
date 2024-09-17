@@ -213,12 +213,14 @@ VfpuRot$idx: "0"  is epsilon                                                   {
       variantT(Vd.Matrix3, Vs.Matrix3Transposed, Vt.Matrix3)
       variantQ(Vd.Matrix4, Vs.Matrix4Transposed, Vt.Matrix4)
     }
-    add3("vhtfm1", prime = 60, vop3 = 1) { variantS(Vd.S, Vs.Matrix1, Vt.S) }
+
     add3("vtfm2", prime = 60, vop3 = 1) { variantP(Vd.P, Vs.Matrix2, Vt.P) }
-    add3("vhtfm2", prime = 60, vop3 = 2) { variantP(Vd.P, Vs.Matrix2, Vt.P) }
+    add3("vhtfm2", prime = 60, vop3 = 1) { variant(Variant.PH, Vd.P, Vs.Matrix2, Vt.P) }
     add3("vtfm3", prime = 60, vop3 = 2) { variantT(Vd.T, Vs.Matrix3, Vt.T) }
-    add3("vhtfm3", prime = 60, vop3 = 3) { variantT(Vd.T, Vs.Matrix3, Vt.T) }
-    add3("vtfm4", prime = 60, vop3 = 3) { variantQ(Vd.Q, Vs.Matrix2, Vt.Q) }
+    add3("vhtfm3", prime = 60, vop3 = 2) { variant(Variant.TH, Vd.T, Vs.Matrix3, Vt.T) }
+    add3("vtfm4", prime = 60, vop3 = 3) { variantQ(Vd.Q, Vs.Matrix4, Vt.Q) }
+    add3("vhtfm4", prime = 60, vop3 = 3) { variant(Variant.QH, Vd.Q, Vs.Matrix4, Vt.Q) }
+
     add3("vmscl", prime = 60, vop3 = 4) {
       variantS(Vd.Matrix1, Vs.Matrix1, Vt.S)
       variantP(Vd.Matrix2, Vs.Matrix2, Vt.S)
@@ -551,6 +553,9 @@ private enum class Variant(val suffix: String, val matcher: String) {
   P(".p", "vc1 = 0 & vc0 = 1"),
   T(".t", "vc1 = 1 & vc0 = 0"),
   Q(".q", "vc1 = 1 & vc0 = 1"),
+  PH(".p", "vc1 = 0 & vc0 = 0"),
+  TH(".t", "vc1 = 0 & vc0 = 1"),
+  QH(".q", "vc1 = 1 & vc0 = 0"),
 }
 
 private enum class Vd(

@@ -1936,14 +1936,6 @@ define pcodeop vmmul_q;
     vfpuWriteMatrix4(vd, 3:1, result[384,32], result[416,32], result[448,32], result[480,32]);
 }
 
-define pcodeop vhtfm1_s;
-:vhtfm1.s vd_s, vs_m, vt_s        is prime = 60 & vop3 = 1 & vc1 = 0 & vc0 = 0 & vd_s & vd & vs_m & vs & vt_s & vt   {
-    local op1:4 = vs;
-    local op2:4 = vt;
-    local result:4 = vhtfm1_s(op1, op2);
-    vd = result;
-}
-
 define pcodeop vtfm2_p;
 :vtfm2.p vd_p, vs_m, vt_p         is prime = 60 & vop3 = 1 & vc1 = 0 & vc0 = 1 & vd_p & vd & vs_m & vs & vt_p & vt   {
     local op1:16 = vfpuReadMatrix2(vs, 0:1);
@@ -1953,7 +1945,7 @@ define pcodeop vtfm2_p;
 }
 
 define pcodeop vhtfm2_p;
-:vhtfm2.p vd_p, vs_m, vt_p        is prime = 60 & vop3 = 2 & vc1 = 0 & vc0 = 1 & vd_p & vd & vs_m & vs & vt_p & vt   {
+:vhtfm2.p vd_p, vs_m, vt_p        is prime = 60 & vop3 = 1 & vc1 = 0 & vc0 = 0 & vd_p & vd & vs_m & vs & vt_p & vt   {
     local op1:16 = vfpuReadMatrix2(vs, 0:1);
     local op2:8 = vfpuReadP(vt);
     local result:8 = vhtfm2_p(op1, op2);
@@ -1969,7 +1961,7 @@ define pcodeop vtfm3_t;
 }
 
 define pcodeop vhtfm3_t;
-:vhtfm3.t vd_t, vs_tm, vt_t       is prime = 60 & vop3 = 3 & vc1 = 1 & vc0 = 0 & vd_t & vd & vs_tm & vs & vt_t & vt   {
+:vhtfm3.t vd_t, vs_tm, vt_t       is prime = 60 & vop3 = 2 & vc1 = 0 & vc0 = 1 & vd_t & vd & vs_tm & vs & vt_t & vt   {
     local op1:36 = vfpuReadMatrix3(vs, 0:1);
     local op2:12 = vfpuReadT(vt);
     local result:12 = vhtfm3_t(op1, op2);
@@ -1978,9 +1970,17 @@ define pcodeop vhtfm3_t;
 
 define pcodeop vtfm4_q;
 :vtfm4.q vd_q, vs_m, vt_q         is prime = 60 & vop3 = 3 & vc1 = 1 & vc0 = 1 & vd_q & vd & vs_m & vs & vt_q & vt   {
-    local op1:16 = vfpuReadMatrix2(vs, 0:1);
+    local op1:64 = vfpuReadMatrix4(vs, 0:1);
     local op2:16 = vfpuReadQ(vt);
     local result:16 = vtfm4_q(op1, op2);
+    vfpuWriteQ(vd, result[0,32], result[32,32], result[64,32], result[96,32]);
+}
+
+define pcodeop vhtfm4_q;
+:vhtfm4.q vd_q, vs_m, vt_q        is prime = 60 & vop3 = 3 & vc1 = 1 & vc0 = 0 & vd_q & vd & vs_m & vs & vt_q & vt   {
+    local op1:64 = vfpuReadMatrix4(vs, 0:1);
+    local op2:16 = vfpuReadQ(vt);
+    local result:16 = vhtfm4_q(op1, op2);
     vfpuWriteQ(vd, result[0,32], result[32,32], result[64,32], result[96,32]);
 }
 
