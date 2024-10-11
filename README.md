@@ -16,7 +16,7 @@ Features:
 
 ## Installation
 
-Download prebuilt package from the [Releases](https://github.com/kotcrab/ghidra-rest-api/releases) section. Select release which matches
+Download prebuilt package from the [Releases](https://github.com/kotcrab/ghidra-allegrex/releases/) section. Select release which matches
 your Ghidra version. Then depending on the version you're installing:
 
 ### Version 19 or newer
