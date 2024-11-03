@@ -1,3 +1,7 @@
+#### Version 20.1
+- Added build for Ghidra 11.2
+- JVM 21 is now required
+
 #### Version 20
 - Added build for Ghidra 11.1.2
 - [#36](https://github.com/kotcrab/ghidra-allegrex/issues/36) - Fixed importing binaries with debug symbols

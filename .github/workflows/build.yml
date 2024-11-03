@@ -18,14 +18,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ghidra: [ '11.1', '11.1.1', '11.1.2' ]
+        ghidra: [ '11.2' ]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
-          java-version: 17
+          java-version: 21
           distribution: temurin
           cache: gradle
       - name: Setup Ghidra
