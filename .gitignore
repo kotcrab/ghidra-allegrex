@@ -1,5 +1,7 @@
 *.sla
 *.zip
+.kotlin/
+
 ## Java
 
 *.class

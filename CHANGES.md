@@ -3,6 +3,7 @@
 - [#36](https://github.com/kotcrab/ghidra-allegrex/issues/36) - Fixed importing binaries with debug symbols
 - [#27](https://github.com/kotcrab/ghidra-allegrex/issues/27) - Fixed processing of HI16/16 relocation pairs
 - [#39](https://github.com/kotcrab/ghidra-allegrex/issues/39) - Fixed handling of `vtfm` and `vhtfm` instructions
+- Updated internal dependencies
 
 #### Version 19.1
 - Added build for Ghidra 11.1.1
