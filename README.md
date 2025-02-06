@@ -12,7 +12,6 @@ Features:
 - PSP calling convention support.
 - Disassembly and decompilation of VFPU instructions (see limitations below).
 - Scripts for importing and exporting PPSSPP `.sym` files (function labels).
-- Ghidra Debugger can be used to debug games running in PPSSPP.
 
 ## Installation
 
@@ -62,24 +61,6 @@ use `reboot.bin` type B relocation mapping.
 ### Raw binaries
 
 Raw binaries are also supported. In that case you will need to manually select Allegrex as the processor and set image base.
-
-### PPSSPP debugger integration
-
-Note: Ghidra 11.1 is replacing API required by this integration with a new one (Trace RMI). The new API is not compatible with the
-old one so a full rewrite of this integration would be required. This is not planned, this integration will be removed once the
-old API is no longer available. To use this integration starting from Ghidra 11.1 you will need to modify the default Debugger 
-tool and enable `DebuggerObjectsPlugin` and `DebuggerTargetsPlugin` plugins.
-
-Ghidra Debugger can be used to debug games running in PPSSPP over the WebSocket API. To get started open
-PPSSPP and make sure "Allow remote debugger" is enabled in PPSSPP settings. Then open your binary using the Debugger tool and
-in the `Debugger Targets` panel press the `Connect` button. Select `PPSSPP WebSocket debugger (beta)` and press `Connect`.
-See Ghidra's built-in help to learn more about the debugger features.
-
-Tips:
-
-- To enable automatic mapping between static and dynamic listing you must make sure the binary file name in Ghidra matches exactly
-  the module name from PPSSPP. Module name is visible in the `Modules` panel and the binary can be renamed in the Ghidra
-  project window.
 
 ## VFPU Limitations
 
