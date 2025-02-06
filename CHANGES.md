@@ -1,3 +1,7 @@
+#### Version 21
+- Added build for Ghidra 11.3
+- PPSSPP debugger integration was removed (Ghidra removed the support for it in version 11.3)
+
 #### Version 20.1
 - Added build for Ghidra 11.2
 - JVM 21 is now required
