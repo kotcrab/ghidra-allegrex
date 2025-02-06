@@ -6,7 +6,6 @@
     </Console>
   </Appenders>
   <Loggers>
-    <Logger level="DEBUG" name="allegrex.agent.ppsspp"/>
     <Root level="INFO">
       <AppenderRef ref="Console"/>
     </Root>
