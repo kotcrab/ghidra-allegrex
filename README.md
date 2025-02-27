@@ -12,6 +12,7 @@ Features:
 - PSP calling convention support.
 - Disassembly and decompilation of VFPU instructions (see limitations below).
 - Scripts for importing and exporting PPSSPP `.sym` files (function labels).
+- Support for exporting kernel modules as object files.
 
 ## Installation
 
@@ -21,6 +22,7 @@ your Ghidra version. Then depending on the version you're installing:
 ### Version 19 or newer
 
 In main Ghidra window:
+
 1. Select `File -> Install Extensions`.
 2. Press the green plus button.
 3. Select downloaded ZIP.
@@ -55,8 +57,13 @@ file in PPSSPP.
 ### Kernel modules
 
 Usage is very similar as when importing games though kernel modules are usually loaded starting from address `88000000`.
-Note that for some files (e.g. `sysmem`, `loadcore`) you will need to click `Options...` during import and select checkbox to 
+Note that for some files (e.g. `sysmem`, `loadcore`) you will need to click `Options...` during import and select checkbox to
 use `reboot.bin` type B relocation mapping.
+
+#### Exporting relocatable kernel objects
+
+Kernel modules can be exported as object files (`.o`). To learn more about this feature see
+[here](https://github.com/kotcrab/ghidra-allegrex/wiki/Exporting-relocatable-kernel-objects).
 
 ### Raw binaries
 
