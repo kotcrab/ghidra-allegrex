@@ -1,5 +1,6 @@
 #### Version 21.1
 - Added build for Ghidra 11.3.1
+- Added missing implementation for `eret` instruction
 
 #### Version 21
 - Added build for Ghidra 11.3

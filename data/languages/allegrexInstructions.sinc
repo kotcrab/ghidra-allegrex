@@ -120,7 +120,9 @@
 :ei RT                          is prime=16 & mfmc0=0x0B & rd=0x0C & fct2=0x0 & bit5=0x01 & zero3=0x0 & RT    unimpl
 
 # 0100 0010 0000 0000 0000 0000 0001 1000
-:eret                           is prime=16 & bit25=1 & fct=24 & copfill=0      unimpl
+:eret                           is prime=16 & bit25=1 & fct=24 & copfill=0 {
+    return[EPC];
+}
 
 # 0111 11ss ssst tttt mmmm mLLL LL00 0000
 :ext RT, RSsrc, lsb, ExtSize    is prime=31 & fct=0 & RT & RSsrc & lsb & msbd & ExtSize {
