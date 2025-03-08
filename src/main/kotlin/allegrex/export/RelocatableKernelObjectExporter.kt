@@ -126,7 +126,7 @@ class RelocatableKernelObjectExporter : Exporter(
       return false
     }
     validateListingInstructions(program)
-    val memoryBlocks = resolveMemoryBlocks(program)
+    val (memoryBlocks, baseAddresses) = resolveMemoryBlocks(program)
     val programBytes = memoryBlocks.map { block ->
       ByteArray(block.size.toInt())
         .also { block.getBytes(block.start, it) }
@@ -140,7 +140,7 @@ class RelocatableKernelObjectExporter : Exporter(
     val elfSymbols = createElfSymbols(strTab, symbols, functions)
     validateElfSymbolsDuplicates(strTab, elfSymbols)
     val (shStrTab, elfSections) = createElfSections()
-    val elfRelocations = createElfRelocations(program, symbols, programBytes, resolvedLoRelocations, strTab, elfSymbols)
+    val elfRelocations = createElfRelocations(program, symbols, programBytes, resolvedLoRelocations, strTab, elfSymbols, baseAddresses)
     ExportElf.writeElf(file, elfSections, shStrTab, elfSymbols, strTab, programBytes, elfRelocations)
     return true
   }
@@ -174,13 +174,15 @@ class RelocatableKernelObjectExporter : Exporter(
     }
   }
 
-  private fun resolveMemoryBlocks(program: Program): List<MemoryBlock> {
+  private fun resolveMemoryBlocks(program: Program): Pair<List<MemoryBlock>, List<Int>> {
     val firstBlock = program.memory.blocks.firstOrNull { it.start == program.imageBase }
       ?: throw ProcessingException("There must be memory block that start at image base")
     val secondBlock = program.memory.blocks.sortedBy { it.start }
       .firstOrNull { it.start > firstBlock.start }
       ?: throw ProcessingException("There must be memory block that starts after the first block")
-    return listOf(firstBlock, secondBlock)
+    val memoryBlocks = listOf(firstBlock, secondBlock)
+    val baseAddresses = memoryBlocks.map { it.start.subtract(program.imageBase).toInt() }
+    return memoryBlocks to baseAddresses
   }
 
   private fun resolveHiLoRelocations(program: Program, monitor: TaskMonitor): List<ResolvedLoRelocation> {
@@ -370,7 +372,9 @@ class RelocatableKernelObjectExporter : Exporter(
 
   private fun collectFunctions(program: Program): List<ModuleFunction> {
     val implementationTag = program.functionManager.functionTagManager.getFunctionTag("IMPLEMENTATION")
+    val ignoredTag = program.functionManager.functionTagManager.getFunctionTag("IGNORED")
     return program.functionManager.getFunctions(true)
+      .filter { !it.tags.contains(ignoredTag) }
       .map {
         ModuleFunction(
           name = it.name,
@@ -468,15 +472,18 @@ class RelocatableKernelObjectExporter : Exporter(
     resolvedLoRelocations: List<ResolvedLoRelocation>,
     strTab: ExportElf.StringAllocator,
     elfSymbols: List<ExportElf.Symbol>,
+    baseAddresses: List<Int>,
   ): List<List<ExportElf.AllegrexRelocation>> {
     val elfRelocations: List<MutableList<ExportElf.AllegrexRelocation>> = listOf(mutableListOf(), mutableListOf())
+    val resolvedSymbolNames = mutableSetOf<String>()
     program.relocationTable.relocations.forEach { relocation ->
       val reloc = relocation.asTypeBRelocationOrThrow()
       when (relocation.type) {
         AllegrexElfRelocationConstants.R_MIPS_32 -> {
           val targetAddress = program.memory.getInt(relocation.address) - program.imageBase.offset.toInt()
-          val resolvedElfSymbol = getGlobalElfSymbolForAddress(program.imageBase, symbols, elfSymbols, strTab, relocation, targetAddress)
+          val resolvedElfSymbol = getElfSymbolForAddress(program.imageBase, symbols, elfSymbols, strTab, relocation, targetAddress)
           if (resolvedElfSymbol != null) {
+            resolvedSymbolNames.add(resolvedElfSymbol.moduleSymbol.name)
             addElf32Relocation(programBytes, elfRelocations, reloc, resolvedElfSymbol.elfSymbolIndex, resolvedElfSymbol.innerOffset)
           } else {
             addElf32Relocation(programBytes, elfRelocations, reloc, reloc.addressBaseIndex + 1, null)
@@ -507,35 +514,45 @@ class RelocatableKernelObjectExporter : Exporter(
             ?: throw ProcessingException("Unknown symbol for JAL relocation at address ${relocation.address}, is the target function defined?")
           val elfSymbolIndex = elfSymbols.indexOfFirst { it.name == strTab.getOrPut(targetSymbol.name) }
             .takeIf { it != -1 }
-            ?: throw ProcessingException("No ELF symbol for function name ${targetSymbol.name}, relocation at address ${relocation.address}")
+            ?: throw ProcessingException(
+              "No ELF symbol for function name ${targetSymbol.name}, relocation at address ${relocation.address}, " +
+                "is the target function marked as ignored?"
+            )
           addElf26Relocation(programBytes, elfRelocations, reloc, elfSymbolIndex)
         }
       }
     }
 
-    val exportedGlobalDataSymbols = mutableSetOf<String>()
     resolvedLoRelocations.forEach { resolvedLoRelocation ->
       val targetAddress = resolvedLoRelocation.targetAddress
-      val resolvedElfSymbol =
-        getGlobalElfSymbolForAddress(program.imageBase, symbols, elfSymbols, strTab, resolvedLoRelocation.loRelocation, targetAddress)
+      val loRelocation = resolvedLoRelocation.loRelocation
+      val loReloc = loRelocation.asTypeBRelocationOrThrow()
+      val sectionOffset = targetAddress - baseAddresses[loReloc.addressBaseIndex]
+      val resolvedElfSymbol = getElfSymbolForAddress(program.imageBase, symbols, elfSymbols, strTab, loRelocation, targetAddress)
+
       resolvedLoRelocation.relatedHiRelocations.forEach { hiRelocation ->
         val hiReloc = hiRelocation.asTypeBRelocationOrThrow()
+        if (loReloc.offsetBaseIndex != hiReloc.offsetBaseIndex || hiReloc.addressBaseIndex != loReloc.addressBaseIndex) {
+          throw ProcessingException(
+            "Mismatch in offset or address base indexes in HI/LO relocation pair, " +
+              "HI relocation at address ${hiRelocation.address}, LO relocation at address ${loRelocation.address}"
+          )
+        }
         if (resolvedElfSymbol != null) {
           addElfHiRelocation(programBytes, elfRelocations, hiReloc, resolvedElfSymbol.elfSymbolIndex, resolvedElfSymbol.innerOffset)
         } else {
-          addElfHiRelocation(programBytes, elfRelocations, hiReloc, hiReloc.addressBaseIndex + 1, targetAddress)
+          addElfHiRelocation(programBytes, elfRelocations, hiReloc, hiReloc.addressBaseIndex + 1, sectionOffset)
         }
       }
 
-      val loReloc = resolvedLoRelocation.loRelocation.asTypeBRelocationOrThrow()
       if (resolvedElfSymbol != null) {
-        exportedGlobalDataSymbols.add(resolvedElfSymbol.moduleSymbol.name)
+        resolvedSymbolNames.add(resolvedElfSymbol.moduleSymbol.name)
         addElfLoRelocation(programBytes, elfRelocations, loReloc, resolvedElfSymbol.elfSymbolIndex, resolvedElfSymbol.innerOffset)
       } else {
-        addElfLoRelocation(programBytes, elfRelocations, loReloc, loReloc.addressBaseIndex + 1, targetAddress)
+        addElfLoRelocation(programBytes, elfRelocations, loReloc, loReloc.addressBaseIndex + 1, sectionOffset)
       }
     }
-    log.appendMsg("\nGlobal data symbols:\n${exportedGlobalDataSymbols.joinToString("\n").ifEmpty { "(none)" }}")
+    log.appendMsg("\nResolved symbols:\n${resolvedSymbolNames.joinToString("\n").ifEmpty { "(none)" }}")
     return elfRelocations
   }
 
@@ -544,13 +561,13 @@ class RelocatableKernelObjectExporter : Exporter(
     elfRelocations: List<MutableList<ExportElf.AllegrexRelocation>>,
     reloc: AllegrexRelocation.TypeB,
     elfSymbolIndex: Int,
-    overrideExistingValue: Int?
+    symbolOffset: Int?
   ) {
-    if (overrideExistingValue != null) {
-      programBytes[reloc.offsetBaseIndex][reloc.offset] = overrideExistingValue.toByte()
-      programBytes[reloc.offsetBaseIndex][reloc.offset + 1] = (overrideExistingValue shr 8).toByte()
-      programBytes[reloc.offsetBaseIndex][reloc.offset + 2] = (overrideExistingValue shr 16).toByte()
-      programBytes[reloc.offsetBaseIndex][reloc.offset + 3] = (overrideExistingValue shr 24).toByte()
+    if (symbolOffset != null) {
+      programBytes[reloc.offsetBaseIndex][reloc.offset] = symbolOffset.toByte()
+      programBytes[reloc.offsetBaseIndex][reloc.offset + 1] = (symbolOffset shr 8).toByte()
+      programBytes[reloc.offsetBaseIndex][reloc.offset + 2] = (symbolOffset shr 16).toByte()
+      programBytes[reloc.offsetBaseIndex][reloc.offset + 3] = (symbolOffset shr 24).toByte()
     }
     elfRelocations[reloc.offsetBaseIndex].add(
       ExportElf.AllegrexRelocation(
@@ -585,11 +602,12 @@ class RelocatableKernelObjectExporter : Exporter(
     elfRelocations: List<MutableList<ExportElf.AllegrexRelocation>>,
     hiReloc: AllegrexRelocation.TypeB,
     elfSymbolIndex: Int,
-    targetAddress: Int
+    symbolOffset: Int,
   ) {
-    val targetHi = targetAddress - targetAddress.toShort().toInt()
-    programBytes[hiReloc.offsetBaseIndex][hiReloc.offset] = (targetHi ushr 16).toByte()
-    programBytes[hiReloc.offsetBaseIndex][hiReloc.offset + 1] = (targetHi ushr 24).toByte()
+    // TODO Unsigned offset if paired with ori instruction? Does that even happen?
+    val offsetHi = symbolOffset - symbolOffset.toShort().toInt()
+    programBytes[hiReloc.offsetBaseIndex][hiReloc.offset] = (offsetHi ushr 16).toByte()
+    programBytes[hiReloc.offsetBaseIndex][hiReloc.offset + 1] = (offsetHi ushr 24).toByte()
     elfRelocations[hiReloc.offsetBaseIndex].add(
       ExportElf.AllegrexRelocation(
         hiReloc.offset,
@@ -604,11 +622,11 @@ class RelocatableKernelObjectExporter : Exporter(
     elfRelocations: List<MutableList<ExportElf.AllegrexRelocation>>,
     loReloc: AllegrexRelocation.TypeB,
     elfSymbolIndex: Int,
-    targetAddress: Int
+    symbolOffset: Int,
   ) {
-    val targetLo = targetAddress.toShort().toInt()
-    programBytes[loReloc.offsetBaseIndex][loReloc.offset] = targetLo.toByte()
-    programBytes[loReloc.offsetBaseIndex][loReloc.offset + 1] = (targetLo ushr 8).toByte()
+    val offsetLo = symbolOffset.toShort().toInt()
+    programBytes[loReloc.offsetBaseIndex][loReloc.offset] = offsetLo.toByte()
+    programBytes[loReloc.offsetBaseIndex][loReloc.offset + 1] = (offsetLo ushr 8).toByte()
     elfRelocations[loReloc.offsetBaseIndex].add(
       ExportElf.AllegrexRelocation(
         loReloc.offset,
@@ -618,7 +636,7 @@ class RelocatableKernelObjectExporter : Exporter(
     )
   }
 
-  private fun getGlobalElfSymbolForAddress(
+  private fun getElfSymbolForAddress(
     imageBase: Address,
     symbols: List<ModuleSymbol>,
     elfSymbols: List<ExportElf.Symbol>,
@@ -629,7 +647,7 @@ class RelocatableKernelObjectExporter : Exporter(
     val symbolOffsetInfo = getSymbolForAddress(imageBase, symbols, relocation, targetAddress)
     val elfSymbolIndex = symbolOffsetInfo?.let { (moduleSymbol, _) ->
       elfSymbols
-        .indexOfFirst { it.name == strTab.getOrPut(moduleSymbol.name) && it.info.toInt() and STB_GLOBAL != 0 }
+        .indexOfFirst { it.name == strTab.getOrPut(moduleSymbol.name) && (it.info.toInt() and STB_GLOBAL != 0 || it.info.toInt() and STB_WEAK != 0) }
         .takeIf { it != -1 }
     }
     if (symbolOffsetInfo == null || elfSymbolIndex == null) {
@@ -660,7 +678,7 @@ class RelocatableKernelObjectExporter : Exporter(
       }
     }
     log.appendMsg(
-      "WARN: No symbol for address ${imageBase.add(targetAddress.toLong() and 0xFFFFFFFF)}. " +
+      "WARN: No symbol at address ${imageBase.add(targetAddress.toLong() and 0xFFFFFFFF)}. " +
         "Relocation type ${relocation.type}, relocation at address ${relocation.address}"
     )
     return null
@@ -701,9 +719,9 @@ class RelocatableKernelObjectExporter : Exporter(
     return reloc
   }
 
-  private fun Listing.getInstructionAtOrThrow(address: Address): Instruction {
-    return getInstructionAt(address)
-      ?: throw ProcessingException("There is no instruction defined at $address, is code disassembled there?")
+  private fun Listing.getInstructionAtOrThrow(imageAddress: Address): Instruction {
+    return getInstructionAt(imageAddress)
+      ?: throw ProcessingException("There is no instruction defined at $imageAddress, is code disassembled there?")
   }
 
   private class ProcessingException(message: String) : Exception(message)
