@@ -489,6 +489,13 @@ class RelocatableKernelObjectExporter : Exporter(
             addElf32Relocation(programBytes, elfRelocations, reloc, reloc.addressBaseIndex + 1, null)
           }
         }
+        AllegrexElfRelocationConstants.R_MIPS_26 -> {
+          log.appendMsg(
+            "WARN: Not resolving symbols for R_MIPS_26 relocation at address ${relocation.address}, " +
+              "if the symbol is not local or this relocation is for an imported variable then function using this relocation won't work correctly."
+          )
+          addElf26Relocation(elfRelocations, reloc, reloc.addressBaseIndex + 1)
+        }
         AllegrexElfRelocationConstants.R_MIPS_LO16, AllegrexElfRelocationConstants.R_MIPS_X_HI16 -> {
           // Processed below using resolvedLoRelocations
         }
@@ -496,13 +503,7 @@ class RelocatableKernelObjectExporter : Exporter(
           if (reloc.offsetBase != 0L || reloc.addressBase != 0L) {
             throw ProcessingException("Not supported, jump is to or inside a non-zero section. $reloc")
           }
-          elfRelocations[reloc.offsetBaseIndex].add(
-            ExportElf.AllegrexRelocation(
-              reloc.offset,
-              AllegrexElfRelocationConstants.R_MIPS_26,
-              reloc.addressBaseIndex + 1,
-            )
-          )
+          addElf26Relocation(elfRelocations, reloc, reloc.addressBaseIndex + 1)
         }
         AllegrexElfRelocationConstants.R_MIPS_X_JAL26 -> {
           if (reloc.offsetBase != 0L || reloc.addressBase != 0L) {
@@ -518,8 +519,9 @@ class RelocatableKernelObjectExporter : Exporter(
               "No ELF symbol for function name ${targetSymbol.name}, relocation at address ${relocation.address}, " +
                 "is the target function marked as ignored?"
             )
-          addElf26Relocation(programBytes, elfRelocations, reloc, elfSymbolIndex)
+          addElf26JalRelocation(programBytes, elfRelocations, reloc, elfSymbolIndex)
         }
+        else -> throw ProcessingException("Missing relocation handler for relocation type: ${relocation.type}")
       }
     }
 
@@ -579,6 +581,20 @@ class RelocatableKernelObjectExporter : Exporter(
   }
 
   private fun addElf26Relocation(
+    elfRelocations: List<MutableList<ExportElf.AllegrexRelocation>>,
+    reloc: AllegrexRelocation.TypeB,
+    elfSymbolIndex: Int,
+  ) {
+    elfRelocations[reloc.offsetBaseIndex].add(
+      ExportElf.AllegrexRelocation(
+        reloc.offset,
+        AllegrexElfRelocationConstants.R_MIPS_26,
+        elfSymbolIndex,
+      )
+    )
+  }
+
+  private fun addElf26JalRelocation(
     programBytes: List<ByteArray>,
     elfRelocations: List<MutableList<ExportElf.AllegrexRelocation>>,
     reloc: AllegrexRelocation.TypeB,
