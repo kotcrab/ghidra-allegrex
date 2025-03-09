@@ -62,7 +62,8 @@ use `reboot.bin` type B relocation mapping.
 
 #### Exporting relocatable kernel objects
 
-Kernel modules can be exported as object files (`.o`). To learn more about this feature see
+Kernel modules can be exported as object files (`.o`), those files can be used as input for the linker.
+To learn more about this feature see
 [here](https://github.com/kotcrab/ghidra-allegrex/wiki/Exporting-relocatable-kernel-objects).
 
 ### Raw binaries
