@@ -1,5 +1,5 @@
 #### Version 21.2
-- Fixed relocation handling for object files and static libraries 
+- [#44](https://github.com/kotcrab/ghidra-allegrex/issues/44) - Fixed relocation handling for object files and static libraries 
 
 #### Version 21.1
 - Added build for Ghidra 11.3.1
