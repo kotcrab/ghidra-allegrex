@@ -13,6 +13,13 @@ class AllegrexRelocationFixupHandler : RelocationFixupHandler() {
     if (PspElfLoader.PSP_ELF_NAME != program.executableFormat) {
       return false
     }
+
+    // This check is confusing but isRelocatable will be true for object files (type == ET_REL) which
+    // can't be processed by the Allegrex specific fixup handler
+    if (program.relocationTable.isRelocatable) {
+      return false
+    }
+
     val language = program.language
     if (language.languageDescription.size != 32) {
       return false

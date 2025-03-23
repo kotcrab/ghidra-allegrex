@@ -7,7 +7,7 @@ import ghidra.program.model.data.StructureDataType
 
 open class AllegrexElfRelocationExtension : ElfRelocation() {
   override fun getSymbolIndex(): Int {
-    return 0
+    return (relocationInfo shr 8).toInt()
   }
 
   override fun getType(): Int {

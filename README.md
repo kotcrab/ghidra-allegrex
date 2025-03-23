@@ -70,12 +70,15 @@ To learn more about this feature see
 
 Raw binaries are also supported. In that case you will need to manually select Allegrex as the processor and set image base.
 
-## VFPU Limitations
+## VFPU and other limitations
 
-- Decompilation support is rather basic, almost every operation is converted to a function call such as `vadd_q(...)`.
+- VFPU decompilation support is rather basic, almost every operation is converted to a function call such as `vadd_q(...)`.
   - Semantics of `vpfxs`, `vpfxt` and `vpfxd` are not currently modeled in the decompiler.
 - Second operand of `vfim.s` will be shown as an integer, should be shown as a half float. Sleigh does not support float
   tokens.
+- Changing image base after importing is not supported for relocatable object files (`.o`).
+- For functions using 64-bit arguments you need to check "Use Custom Storage" and manually specify argument storage. 
+  (this is caused by a [Ghidra issue](https://github.com/NationalSecurityAgency/ghidra/issues/2762)).
 
 ## Building
 
