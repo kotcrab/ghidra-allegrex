@@ -44,15 +44,15 @@ After importing and opening the file you should do the auto analysis. Default op
 
 #### Using PPSSPP .sym scripts
 
-PPSSPP identifies many functions automatically, it's useful to get those into Ghidra after doing the initial analysis. Export
-the `.sym` file from PPSSPP and in Ghidra run script
-`PpssppImportSymFile`. Select the `.sym` file. Enter `0` when asked for offset if your image base is already at `08804000`.
+PPSSPP identifies many functions automatically, it's useful to get those into Ghidra after doing the initial analysis.
+With your game loaded in PPSSPP use the `Debug` menu to save the `.sym` file then in Ghidra run `PpssppImportSymFile` script.
+Select the `.sym` file. Enter `0` when asked for offset if your image base is already at `08804000`.
 It's usually fine to run this script after you've started renaming functions in the binary. The script by default skips
 unknown names from PPSSPP so your work can only get overwritten if you've renamed one of the autodetected function.
 
-Likewise, you can use `PpssppExportSymFile` to export your work as a `.sym` file which can be imported into PPSSPP. Enter `0`
-when asked for offset if your image base is already at `08804000`. You need to do `Reset symbol table` before importing the
-file in PPSSPP.
+Likewise, you can use `PpssppExportSymFile` script to export your work as a `.sym` file which can be imported into PPSSPP.
+Enter `0` when asked for offset if your image base is already at `08804000`. You need to do `Reset symbol table` before
+importing the file in PPSSPP.
 
 ### Kernel modules
 
