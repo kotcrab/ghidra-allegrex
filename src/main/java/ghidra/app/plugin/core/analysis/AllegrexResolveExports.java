@@ -9,7 +9,7 @@ package allegrex.analysis;
 
 import static ghidra.app.util.Utils.*;
 
-// Ghidra depedenced
+// Ghidra 
 import ghidra.program.model.listing.*;
 import ghidra.program.model.data.*;
 import ghidra.program.model.symbol.*;
@@ -18,7 +18,7 @@ import ghidra.program.model.mem.*;
 import ghidra.program.model.scalar.Scalar;
 import ghidra.program.model.listing.Listing;
 
-// Java depedence
+// Java 
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;

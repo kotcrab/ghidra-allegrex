@@ -8,7 +8,7 @@ package allegrex.analysis;
 // Ghidra Util Static
 import static ghidra.app.util.Utils.*;
 
-// Ghidra depedenced
+// Ghidra
 import ghidra.program.model.listing.*;
 import ghidra.program.model.data.*;
 import ghidra.program.model.symbol.*;
@@ -16,7 +16,7 @@ import ghidra.program.model.address.*;
 import ghidra.program.model.mem.*;
 import ghidra.app.util.ModuleType;
 
-// Java depedence
+// Java 
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
