@@ -1,3 +1,9 @@
+// Recover some section names and apply NIDs for PSP binaries.
+// Adapted from the original Python script by Ethanol.
+// @author Ethanol (Original Script)
+// @author SHADOW (Ghidra Java Implementation)
+// @category Analysis
+
 package allegrex.analysis;
 
 // Ghidra
