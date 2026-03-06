@@ -13,6 +13,10 @@ Features:
 - Disassembly and decompilation of VFPU instructions (see limitations below).
 - Scripts for importing and exporting PPSSPP `.sym` files (function labels).
 - Support for exporting kernel modules as object files.
+- **Automated Signature Recovery:**
+  - Support for recovering ELF section names and resolving PSP NIDs.
+  - Automatic application of function parameters and return types (based on original Python logic by **Ethanol**).
+  - Note: This feature requires the `baseImage` to be set to `08804000` to function correctly.
 
 ## Installation
 
