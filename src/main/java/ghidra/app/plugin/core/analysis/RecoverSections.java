@@ -33,7 +33,7 @@ public class RecoverSections {
         Address exportsTop = exportsAddr.subtract(4);
 
         if (exportsAddr.getOffset() > exportsEnd.getOffset()) {
-            throw new Exception("Irrelar exports data");
+            throw new Exception("Malformed Exports data");
         }
         long size = exportsEnd.getOffset() - exportsAddr.getOffset();
         createMemBlock(program, exportsTop, 4, ".lib.ent.top", true, false, false);
@@ -57,7 +57,7 @@ public class RecoverSections {
         Address importsTop = importsAddr.subtract(4);
 
         if (importsAddr.getOffset() > importsEnd.getOffset()) {
-            throw new Exception("Irregular exports data");
+            throw new Exception("Malformed imports data");
         }
 
         long ImportsSize = importsEnd.getOffset() - importsAddr.getOffset();
@@ -87,7 +87,7 @@ public class RecoverSections {
         Memory memory = program.getMemory();
         Listing listing = program.getListing();
 
-        // .lib.stub
+        // .lib.stub isn't required in PRXes, so use .rodata.sceModuleInfo instead.
         MemoryBlock sceModuleInfo_section = program.getMemory().getBlock(".rodata.sceModuleInfo");
         Address sceModuleInfoAddr;
         if (sceModuleInfo_section == null) {
