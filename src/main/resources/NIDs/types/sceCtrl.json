@@ -1,0 +1,54 @@
+{
+    "module": "sceCtrl",
+    "category": "/PSP/sceCtrl",
+    "typedefs": [{
+        "name": "u32",
+        "baseType": "uint32"
+    },{
+        "name": "uint8",
+        "baseType": "uint8"
+    }
+],
+    "enums": [{
+        "name": "SceCtrlPadPollMode",
+        "size": 4,
+        "values": [{
+            "name": "SCE_CTRL_POLL_INACTIVE",
+            "value": 0 },
+            {"name": "SCE_CTRL_POLL_ACTIVE",
+            "value": 1 }
+        ]
+    }],
+    "structs": [{
+        "name": "SceCtrlData",
+        "fields": [
+        { "name": "timeStamp", "type": "uint" },
+        { "name": "buttons", "type": "uint" },
+        { "name": "aX", "type": "byte" },
+        { "name": "aY", "type": "byte" },
+        { "name": "rX", "type": "byte" },
+        { "name": "rY", "type": "byte" },
+        { "name": "rsrv", "type": "byte[4]" }
+    ]
+    }],
+    "functions": [
+        {
+            "name": "sceCtrlReadBufferPositive",
+            "NID": "0x1F803938",
+            "values": [{
+                "name": "pData",
+                "type": "SceCtrlData*" },{
+                "name": "nBufs",
+                "type": "byte" }],
+            "returnType": "uint"
+        },
+        {
+            "name": "sceCtrlSetSamplingMode",
+            "NID": "0X1F4011E6",
+            "values": [{
+                "name": "pMode",
+                "type": "byte*" }],
+            "returnType": "uint"
+        }
+    ]
+}

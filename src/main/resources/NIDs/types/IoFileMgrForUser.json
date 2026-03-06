@@ -1,0 +1,218 @@
+{
+    "module": "IoFileMgrForUser",
+    "category": "/PSP/IoFileMgrForUser",
+    "typedefs": [
+        { "name": "SceMode", "baseType": "int" },
+        { "name": "SceOff", "baseType": "int" },
+        { "name": "SceUID", "baseType": "int" },
+        { "name": "SceSize", "baseType": "int" },
+        { "name": "SceUInt64", "baseType": "ulonglong" },
+        { "name": "SceInt64", "baseType": "longlong" }
+],
+    "enums": [{
+        "name": "SceCtrlPadPollMode",
+        "size": 4,
+        "values": [{
+            "name": "SCE_CTRL_POLL_INACTIVE",
+            "value": 0 },
+            {"name": "SCE_CTRL_POLL_ACTIVE",
+            "value": 1 }
+        ]
+    }],
+    "structs": [{
+        "name": "ScePspDateTime",
+        "fields": [
+        { "name": "year", "type": "ushort" },
+        { "name": "month", "type": "ushort" },
+        { "name": "day", "type": "ushort" },
+        { "name": "hour", "type": "ushort" },
+        { "name": "minute", "type": "ushort" },
+        { "name": "second", "type": "ushort" },
+        { "name": "microsecond", "type": "uint" }
+    ]
+    },{
+        "name": "SceIoStat",
+        "fields": [
+            { "name": "st_mode", "type": "SceMode" },
+            { "name": "st_attr", "type": "uint" },
+            { "name": "st_size", "type": "SceOff" },
+            { "name": "st_ctime", "type": "ScePspDateTime" },
+            { "name": "st_atime", "type": "ScePspDateTime" },
+            { "name": "st_mtime", "type": "ScePspDateTime" },
+            { "name": "st_private", "type": "uint[6]" }
+        ]
+    }],
+    "functions": [
+        {
+            "name": "sceIoMkdir",
+            "NID": "0x06A70004",
+            "values": [
+                { "name": "path", "type": "char*" },
+                { "name": "mode", "type": "SceMode" }
+            ],
+            "returnType": "int"
+        },
+        {
+            "name": "sceIoOpen",
+            "NID": "0x109F50BC",
+            "values": [
+                { "name": "file", "type": "char*" },
+                { "name": "flags", "type": "int" },
+                { "name": "mode", "type": "SceMode" }
+            ],
+            "returnType": "SceUID"
+        },
+        {
+            "name": "sceIoLseek",
+            "NID": "0x27EB27B8",
+            "values": [
+                { "name": "fd", "type": "SceUID" },
+                { "name": "offset", "type": "SceOff" },
+                { "name": "whence", "type": "int" }
+            ],
+            "returnType": "SceOff"
+        },
+        {
+            "name": "sceIoLseekAsync",
+            "NID": "0X71B19E77",
+            "values": [
+                { "name": "fd", "type": "SceUID" },
+                { "name": "offset", "type": "SceOff" },
+                { "name": "whence", "type": "int" }
+            ],
+            "returnType": "SceOff"
+        },
+        {
+            "name": "sceIoPollAsync",
+            "NID": "0x3251EA56",
+            "values": [
+                { "name": "fd", "type": "SceUID" },
+                { "name": "res", "type": "SceInt64*" }
+            ],
+            "returnType": "int"
+        },
+        {
+            "name": "sceIoDevctl",
+            "NID": "0x54F5FB11",
+            "values": [
+                { "name": "dev", "type": "char*" },
+                { "name": "cmd", "type": "uint" },
+                { "name": "indata", "type": "void*" },
+                { "name": "inlen", "type": "int" },
+                { "name": "outdata", "type": "void*" },
+                { "name": "outlen", "type": "int" }
+            ],
+            "returnType": "int"
+        },
+        {
+            "name": "sceIoRead",
+            "NID": "0x6A638D83",
+            "values": [
+                { "name": "fd", "type": "SceUID" },
+                { "name": "data", "type": "void*" },
+                { "name": "size", "type": "SceSize" }
+            ],
+            "returnType": "int"
+        },
+        {
+            "name": "sceIoReadAsync",
+            "NID": "0xA0B5A7C2",
+            "values": [
+                { "name": "fd", "type": "SceUID" },
+                { "name": "data", "type": "void*" },
+                { "name": "size", "type": "SceSize" }
+            ],
+            "returnType": "int"
+        },
+        {
+            "name": "sceIoWrite",
+            "NID": "0x42EC03AC",
+            "values": [
+                { "name": "fd", "type": "SceUID" },
+                { "name": "data", "type": "void*" },
+                { "name": "size", "type": "SceSize" }
+            ],
+            "returnType": "int"
+        },
+        {
+            "name": "sceIoWriteAsync",
+            "NID": "0x0FACAB19",
+            "values": [
+                { "name": "fd", "type": "SceUID" },
+                { "name": "data", "type": "void*" },
+                { "name": "size", "type": "SceSize" }
+            ],
+            "returnType": "int"
+        },
+        {
+            "name": "sceIoRemove",
+            "NID": "0xF27A9C51",
+            "values": [
+                { "name": "file", "type": "char*" }
+            ],
+            "returnType": "int"
+        },
+        {
+            "name": "sceIoRename",
+            "NID": "0x779103A0",
+            "values": [
+                { "name": "oldname", "type": "char*" },
+                { "name": "newname", "type": "char*" }
+            ],
+            "returnType": "int"
+        },
+        {
+            "name": "sceIoClose",
+            "NID": "0X810C4BC3",
+            "values": [
+                { "name": "fd", "type": "SceUID" }
+            ],
+            "returnType": "int"
+        },
+        {
+            "name": "sceIoCloseAsync",
+            "NID": "0XFF5940B6",
+            "values": [
+                { "name": "fd", "type": "SceUID" }
+            ],
+            "returnType": "int"
+        },
+        {
+            "name": "sceIoGetstat",
+            "NID": "0xACE946E8",
+            "values": [
+                { "name": "file", "type": "char*" },
+                { "name": "stat", "type": "SceIoStat*" }
+            ],
+            "returnType": "int"
+        },
+        {
+            "name": "sceIoChstat",
+            "NID": "0xB8A740F4",
+            "values": [
+                { "name": "file", "type": "char*" },
+                { "name": "stat", "type": "SceIoStat*" },
+                { "name": "bits", "type": "int" }
+            ],
+            "returnType": "int"
+        },
+        {
+            "name": "sceIoWaitAsync",
+            "NID": "0xE23EEC33",
+            "values": [
+                { "name": "fd", "type": "SceUID" },
+                { "name": "res", "type": "SceInt64*" }
+            ],
+            "returnType": "int"
+        },
+        {
+            "name": "sceIoWaitAsyncCB",
+            "NID": "0x35DBD746",
+            "values": [
+                { "name": "fd", "type": "SceUID" },
+                { "name": "res", "type": "SceInt64*" }
+            ],
+            "returnType": "int"
+        }
+    ]
+}
