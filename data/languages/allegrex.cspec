@@ -104,6 +104,13 @@
                 <register name="f28"/>
                 <register name="f30"/>
             </unaffected>
+            <killedbycall>
+                <register name="at"/>
+                <register name="v0"/>
+                <register name="v1"/>
+                <register name="f0"/>
+                <register name="f1"/>
+            </killedbycall>
             <localrange>
                 <range space="stack" first="0xfff0bdc0" last="0xffffffff"/>
                 <!-- This is backup storage space for register params, but we treat as locals -->

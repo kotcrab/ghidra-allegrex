@@ -51,20 +51,20 @@ class PspElfLoader : ElfLoader() {
     provider: ByteProvider?,
     loadSpec: LoadSpec?,
     domainObject: DomainObject?,
-    loadIntoProgram: Boolean
+    loadIntoProgram: Boolean,
+    mirrorFsLayout: Boolean,
   ): MutableList<Option> {
-    val options = super.getDefaultOptions(provider, loadSpec, domainObject, loadIntoProgram)
+    val options = super.getDefaultOptions(provider, loadSpec, domainObject, loadIntoProgram, mirrorFsLayout)
     options.add(Options.UseRebootBinTypeBMapping.toOption())
     return options
   }
 
-  override fun load(
-    provider: ByteProvider, loadSpec: LoadSpec?, options: List<Option>,
-    program: Program, monitor: TaskMonitor, log: MessageLog,
-  ) {
+  override fun load(program: Program, settings: Loader.ImporterSettings) {
     try {
-      val elf = PspElfHeader(provider, Options.UseRebootBinTypeBMapping.getValue(options)) { log.appendMsg(it) }
-      ElfProgramBuilder.loadElf(elf, program, options, log, monitor)
+      val elf = PspElfHeader(settings.provider, Options.UseRebootBinTypeBMapping.getValue(settings.options)) {
+        settings.log.appendMsg(it)
+      }
+      ElfProgramBuilder.loadElf(elf, program, settings.options, settings.log, settings.monitor)
       program.executableFormat = PSP_ELF_NAME
     } catch (e: ElfException) {
       throw IOException(e.message)
