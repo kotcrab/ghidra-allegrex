@@ -1513,27 +1513,15 @@ define pcodeop vocp_q;
 }
 
 define pcodeop vsocp_s;
-:vsocp.s vd_s, vs_s               is prime = 52 & vop3 = 0 & vt = 69 & vc1 = 0 & vc0 = 0 & vd_s & vd & vs_s & vs   {
+:vsocp.s vd_p, vs_s               is prime = 52 & vop3 = 0 & vt = 69 & vc1 = 0 & vc0 = 0 & vd_p & vd & vs_s & vs   {
     local op1:4 = vs;
-    local result:4 = vsocp_s(op1);
-    vd = result;
-}
-define pcodeop vsocp_p;
-:vsocp.p vd_p, vs_p               is prime = 52 & vop3 = 0 & vt = 69 & vc1 = 0 & vc0 = 1 & vd_p & vd & vs_p & vs   {
-    local op1:8 = vfpuReadP(vs);
-    local result:8 = vsocp_p(op1);
+    local result:8 = vsocp_s(op1);
     vfpuWriteP(vd, result[0,32], result[32,32]);
 }
-define pcodeop vsocp_t;
-:vsocp.t vd_t, vs_t               is prime = 52 & vop3 = 0 & vt = 69 & vc1 = 1 & vc0 = 0 & vd_t & vd & vs_t & vs   {
-    local op1:12 = vfpuReadT(vs);
-    local result:12 = vsocp_t(op1);
-    vfpuWriteT(vd, result[0,32], result[32,32], result[64,32]);
-}
-define pcodeop vsocp_q;
-:vsocp.q vd_q, vs_q               is prime = 52 & vop3 = 0 & vt = 69 & vc1 = 1 & vc0 = 1 & vd_q & vd & vs_q & vs   {
-    local op1:16 = vfpuReadQ(vs);
-    local result:16 = vsocp_q(op1);
+define pcodeop vsocp_p;
+:vsocp.p vd_q, vs_p               is prime = 52 & vop3 = 0 & vt = 69 & vc1 = 0 & vc0 = 1 & vd_q & vd & vs_p & vs   {
+    local op1:8 = vfpuReadP(vs);
+    local result:16 = vsocp_p(op1);
     vfpuWriteQ(vd, result[0,32], result[32,32], result[64,32], result[96,32]);
 }
 
