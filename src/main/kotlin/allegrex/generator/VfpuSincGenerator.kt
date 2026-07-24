@@ -188,7 +188,10 @@ VfpuRot$idx: "0"  is epsilon                                                   {
     add2("vbfy1", vt = 66) { variantsAllToAll() }
     add2("vbfy2", vt = 67) { variantsAllToAll() }
     add2("vocp", vt = 68) { variantsAllToAll() }
-    add2("vsocp", vt = 69) { variantsAllToAll() }
+    add2("vsocp", vt = 69) {
+      variantS(Vd.P, Vs.S)
+      variantP(Vd.Q, Vs.P)
+    }
     add2("vfad", vt = 70) { variantsAllToS() }
     add2("vavg", vt = 71) { variantsAllToS() }
     add2("vsrt3", vt = 72) { variantsAllToAll() }

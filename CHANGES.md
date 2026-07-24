@@ -1,3 +1,7 @@
+#### Version 21.4
+- Updated build target Ghidra versions
+- Fixed handling of `vsocp` instruction 
+
 #### Version 21.3
 - Updated to Ghidra 12.0
 
