@@ -40,6 +40,7 @@ import ghidra.program.model.scalar.Scalar;
 import ghidra.program.model.symbol.Symbol;
 import ghidra.program.model.symbol.SymbolUtilities;
 import ghidra.util.Msg;
+import ghidra.util.classfinder.ExtensionPointProperties;
 import ghidra.util.exception.AssertException;
 import ghidra.util.exception.CancelledException;
 import ghidra.util.exception.InvalidInputException;
@@ -53,6 +54,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 // Note that this class is derived from the MIPS_ElfExtension. When the comment
 // says "PSP relocation section are not supported" it refers to the built-in
 // MIPS plugin, not the Allegrex one.
+@ExtensionPointProperties(priority = 10000)
 public class Allegrex_ElfExtension extends ElfExtension {
 
   private static final String MIPS_STUBS_SECTION_NAME = ".MIPS.stubs";
@@ -140,7 +142,7 @@ public class Allegrex_ElfExtension extends ElfExtension {
 
   @Override
   public boolean canHandle (ElfHeader elf) {
-    return elf.e_machine() == ElfConstants.EM_MIPS;
+    return elf.e_machine() == ElfConstants.EM_MIPS && elf instanceof PspElfHeader;
   }
 
   @Override
