@@ -1,6 +1,7 @@
 #### Version 21.4
 - Updated build target Ghidra versions
-- Fixed handling of `vsocp` instruction 
+- Fixed handling of `vsocp` instruction
+- [#49](https://github.com/kotcrab/ghidra-allegrex/issues/49) - Improved ELF import when other conflicting plugins are installed 
 
 #### Version 21.3
 - Updated to Ghidra 12.0
