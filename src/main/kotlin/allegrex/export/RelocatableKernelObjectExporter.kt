@@ -30,8 +30,8 @@ import ghidra.app.util.DomainObjectService
 import ghidra.app.util.Option
 import ghidra.app.util.OptionException
 import ghidra.app.util.OptionUtils
-import ghidra.app.util.exporter.Exporter
 import ghidra.app.util.exporter.ExporterException
+import ghidra.app.util.exporter.ProgramExporter
 import ghidra.framework.model.DomainObject
 import ghidra.program.model.address.Address
 import ghidra.program.model.address.AddressRange
@@ -52,7 +52,7 @@ import java.io.File
 import java.io.IOException
 
 @Suppress("unused")
-class RelocatableKernelObjectExporter : Exporter(
+class RelocatableKernelObjectExporter : ProgramExporter(
   "Relocatable PSP kernel object", "o", null
 ) {
   companion object {
