@@ -55,6 +55,13 @@ jobs:
             -cspec default -noanalysis -scriptPath "$GITHUB_WORKSPACE/src/test/ghidra_scripts" \
             -postScript VfpuPrefixSmoke.java -deleteProject 2>&1 | tee "$RUNNER_TEMP/vfpu-prefix-smoke.log"
           grep -q 'VFPU_PREFIX_SMOKE_COMPLETE' "$RUNNER_TEMP/vfpu-prefix-smoke.log"
+      - name: Preserve VFPU prefix regression log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vfpu-prefix-pcode-for-Ghidra-${{ matrix.ghidra }}
+          path: ${{ runner.temp }}/vfpu-prefix-smoke.log
+          if-no-files-found: ignore
       - name: Upload artifact to workflow
         uses: actions/upload-artifact@v4
         with:
