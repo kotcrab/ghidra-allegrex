@@ -58,17 +58,14 @@ define pcodeop vcst_q;
     vfpuWriteQ(vd, result[0,32], result[32,32], result[64,32], result[96,32]);
 }
 
-define pcodeop vpfxs;
-define pcodeop vpfxt;
-define pcodeop vpfxd;
-:vpfxs [Vpfxst0, Vpfxst1, Vpfxst2, Vpfxst3]     is prime=55 & vop2 = 0 & Vpfxst0 & Vpfxst1 & Vpfxst2 & Vpfxst3  {
-    SPFX = vpfxs(Vpfxst0, Vpfxst1, Vpfxst2, Vpfxst3);
+:vpfxs [Vpfxst0, Vpfxst1, Vpfxst2, Vpfxst3]     is prime=55 & vop2 = 0 & Vpfxst0 & Vpfxst1 & Vpfxst2 & Vpfxst3 & vpfximm {
+    SPFX = vpfximm;
 }
-:vpfxt [Vpfxst0, Vpfxst1, Vpfxst2, Vpfxst3]     is prime=55 & vop2 = 1 & Vpfxst0 & Vpfxst1 & Vpfxst2 & Vpfxst3 {
-    TPFX = vpfxt(Vpfxst0, Vpfxst1, Vpfxst2, Vpfxst3);
+:vpfxt [Vpfxst0, Vpfxst1, Vpfxst2, Vpfxst3]     is prime=55 & vop2 = 1 & Vpfxst0 & Vpfxst1 & Vpfxst2 & Vpfxst3 & vpfximm {
+    TPFX = vpfximm;
 }
-:vpfxd [Vpfxd0, Vpfxd1, Vpfxd2, Vpfxd3]         is prime=55 & vop2 = 2 & Vpfxd0 & Vpfxd1 & Vpfxd2 & Vpfxd3 {
-    DPFX = vpfxd(Vpfxd0, Vpfxd1, Vpfxd2, Vpfxd3);
+:vpfxd [Vpfxd0, Vpfxd1, Vpfxd2, Vpfxd3]         is prime=55 & vop2 = 2 & Vpfxd0 & Vpfxd1 & Vpfxd2 & Vpfxd3 & vpfximm {
+    DPFX = vpfximm & 0xfff;
 }
 
 define pcodeop viim_s;

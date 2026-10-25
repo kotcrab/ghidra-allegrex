@@ -36,6 +36,25 @@ jobs:
         run: |
           chmod +x gradlew
           ./gradlew buildExtension
+      - name: Verify VFPU prefix p-code
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          from struct import pack
+          import os
+          words = (0xdc0000c6, 0xdc0a35c6, 0xdd0756e4, 0xde0fffaa, 0xde000000)
+          Path(os.environ["RUNNER_TEMP"], "vfpu-prefix.bin").write_bytes(pack("<5I", *words))
+          PY
+          unzip -q dist/*ghidra-allegrex.zip -d "$GHIDRA_INSTALL_DIR/Ghidra/Extensions"
+          mkdir -p "$RUNNER_TEMP/ghidra-vfpu"
+          "$GHIDRA_INSTALL_DIR/support/analyzeHeadless" "$RUNNER_TEMP/ghidra-vfpu" vfpu-prefix \
+            -import "$RUNNER_TEMP/vfpu-prefix.bin" -loader BinaryLoader \
+            -loader-baseAddr 0x08804000 -processor Allegrex:LE:32:default \
+            -cspec default -noanalysis -scriptPath "$GITHUB_WORKSPACE/src/test/ghidra_scripts" \
+            -postScript VfpuPrefixSmoke.java -deleteProject 2>&1 | tee "$RUNNER_TEMP/vfpu-prefix-smoke.log"
+          grep -q 'VFPU_PREFIX_SMOKE_COMPLETE' "$RUNNER_TEMP/vfpu-prefix-smoke.log"
       - name: Upload artifact to workflow
         uses: actions/upload-artifact@v4
         with:
