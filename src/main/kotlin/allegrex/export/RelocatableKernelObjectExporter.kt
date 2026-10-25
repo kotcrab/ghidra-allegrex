@@ -61,7 +61,9 @@ class RelocatableKernelObjectExporter : ProgramExporter(
         private const val NAME = "Global data symbols names (regex)"
         const val DEFAULT = "^g_.+\$"
 
-        fun toOption() = Option(NAME, DEFAULT)
+        fun toOption(): Option = Option.newString(NAME)
+          .value(DEFAULT)
+          .build()
 
         fun getValue(options: List<Option>): String = OptionUtils.getOption(NAME, options, DEFAULT)
       }

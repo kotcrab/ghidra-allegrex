@@ -5,10 +5,8 @@ import ghidra.app.util.Option
 import ghidra.app.util.OptionUtils
 import ghidra.app.util.bin.ByteProvider
 import ghidra.app.util.bin.format.elf.ElfException
-import ghidra.app.util.importer.MessageLog
 import ghidra.framework.model.DomainObject
 import ghidra.program.model.listing.Program
-import ghidra.util.task.TaskMonitor
 import java.io.IOException
 
 class PspElfLoader : ElfLoader() {
@@ -21,12 +19,12 @@ class PspElfLoader : ElfLoader() {
       object UseRebootBinTypeBMapping {
         private const val NAME = "Use reboot.bin Type B Relocation Mapping"
         private const val DEFAULT = false
-        private val TYPE = java.lang.Boolean::class.java // must be Java Boolean
         private const val COMMAND_LINE = "${COMMAND_LINE_ARG_PREFIX}-useRebootBinTypeBRelocationMapping"
 
-        fun toOption(): Option {
-          return Option(NAME, DEFAULT, TYPE, COMMAND_LINE)
-        }
+        fun toOption(): Option = Option.newBoolean(NAME)
+          .value(DEFAULT)
+          .commandLineArgument(COMMAND_LINE)
+          .build()
 
         fun getValue(options: List<Option>): Boolean {
           return OptionUtils.getOption(NAME, options, DEFAULT)

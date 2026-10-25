@@ -131,7 +131,7 @@ object ExportElf {
               STRTAB -> strTabBytes.size
               SHSTRTAB -> shStrTabBytes.size
               else -> error("Unknown section: ${section.name}")
-            }.toInt()
+            }
           )
         } else {
           it.writeInt(section.size)
