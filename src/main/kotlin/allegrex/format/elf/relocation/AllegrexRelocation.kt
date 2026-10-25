@@ -107,9 +107,16 @@ sealed class AllegrexRelocation(
     }
 
     override fun toLongArray(): LongArray {
-      return arrayOf(offset, type, offsetBaseIndex, addressBaseIndex, offsetBase, addressBase, addend, unused)
-        .map { it.toLong() }
-        .toLongArray()
+      return longArrayOf(
+        offset.toLong(),
+        type.toLong(),
+        offsetBaseIndex.toLong(),
+        addressBaseIndex.toLong(),
+        offsetBase,
+        addressBase,
+        addend.toLong(),
+        unused.toLong()
+      )
     }
   }
 }

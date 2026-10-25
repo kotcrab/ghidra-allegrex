@@ -1,3 +1,7 @@
+#### Version 21.5
+- Updated to Ghidra 12.2
+- JVM 25 is now required
+
 #### Version 21.4
 - Updated to Ghidra 12.1.3
 - Fixed handling of `vsocp` instruction
