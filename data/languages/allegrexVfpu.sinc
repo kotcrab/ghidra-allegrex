@@ -143,8 +143,25 @@ define pcodeop vrot_q;
     vd = rt;
 }
 
-:mtvc rt, VfpuCtl                 is prime=18 & copop = 7 & vc0 != 0 & rt & VfpuCtl {
+# mtvc writes are masked per control register; RSV5/RSV6/REV and undefined selectors are read-only.
+:mtvc rt, VfpuCtl                 is prime=18 & copop = 7 & vc0 != 0 & rt & VfpuCtl & vd_ctl < 2 {
+    VfpuCtl = rt & 0x000fffff;
+}
+:mtvc rt, VfpuCtl                 is prime=18 & copop = 7 & vc0 != 0 & rt & VfpuCtl & vd_ctl = 2 {
+    VfpuCtl = rt & 0x00000fff;
+}
+:mtvc rt, VfpuCtl                 is prime=18 & copop = 7 & vc0 != 0 & rt & VfpuCtl & vd_ctl = 3 {
+    VfpuCtl = rt & 0x0000003f;
+}
+:mtvc rt, VfpuCtl                 is prime=18 & copop = 7 & vc0 != 0 & rt & VfpuCtl & vd_ctl = 4 {
     VfpuCtl = rt;
+}
+:mtvc rt, VfpuCtl                 is prime=18 & copop = 7 & vc0 != 0 & rt & VfpuCtl & vd_ctl >= 5 & vd_ctl <= 7 {
+}
+:mtvc rt, VfpuCtl                 is prime=18 & copop = 7 & vc0 != 0 & rt & VfpuCtl & vd_ctl >= 8 & vd_ctl <= 15 {
+    VfpuCtl = (rt & 0x000fffff) | 0x3f800000;
+}
+:mtvc rt, VfpuCtl                 is prime=18 & copop = 7 & vc0 != 0 & rt & VfpuCtl & vd_ctl >= 16 {
 }
 
 :lv.s VfpuMemS, OFF_VBASE         is prime=50 & OFF_VBASE & VfpuMemS {
