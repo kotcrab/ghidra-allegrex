@@ -28,11 +28,11 @@ define pcodeop vcmp_q;
 }
 
 # FIXME: this doesn't correctly model the behaviour for read only registers and registers outside control register range (unlikely to be in normal code?)
-:vmfvc vd_s, VfpuCtl              is prime=52 & vop3 = 0 & vt = 80 & vd_s & VfpuCtl {
-    vd_s = VfpuCtl;
+:vmfvc vd_s, VfpuCtlSource        is prime=52 & vop3 = 0 & vt = 80 & vd_s & vd & VfpuCtlSource {
+    vd = VfpuCtlSource;
 }
-:vmtvc vs_s, VfpuCtl              is prime=52 & vop3 = 0 & vt = 81 & vs_s & VfpuCtl {
-    VfpuCtl = vs_s;
+:vmtvc vs_s, VfpuCtl              is prime=52 & vop3 = 0 & vt = 81 & vs_s & vs & VfpuCtl {
+    VfpuCtl = vs;
 }
 
 define pcodeop vcst_s;
