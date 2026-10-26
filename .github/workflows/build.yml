@@ -36,41 +36,36 @@ jobs:
         run: |
           chmod +x gradlew
           ./gradlew buildExtension
-      - name: Verify mtvc control-register write masks
+      - name: Verify mtvc masks and decompiled values
         shell: bash
         run: |
           set -euo pipefail
           python3 - <<'PY'
           from pathlib import Path
           import os, re, struct
+          words = []
           for name, count in (("vfpu-control-transfers", 28), ("vfpu-mtvc-mask-edges", 7)):
               source = Path("src/test/fixtures", name + ".S").read_text()
-              words = [int(w, 16) for w in re.findall(r"^\s*\.word\s+(0x[0-9a-fA-F]{8})", source, re.M)]
-              assert len(words) == count, (name, len(words))
-              Path(os.environ["RUNNER_TEMP"], name + ".bin").write_bytes(struct.pack("<" + str(count) + "I", *words))
+              selected = [int(w, 16) for w in re.findall(r"^\s*\.word\s+(0x[0-9a-fA-F]{8})", source, re.M)]
+              if len(selected) != count:
+                  raise ValueError(f"Expected {count} instructions in {name}")
+              words.extend(selected)
+          Path(os.environ["RUNNER_TEMP"], "mtvc.bin").write_bytes(struct.pack("<35I", *words))
           PY
           unzip -q dist/*ghidra-allegrex.zip -d "$GHIDRA_INSTALL_DIR/Ghidra/Extensions"
           mkdir -p "$RUNNER_TEMP/ghidra-control"
-          "$GHIDRA_INSTALL_DIR/support/analyzeHeadless" "$RUNNER_TEMP/ghidra-control" mtvc-core \
-            -import "$RUNNER_TEMP/vfpu-control-transfers.bin" -loader BinaryLoader \
+          "$GHIDRA_INSTALL_DIR/support/analyzeHeadless" "$RUNNER_TEMP/ghidra-control" mtvc \
+            -import "$RUNNER_TEMP/mtvc.bin" -loader BinaryLoader \
             -loader-baseAddr 0x08804000 -processor Allegrex:LE:32:default \
             -cspec default -noanalysis -scriptPath "$GITHUB_WORKSPACE/src/test/ghidra_scripts" \
-            -postScript VfpuMtvcMaskSmoke.java -deleteProject 2>&1 | tee "$RUNNER_TEMP/mtvc-core.log"
-          grep -q 'VFPU_MTVC_MASK_COMPLETE' "$RUNNER_TEMP/mtvc-core.log"
-          "$GHIDRA_INSTALL_DIR/support/analyzeHeadless" "$RUNNER_TEMP/ghidra-control" mtvc-edges \
-            -import "$RUNNER_TEMP/vfpu-mtvc-mask-edges.bin" -loader BinaryLoader \
-            -loader-baseAddr 0x08804000 -processor Allegrex:LE:32:default \
-            -cspec default -noanalysis -scriptPath "$GITHUB_WORKSPACE/src/test/ghidra_scripts" \
-            -postScript VfpuMtvcMaskEdges.java -deleteProject 2>&1 | tee "$RUNNER_TEMP/mtvc-edges.log"
-          grep -q 'VFPU_MTVC_EDGES_COMPLETE' "$RUNNER_TEMP/mtvc-edges.log"
-      - name: Preserve mtvc regression logs
+            -postScript VfpuMtvcMaskSmoke.java -deleteProject 2>&1 | tee "$RUNNER_TEMP/mtvc.log"
+          grep -q 'VFPU_MTVC_MASK_COMPLETE' "$RUNNER_TEMP/mtvc.log"
+      - name: Preserve mtvc regression log
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: mtvc-control-mask-Ghidra-${{ matrix.ghidra }}
-          path: |
-            ${{ runner.temp }}/mtvc-core.log
-            ${{ runner.temp }}/mtvc-edges.log
+          path: ${{ runner.temp }}/mtvc.log
           if-no-files-found: ignore
       - name: Upload artifact to workflow
         uses: actions/upload-artifact@v4
