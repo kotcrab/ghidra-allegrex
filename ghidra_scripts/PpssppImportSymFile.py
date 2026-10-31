@@ -7,11 +7,14 @@ offsetBy = askInt("Offset addresses by", "Offset")
 skipZun = True
 makePrimary = True
 
-for line in file(sym.absolutePath):
-    parts = line.split(" ")
-    address = toAddr(long(parts[0], 16) + offsetBy)
-    name = parts[1].rsplit(",", 1)[0]
-    if skipZun and name.startswith("z_un_"):
-        continue
-    print "Create label", name, "at", address
-    createLabel(address, name, makePrimary)
+with open(sym.absolutePath, "r") as f:
+    for line in f:
+        parts = line.split(" ")
+        address = toAddr(int(parts[0], 16) + offsetBy)
+        name = parts[1].rsplit(",", 1)[0]
+
+        if skipZun and name.startswith("z_un_"):
+            continue
+
+        print("Create label", name, "at", address)
+        createLabel(address, name, makePrimary)
