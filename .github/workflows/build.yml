@@ -36,6 +36,33 @@ jobs:
         run: |
           chmod +x gradlew
           ./gradlew buildExtension
+      - name: Verify scalar VFPU control mapping
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import os, re, struct
+          source = Path("src/test/fixtures/vfpu-control-mapping.S").read_text()
+          words = [int(w, 16) for w in re.findall(r"^\s*\.word\s+(0x[0-9a-fA-F]{8})", source, re.M)]
+          assert len(words) == 16
+          Path(os.environ["RUNNER_TEMP"], "vfpu-control-mapping.bin").write_bytes(struct.pack("<16I", *words))
+          PY
+          unzip -q dist/*ghidra-allegrex.zip -d "$GHIDRA_INSTALL_DIR/Ghidra/Extensions"
+          mkdir -p "$RUNNER_TEMP/ghidra-control"
+          "$GHIDRA_INSTALL_DIR/support/analyzeHeadless" "$RUNNER_TEMP/ghidra-control" mapping \
+            -import "$RUNNER_TEMP/vfpu-control-mapping.bin" -loader BinaryLoader \
+            -loader-baseAddr 0x08804000 -processor Allegrex:LE:32:default \
+            -cspec default -noanalysis -scriptPath "$GITHUB_WORKSPACE/src/test/ghidra_scripts" \
+            -postScript VfpuControlMappingSmoke.java -deleteProject 2>&1 | tee "$RUNNER_TEMP/vfpu-control-mapping.log"
+          grep -q 'VFPU_CTRL_MAPPING_REVIEW_PASS' "$RUNNER_TEMP/vfpu-control-mapping.log"
+      - name: Preserve VFPU control mapping regression
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vfpu-control-mapping-ghidra-${{ matrix.ghidra }}
+          path: ${{ runner.temp }}/vfpu-control-mapping.log
+          if-no-files-found: ignore
       - name: Upload artifact to workflow
         uses: actions/upload-artifact@v4
         with:

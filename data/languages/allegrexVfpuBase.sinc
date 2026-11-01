@@ -232,6 +232,28 @@ VfpuCtl: "RCX4" is vd_ctl = 0xC { export RCX4; }
 VfpuCtl: "RCX5" is vd_ctl = 0xD { export RCX5; }
 VfpuCtl: "RCX6" is vd_ctl = 0xE { export RCX6; }
 VfpuCtl: "RCX7" is vd_ctl = 0xF { export RCX7; }
+
+# vmfvc selects its control source from bits 8..14, unlike mtvc/mfvc/vmtvc.
+VfpuCtlSource: "SPFX" is vs_ctl = 0x0 { export SPFX; }
+VfpuCtlSource: "TPFX" is vs_ctl = 0x1 { export TPFX; }
+VfpuCtlSource: "DPFX" is vs_ctl = 0x2 { export DPFX; }
+VfpuCtlSource: "CC" is vs_ctl = 0x3 { export CC; }
+VfpuCtlSource: "INF4" is vs_ctl = 0x4 { export INF4; }
+VfpuCtlSource: "RSV5" is vs_ctl = 0x5 { export RSV5; }
+VfpuCtlSource: "RSV6" is vs_ctl = 0x6 { export RSV6; }
+VfpuCtlSource: "REV" is vs_ctl = 0x7 { export REV; }
+VfpuCtlSource: "RCX0" is vs_ctl = 0x8 { export RCX0; }
+VfpuCtlSource: "RCX1" is vs_ctl = 0x9 { export RCX1; }
+VfpuCtlSource: "RCX2" is vs_ctl = 0xA { export RCX2; }
+VfpuCtlSource: "RCX3" is vs_ctl = 0xB { export RCX3; }
+VfpuCtlSource: "RCX4" is vs_ctl = 0xC { export RCX4; }
+VfpuCtlSource: "RCX5" is vs_ctl = 0xD { export RCX5; }
+VfpuCtlSource: "RCX6" is vs_ctl = 0xE { export RCX6; }
+VfpuCtlSource: "RCX7" is vs_ctl = 0xF { export RCX7; }
+# The remaining selectors are not control registers. Keep their old scalar
+# names in the disassembly, but return zero as vmfvc does for invalid indices.
+VfpuCtlSource: vs_s          is vs_s & vs_ctl >= 0x10 & vs_ctl < 0x7F { export 0:4; }
+VfpuCtlSource: "(interlock)" is vs_ctl = 0x7F { export 0:4; }
 VfpuCtl: "S400" is vd_ctl = 0x10 { export 0:4; }
 VfpuCtl: "S410" is vd_ctl = 0x11 { export 0:4; }
 VfpuCtl: "S420" is vd_ctl = 0x12 { export 0:4; }
