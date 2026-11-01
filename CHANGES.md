@@ -1,3 +1,6 @@
+#### Version 21.6
+- Updated `PpssppImportSymFile` script to work with Python 3 
+
 #### Version 21.5
 - Updated to Ghidra 12.2
 - JVM 25 is now required
