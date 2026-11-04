@@ -203,7 +203,11 @@ define pcodeop vadd_q;
 :vadd.q vd_q, vs_q, vt_q          is prime = 24 & vop3 = 0 & vc1 = 1 & vc0 = 1 & vd_q & vd & vs_q & vs & vt_q & vt   {
     local op1:16 = vfpuReadQ(vs);
     local op2:16 = vfpuReadQ(vt);
-    local result:16 = vadd_q(op1, op2);
+    local previous:16 = vfpuReadQ(vd);
+    local result:16 = vadd_q(previous, op1, op2, SPFX, TPFX, DPFX);
+    SPFX = 0xe4;
+    TPFX = 0xe4;
+    DPFX = 0;
     vfpuWriteQ(vd, result[0,32], result[32,32], result[64,32], result[96,32]);
 }
 

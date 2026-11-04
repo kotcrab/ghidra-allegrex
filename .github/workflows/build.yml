@@ -36,6 +36,38 @@ jobs:
         run: |
           chmod +x gradlew
           ./gradlew buildExtension
+      - name: Verify vadd.q prefix consumption
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          from struct import pack
+          import os
+          words = (
+              0xd8800000, 0xd8a40000, 0xdc0000e4, 0xdd0000e4,
+              0xde000000, 0x60048090, 0xf8d00000, 0xdc0000c6,
+              0x60048090, 0xf8d00010, 0x60048090, 0xf8d00020,
+              0x03e00008, 0x00000000,
+          )
+          Path(os.environ["RUNNER_TEMP"], "vfpu-vaddq.bin").write_bytes(pack("<14I", *words))
+          PY
+          unzip -q dist/*ghidra-allegrex.zip -d "$GHIDRA_INSTALL_DIR/Ghidra/Extensions"
+          test -f "$GHIDRA_INSTALL_DIR/Ghidra/Extensions/ghidra-allegrex/extension.properties"
+          mkdir -p "$RUNNER_TEMP/ghidra-vfpu"
+          "$GHIDRA_INSTALL_DIR/support/analyzeHeadless" "$RUNNER_TEMP/ghidra-vfpu" vfpu-vaddq \
+            -import "$RUNNER_TEMP/vfpu-vaddq.bin" -loader BinaryLoader \
+            -loader-baseAddr 0x08804000 -processor Allegrex:LE:32:default \
+            -cspec default -noanalysis -scriptPath "$GITHUB_WORKSPACE/src/test/ghidra_scripts" \
+            -postScript VfpuVaddQPrefixSmoke.java -deleteProject 2>&1 | tee "$RUNNER_TEMP/vfpu-vaddq-smoke.log"
+          grep -q 'VFPU_VADDQ_SMOKE_COMPLETE' "$RUNNER_TEMP/vfpu-vaddq-smoke.log"
+      - name: Preserve vadd.q regression log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vfpu-vaddq-pcode-for-Ghidra-${{ matrix.ghidra }}
+          path: ${{ runner.temp }}/vfpu-vaddq-smoke.log
+          if-no-files-found: ignore
       - name: Upload artifact to workflow
         uses: actions/upload-artifact@v4
         with:
